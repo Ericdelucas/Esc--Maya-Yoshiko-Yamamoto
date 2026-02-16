@@ -1,3 +1,0 @@
-package handlers
-
-// ...auth handler implementation...
