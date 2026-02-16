@@ -1,0 +1,3 @@
+package services
+
+// ...auth service implementation...
