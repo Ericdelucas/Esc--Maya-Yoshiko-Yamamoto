@@ -1,1 +1,38 @@
-# docker-compose.yml
+version: "3.9"
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: smartsaude-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: smartsaude
+      MYSQL_USER: smartuser
+      MYSQL_PASSWORD: smartpass
+      MYSQL_ROOT_PASSWORD: rootpass
+    volumes:
+      - smartsaude_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  auth-service:
+    build:
+      context: ./auth-service
+    container_name: smartsaude-auth
+    restart: unless-stopped
+    environment:
+      AUTH_PORT: 8080
+      DB_URL: mysql+pymysql://smartuser:smartpass@mysql:3306/smartsaude
+      JWT_SECRET: super_secret_key_change_me
+      PEPPER_KEY: super_pepper_key_change_me
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+
+volumes:
+  smartsaude_mysql_data:
