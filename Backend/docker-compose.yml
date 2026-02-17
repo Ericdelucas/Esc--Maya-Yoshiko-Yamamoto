@@ -1,38 +1,60 @@
-version: "3.9"
-
 services:
   mysql:
     image: mysql:8.0
     container_name: smartsaude-mysql
-    restart: unless-stopped
     environment:
       MYSQL_DATABASE: smartsaude
       MYSQL_USER: smartuser
       MYSQL_PASSWORD: smartpass
-      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
     volumes:
       - smartsaude_mysql_data:/var/lib/mysql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "smartuser", "-psmartpass"]
       interval: 5s
       timeout: 3s
       retries: 20
+    networks:
+      - backend
 
   auth-service:
     build:
       context: ./auth-service
+      dockerfile: Dockerfile
     container_name: smartsaude-auth
-    restart: unless-stopped
     environment:
-      AUTH_PORT: 8080
-      DB_URL: mysql+pymysql://smartuser:smartpass@mysql:3306/smartsaude
-      JWT_SECRET: super_secret_key_change_me
-      PEPPER_KEY: super_pepper_key_change_me
+      DB_URL: "mysql+pymysql://smartuser:smartpass@mysql:3306/smartsaude"
+      JWT_SECRET: "troque-por-uma-chave-com-32-bytes-no-minimo-123456"
+      JWT_ISSUER: "smartsaude-auth"
     depends_on:
       mysql:
         condition: service_healthy
     ports:
       - "8080:8080"
+    networks:
+      - backend
+
+  ai-service:
+    build:
+      context: ./ai-service
+      dockerfile: Dockerfile
+    container_name: smartsaude-ai
+    environment:
+      AUTH_BASE_URL: "http://auth-service:8080"
+      # Se usar Ollama rodando fora do docker: host.docker.internal (Linux às vezes precisa ajuste)
+      # OLLAMA_BASE_URL: "http://host.docker.internal:11434"
+    depends_on:
+      auth-service:
+        condition: service_started
+    ports:
+      - "8090:8090"
+    networks:
+      - backend
 
 volumes:
   smartsaude_mysql_data:
+
+networks:
+  backend:
+    name: backend_default

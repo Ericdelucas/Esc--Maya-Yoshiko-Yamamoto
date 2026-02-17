@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from app.core.config import get_settings
 from app.core.error_handler import register_error_handlers
 from app.routers.auth_router import router as auth_router
+from app.routers.me_router import router as me_router
 
 
 def create_app() -> FastAPI:
@@ -12,6 +13,7 @@ def create_app() -> FastAPI:
     register_error_handlers(app)
 
     app.include_router(auth_router, tags=["auth"])
+    app.include_router(me_router)
     return app
 
 

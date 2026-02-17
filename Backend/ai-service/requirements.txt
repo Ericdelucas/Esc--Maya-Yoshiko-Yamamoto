@@ -1,1 +1,13 @@
-# requirements.txt
+fastapi>=0.110
+uvicorn[standard]>=0.27
+pydantic>=2.6
+pydantic-settings>=2.2
+
+httpx>=0.27
+python-dotenv>=1.0
+
+# Se você usa logs estruturados
+loguru>=0.7
+
+# Se seu ai-service faz embeddings/local kb ou parsing
+numpy>=1.26

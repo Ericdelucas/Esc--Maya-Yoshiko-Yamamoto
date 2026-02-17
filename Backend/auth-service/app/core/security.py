@@ -50,4 +50,43 @@ def _split2(s: str) -> tuple[str, str]:
 		raise ValueError("invalid stored hash")
 	a, b = s.split(".", 1)
 	return a, b
-# security.py
+
+
+from datetime import datetime, timedelta, timezone
+from typing import Any, Dict
+
+import jwt
+
+
+def create_access_token(
+    subject: str,
+    email: str,
+    secret_key: str,
+    issuer: str,
+    expires_minutes: int = 120,
+    algorithm: str = "HS256",
+) -> str:
+    now = datetime.now(timezone.utc)
+    payload: Dict[str, Any] = {
+        "iss": issuer,
+        "sub": str(subject),
+        "email": email,
+        "iat": int(now.timestamp()),
+        "exp": int((now + timedelta(minutes=expires_minutes)).timestamp()),
+    }
+    return jwt.encode(payload, secret_key, algorithm=algorithm)
+
+
+def decode_access_token(
+    token: str,
+    secret_key: str,
+    issuer: str,
+    algorithms: tuple[str, ...] = ("HS256",),
+) -> Dict[str, Any]:
+    return jwt.decode(
+        token,
+        secret_key,
+        algorithms=list(algorithms),
+        issuer=issuer,
+        options={"require": ["exp", "iat", "sub", "iss"]},
+    )
