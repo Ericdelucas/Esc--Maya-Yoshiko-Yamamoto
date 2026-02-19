@@ -33,5 +33,5 @@ def verify(
     if not authorization or not authorization.startswith("Bearer "):
         raise Unauthorized("missing bearer token")
     token = authorization.replace("Bearer ", "", 1).strip()
-    claims = svc.verify(token)
-    return {"claims": claims}
+    payload = svc.verify(token)
+    return {"sub": payload["sub"], "email": payload["email"], "role": payload["role"]}

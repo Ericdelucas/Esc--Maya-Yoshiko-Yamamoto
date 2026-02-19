@@ -1,1 +1,0 @@
-# exercise_schema.py

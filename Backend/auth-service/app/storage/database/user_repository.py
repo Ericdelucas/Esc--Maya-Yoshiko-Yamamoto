@@ -7,9 +7,9 @@ from app.storage.database.base_repository import SessionLocal
 
 
 class UserRepository:
-    def create(self, email: str, password_hash: str) -> User:
+    def create(self, email: str, password_hash: str, role: str = "Patient") -> User:
         with SessionLocal() as session:
-            db_user = UserORM(email=email, password_hash=password_hash)
+            db_user = UserORM(email=email, password_hash=password_hash, role=role)
             session.add(db_user)
             try:
                 session.commit()
@@ -22,6 +22,7 @@ class UserRepository:
                 id=db_user.id,
                 email=db_user.email,
                 password_hash=db_user.password_hash,
+                role=db_user.role,
             )
 
     def get_by_email(self, email: str) -> User | None:
@@ -39,4 +40,5 @@ class UserRepository:
                 id=db_user.id,
                 email=db_user.email,
                 password_hash=db_user.password_hash,
+                role=db_user.role,
             )

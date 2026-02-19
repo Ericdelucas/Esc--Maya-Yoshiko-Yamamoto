@@ -10,12 +10,13 @@ class JwtService:
     issuer: str = "smartsaude-auth"
     expires_minutes: int = 120
 
-    def sign(self, user_id: int, email: str) -> str:
+    def sign(self, user_id: int, email: str, role: str) -> str:
         now = int(time.time())
         payload = {
             "iss": self.issuer,
             "sub": str(user_id),
             "email": email,
+            "role": role,
             "iat": now,
             "exp": now + (self.expires_minutes * 60),
         }

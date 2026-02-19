@@ -42,8 +42,9 @@ services:
     container_name: smartsaude-ai
     environment:
       AUTH_BASE_URL: "http://auth-service:8080"
-      # Se usar Ollama rodando fora do docker: host.docker.internal (Linux às vezes precisa ajuste)
-      # OLLAMA_BASE_URL: "http://host.docker.internal:11434"
+      OLLAMA_HOST: "http://host.docker.internal:11434"
+      OLLAMA_MODEL: "llama3"
+      OLLAMA_TIMEOUT_SEC: "30"
     depends_on:
       auth-service:
         condition: service_started
@@ -52,8 +53,93 @@ services:
     networks:
       - backend
 
+  notification-service:
+    build: ./notification-service
+    container_name: smartsaude-notification
+    ports:
+      - "8070:8070"
+    environment:
+      - DB_URL=mysql+pymysql://smartuser:smartpass@mysql:3306/smartsaude
+      - AUTH_BASE_URL=http://auth-service:8080
+    depends_on:
+      auth-service:
+        condition: service_started
+    networks:
+      - backend
+
+  ehr-service:
+    build: ./ehr-service
+    container_name: smartsaude-ehr
+    ports:
+      - "8060:8060"
+    environment:
+      - DB_URL=mysql+pymysql://smartuser:smartpass@mysql:3306/smartsaude
+      - AUTH_BASE_URL=http://auth-service:8080
+    depends_on:
+      mysql:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+    networks:
+      - backend
+
+  analytics-service:
+    build: ./analytics-service
+    container_name: smartsaude-analytics
+    ports:
+      - "8050:8050"
+    environment:
+      - DB_URL=mysql+pymysql://smartuser:smartpass@mysql:3306/smartsaude
+      - AUTH_BASE_URL=http://auth-service:8080
+    depends_on:
+      mysql:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+    networks:
+      - backend
+
+  exercise-service:
+    build: ./exercise-service
+    container_name: smartsaude-exercise
+    ports:
+      - "8040:8040"
+    environment:
+      - DB_URL=mysql+pymysql://smartuser:smartpass@mysql:3306/smartsaude
+      - AUTH_BASE_URL=http://auth-service:8080
+      - UPLOAD_DIR=/data/uploads
+    volumes:
+      - smartsaude_uploads:/data/uploads
+    depends_on:
+      mysql:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+    networks:
+      - backend
+
+  training-service:
+    build: ./training-service
+    container_name: smartsaude-training
+    ports:
+      - "8030:8030"
+    environment:
+      - DB_URL=mysql+pymysql://smartuser:smartpass@mysql:3306/smartsaude
+      - AUTH_BASE_URL=http://auth-service:8080
+      - NOTIF_BASE_URL=http://notification-service:8070
+    depends_on:
+      mysql:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+      notification-service:
+        condition: service_started
+    networks:
+      - backend
+
 volumes:
   smartsaude_mysql_data:
+  smartsaude_uploads:
 
 networks:
   backend:

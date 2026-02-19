@@ -18,7 +18,7 @@ class AuthService:
 
         password_hash = self.hasher.hash_password(password)
         try:
-            user = self.users.create(email=email.lower(), password_hash=password_hash)
+            user = self.users.create(email=email.lower(), password_hash=password_hash, role="Patient")
         except ValueError:
             raise Conflict("email already exists")
         return user.id
@@ -31,7 +31,7 @@ class AuthService:
         if not user or not self.hasher.verify_password(password, user.password_hash):
             raise Unauthorized("invalid credentials")
 
-        return self.jwt.sign(user_id=user.id, email=user.email)
+        return self.jwt.sign(user_id=user.id, email=user.email, role=user.role)
 
     def verify(self, token: str) -> dict:
         if not token:

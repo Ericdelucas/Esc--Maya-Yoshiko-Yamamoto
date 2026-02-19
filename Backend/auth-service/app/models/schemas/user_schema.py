@@ -14,6 +14,7 @@ class UserLoginIn(BaseModel):
 class UserOut(BaseModel):
     id: int
     email: EmailStr
+    role: str
 
 
 class TokenOut(BaseModel):
