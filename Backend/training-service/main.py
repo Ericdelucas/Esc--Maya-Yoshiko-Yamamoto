@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from app.routers.health_router import router as health_router
 from app.routers.training_router import router as training_router
 from app.routers.me_router import router as me_router
+from app.routers.exercises_router import router as exercises_router
 
 
 def create_app() -> FastAPI:
@@ -9,6 +10,7 @@ def create_app() -> FastAPI:
     app.include_router(health_router)
     app.include_router(training_router, prefix="/training", tags=["training"])
     app.include_router(me_router, prefix="/training", tags=["training"])
+    app.include_router(exercises_router)
     return app
 
 

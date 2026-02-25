@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SmartSaúde SUS - Pose WS Test</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 16px; }
+    .row { display: flex; gap: 16px; flex-wrap: wrap; }
+    video, canvas { border: 1px solid #ccc; border-radius: 8px; }
+    .panel { min-width: 320px; max-width: 520px; }
+    .badge { display:inline-block; padding: 6px 10px; border-radius: 999px; font-weight: 700; }
+    .ok { background:#e7f7ee; }
+    .warn { background:#fff6db; }
+    .urgent { background:#ffe1e1; }
+    pre { background:#f6f6f6; padding: 12px; border-radius: 8px; overflow:auto; }
+    input, button { padding: 8px; }
+    button { cursor:pointer; }
+  </style>
+</head>
+<body>
+  <h2>Teste em tempo real (WebSocket) - Flexão</h2>
+
+  <div class="row">
+    <div>
+      <div style="position:relative; width:480px; height:360px;">
+        <video id="video" width="480" height="360" autoplay playsinline muted
+                style="position:absolute; left:0; top:0; border:1px solid #ccc; border-radius:8px;"></video>
+
+        <canvas id="canvas" width="480" height="360"
+                  style="position:absolute; left:0; top:0;"></canvas>
+      </div>
+      <div style="margin-top:10px;">
+        <button id="btnStart">Iniciar</button>
+        <button id="btnStop" disabled>Parar</button>
+      </div>
+      <div style="margin-top:10px;">
+        <label>FPS envio: </label>
+        <input id="fps" type="number" value="12" min="3" max="30" style="width:80px;" />
+        <label style="margin-left:10px;">Qualidade JPEG: </label>
+        <input id="q" type="number" value="0.7" min="0.3" max="0.95" step="0.05" style="width:90px;" />
+      </div>
+    </div>
+
+    <div class="panel">
+      <div>WS URL:</div>
+      <input id="wsUrl" style="width:100%;" value="ws://127.0.0.1:8090/ai/pose/ws" />
+      <div style="margin-top:10px;">exercise_id:</div>
+      <input id="exerciseId" style="width:120px;" value="1" />
+      <div style="margin-top:10px;">token (opcional):</div>
+      <input id="token" style="width:100%;" placeholder="Bearer token sem 'Bearer '" />
+
+      <div style="margin-top:10px;">
+        <label><input id="sendAudio" type="checkbox" /> Enviar áudio (TTS)</label>
+      </div>
+
+      <h3>Status</h3>
+      <div>Phase: <b id="phase">-</b></div>
+      <div>Elbow avg: <b id="elbowAvg">-</b></div>
+      <div style="margin-top:8px;">
+        <span class="badge ok" id="badge">-</span>
+      </div>
+      <h3>Instrução</h3>
+      <div style="font-size:18px; font-weight:700;" id="instruction">-</div>
+
+      <h3>Debug (JSON)</h3>
+      <pre id="debug">{}</pre>
+    </div>
+  </div>
+
+<script>
+  const video = document.getElementById("video");
+  const canvas = document.getElementById("canvas");
+  const ctx = canvas.getContext("2d", { willReadFrequently: false });
+
+  const btnStart = document.getElementById("btnStart");
+  const btnStop = document.getElementById("btnStop");
+
+  const wsUrlEl = document.getElementById("wsUrl");
+  const exerciseIdEl = document.getElementById("exerciseId");
+  const tokenEl = document.getElementById("token");
+  const sendAudioEl = document.getElementById("sendAudio");
+
+  const fpsEl = document.getElementById("fps");
+  const qEl = document.getElementById("q");
+
+  const phaseEl = document.getElementById("phase");
+  const elbowAvgEl = document.getElementById("elbowAvg");
+  const badgeEl = document.getElementById("badge");
+  const instructionEl = document.getElementById("instruction");
+  const debugEl = document.getElementById("debug");
+
+  function drawOverlay(data) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const lm = data.landmarks;
+    if (!lm || typeof lm !== "object") return;
+
+    const toPx = (p) => {
+      // p pode vir como [x,y] ou (x,y) convertido para array
+      const x = p[0] * canvas.width;
+      const y = p[1] * canvas.height;
+      return [x, y];
+    };
+
+    const links = [
+      ["left_shoulder","left_elbow"], ["left_elbow","left_wrist"],
+      ["right_shoulder","right_elbow"], ["right_elbow","right_wrist"],
+      ["left_shoulder","right_shoulder"],
+      ["left_hip","right_hip"],
+      ["left_shoulder","left_hip"], ["right_shoulder","right_hip"],
+      ["left_hip","left_knee"], ["left_knee","left_ankle"],
+      ["right_hip","right_knee"], ["right_knee","right_ankle"],
+    ];
+
+    // linhas
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = "lime";
+    for (const [a, b] of links) {
+      if (!(a in lm) || !(b in lm)) continue;
+      const [ax, ay] = toPx(lm[a]);
+      const [bx, by] = toPx(lm[b]);
+      ctx.beginPath();
+      ctx.moveTo(ax, ay);
+      ctx.lineTo(bx, by);
+      ctx.stroke();
+    }
+
+    // pontos
+    ctx.fillStyle = "red";
+    for (const k of Object.keys(lm)) {
+      const p = lm[k];
+      if (!p || p.length < 2) continue;
+      const [x, y] = toPx(p);
+      ctx.beginPath();
+      ctx.arc(x, y, 5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  let ws = null;
+  let timer = null;
+  let stream = null;
+  let lastAudioKey = "";
+
+  function setBadge(level) {
+    badgeEl.className = "badge " + (level || "").toLowerCase();
+    badgeEl.textContent = level || "-";
+    if (!level) badgeEl.className = "badge ok";
+    if (level === "OK") badgeEl.className = "badge ok";
+    if (level === "WARN") badgeEl.className = "badge warn";
+    if (level === "URGENT") badgeEl.className = "badge urgent";
+  }
+
+  async function startCamera() {
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: { width: 480, height: 360, facingMode: "user" },
+      audio: false
+    });
+    video.srcObject = stream;
+    await video.play();
+  }
+
+  function stopCamera() {
+    if (stream) {
+      stream.getTracks().forEach(t => t.stop());
+      stream = null;
+    }
+  }
+
+  function playBase64Mp3(b64) {
+    // Evita tocar o mesmo áudio repetidamente (extra throttle do lado cliente)
+    if (!b64 || b64 === lastAudioKey) return;
+    lastAudioKey = b64;
+
+    const audio = new Audio("data:audio/mp3;base64," + b64);
+    audio.play().catch(() => {});
+  }
+
+  function sendFrame() {
+    if (!ws || ws.readyState !== WebSocket.OPEN) return;
+
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    const quality = Math.max(0.3, Math.min(0.95, parseFloat(qEl.value || "0.7")));
+
+    canvas.toBlob(async (blob) => {
+      if (!blob) return;
+      const buf = await blob.arrayBuffer();
+      ws.send(buf);
+    }, "image/jpeg", quality);
+  }
+
+  function startLoop() {
+    const fps = Math.max(3, Math.min(30, parseInt(fpsEl.value || "12", 10)));
+    const interval = Math.floor(1000 / fps);
+    timer = setInterval(sendFrame, interval);
+  }
+
+  function stopLoop() {
+    if (timer) clearInterval(timer);
+    timer = null;
+  }
+
+  btnStart.onclick = async () => {
+    btnStart.disabled = true;
+
+    try {
+      await startCamera();
+
+      ws = new WebSocket(wsUrlEl.value);
+      ws.binaryType = "arraybuffer";
+
+      ws.onopen = () => {
+        const payload = {
+          exercise_id: parseInt(exerciseIdEl.value || "1", 10),
+          token: tokenEl.value || "",
+          send_audio: !!sendAudioEl.checked
+        };
+        ws.send(JSON.stringify(payload));
+        startLoop();
+        btnStop.disabled = false;
+      };
+
+      ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+
+        debugEl.textContent = JSON.stringify(data, null, 2);
+
+        phaseEl.textContent = data.phase ?? "-";
+        elbowAvgEl.textContent = (data.elbow_avg ?? "-");
+        setBadge(data.feedback_level);
+
+        instructionEl.textContent = data.instruction ?? "-";
+
+        // Desenhar overlay do esqueleto
+        drawOverlay(data);
+
+        if (data.audio_base64) {
+          playBase64Mp3(data.audio_base64);
+        }
+      };
+
+      ws.onerror = () => {
+        instructionEl.textContent = "Erro no WebSocket.";
+      };
+
+      ws.onclose = () => {
+        stopLoop();
+        btnStop.disabled = true;
+        btnStart.disabled = false;
+        instructionEl.textContent = "Conexão WS fechada.";
+      };
+
+    } catch (e) {
+      btnStart.disabled = false;
+      instructionEl.textContent = "Falha ao iniciar câmera/WS: " + e;
+      stopCamera();
+    }
+  };
+
+  btnStop.onclick = () => {
+    btnStop.disabled = true;
+
+    stopLoop();
+    if (ws) {
+      try { ws.close(); } catch {}
+      ws = null;
+    }
+    stopCamera();
+    btnStart.disabled = false;
+  };
+</script>
+</body>
+</html>
