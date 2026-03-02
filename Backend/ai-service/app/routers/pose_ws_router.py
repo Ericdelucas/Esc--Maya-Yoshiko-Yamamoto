@@ -20,6 +20,7 @@ router = APIRouter(prefix="/ai/pose", tags=["AI - Pose WS"])
 @router.websocket("/ws")
 async def pose_ws(ws: WebSocket) -> None:
     await ws.accept()
+    await ws.send_json({"hello": "ws_connected"})
 
     detector = PoseDetector()
     validator = MovementValidator()
@@ -70,7 +71,7 @@ async def pose_ws(ws: WebSocket) -> None:
                     continue
 
                 # TESTE DE VIDA - verificar se frame chega
-                await ws.send_json({"ping": "frame_received"})
+                await ws.send_json({"ping": "frame_received", "bytes": len(frame_bytes)})
 
                 ok, landmarks = detector.detect_landmarks(frame_bytes)
                 if not ok:

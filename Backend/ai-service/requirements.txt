@@ -3,3 +3,6 @@ uvicorn[standard]
 pydantic
 requests
 pytest
+opencv-python-headless
+mediapipe
+numpy

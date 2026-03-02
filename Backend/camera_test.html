@@ -89,6 +89,7 @@
   const badgeEl = document.getElementById("badge");
   const instructionEl = document.getElementById("instruction");
   const debugEl = document.getElementById("debug");
+  const statusEl = document.getElementById("phase"); // Usando phase como status temporário
 
   function drawOverlay(data) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -139,9 +140,10 @@
   }
 
   let ws = null;
-  let timer = null;
+  let sending = false;
   let stream = null;
   let lastAudioKey = "";
+  let lastSend = 0;
 
   function setBadge(level) {
     badgeEl.className = "badge " + (level || "").toLowerCase();
@@ -177,29 +179,74 @@
     audio.play().catch(() => {});
   }
 
-  function sendFrame() {
-    if (!ws || ws.readyState !== WebSocket.OPEN) return;
+  function connectWsAndStart() {
+    const url = wsUrlEl.value.trim();
+    ws = new WebSocket(url);
+    ws.binaryType = "arraybuffer";
 
+    ws.onopen = () => {
+      statusEl.textContent = "WS conectado. Enviando handshake...";
+      const meta = {
+        exercise_id: Number(exerciseIdEl.value || 1),
+        token: (tokenEl.value || "").trim(), // SOMENTE JWT, sem "Bearer "
+        send_audio: sendAudioEl.checked,
+      };
+      ws.send(JSON.stringify(meta));
+      sending = true;
+      requestAnimationFrame(sendLoop);
+    };
+
+    ws.onmessage = (evt) => {
+      try {
+        const data = JSON.parse(evt.data);
+        debugEl.textContent = JSON.stringify(data, null, 2);
+        if (typeof drawOverlay === "function") drawOverlay(data);
+        if (data.instruction) instructionEl.textContent = data.instruction;
+        if (data.phase) phaseEl.textContent = data.phase;
+        if (data.elbow_avg !== undefined) elbowAvgEl.textContent = String(data.elbow_avg);
+      } catch (e) {
+        console.error("WS message parse error:", e, evt.data);
+      }
+    };
+
+    ws.onerror = (e) => {
+      console.error("WS error:", e);
+    };
+
+    ws.onclose = (e) => {
+      sending = false;
+      statusEl.textContent = `WS fechado (code=${e.code}).`;
+      console.warn("WS closed:", e);
+    };
+  }
+
+  async function sendFrameOnce() {
+    // desenha frame atual no canvas
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-    const quality = Math.max(0.3, Math.min(0.95, parseFloat(qEl.value || "0.7")));
+    const quality = Number(qEl.value || 0.85);
+    const blob = await new Promise((resolve) =>
+      canvas.toBlob(resolve, "image/jpeg", quality)
+    );
+    if (!blob) return;
 
-    canvas.toBlob(async (blob) => {
-      if (!blob) return;
-      const buf = await blob.arrayBuffer();
+    const buf = await blob.arrayBuffer();
+    if (ws && ws.readyState === WebSocket.OPEN) {
       ws.send(buf);
-    }, "image/jpeg", quality);
+    }
   }
 
-  function startLoop() {
-    const fps = Math.max(3, Math.min(30, parseInt(fpsEl.value || "12", 10)));
-    const interval = Math.floor(1000 / fps);
-    timer = setInterval(sendFrame, interval);
-  }
+  function sendLoop(ts) {
+    if (!sending) return;
 
-  function stopLoop() {
-    if (timer) clearInterval(timer);
-    timer = null;
+    const fps = Number(fpsEl.value || 8);
+    const minInterval = 1000 / fps;
+
+    if (ts - lastSend >= minInterval) {
+      lastSend = ts;
+      sendFrameOnce().catch((err) => console.error("sendFrameOnce error:", err));
+    }
+    requestAnimationFrame(sendLoop);
   }
 
   btnStart.onclick = async () => {
@@ -207,68 +254,23 @@
 
     try {
       await startCamera();
-
-      ws = new WebSocket(wsUrlEl.value);
-      ws.binaryType = "arraybuffer";
-
-      ws.onopen = () => {
-        const payload = {
-          exercise_id: parseInt(exerciseIdEl.value || "1", 10),
-          token: tokenEl.value || "",
-          send_audio: !!sendAudioEl.checked
-        };
-        ws.send(JSON.stringify(payload));
-        startLoop();
-        btnStop.disabled = false;
-      };
-
-      ws.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-
-        debugEl.textContent = JSON.stringify(data, null, 2);
-
-        phaseEl.textContent = data.phase ?? "-";
-        elbowAvgEl.textContent = (data.elbow_avg ?? "-");
-        setBadge(data.feedback_level);
-
-        instructionEl.textContent = data.instruction ?? "-";
-
-        // Desenhar overlay do esqueleto
-        drawOverlay(data);
-
-        if (data.audio_base64) {
-          playBase64Mp3(data.audio_base64);
-        }
-      };
-
-      ws.onerror = () => {
-        instructionEl.textContent = "Erro no WebSocket.";
-      };
-
-      ws.onclose = () => {
-        stopLoop();
-        btnStop.disabled = true;
-        btnStart.disabled = false;
-        instructionEl.textContent = "Conexão WS fechada.";
-      };
-
-    } catch (e) {
+      connectWsAndStart();
+      btnStop.disabled = false;
+    } catch (err) {
+      console.error("Start error:", err);
       btnStart.disabled = false;
-      instructionEl.textContent = "Falha ao iniciar câmera/WS: " + e;
-      stopCamera();
     }
   };
 
   btnStop.onclick = () => {
-    btnStop.disabled = true;
-
-    stopLoop();
+    sending = false;
+    stopCamera();
     if (ws) {
-      try { ws.close(); } catch {}
+      ws.close();
       ws = null;
     }
-    stopCamera();
     btnStart.disabled = false;
+    btnStop.disabled = true;
   };
 </script>
 </body>

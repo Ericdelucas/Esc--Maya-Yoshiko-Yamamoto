@@ -17,4 +17,4 @@ COPY . /app
 
 EXPOSE 8090
 
-CMD ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8090"]
+CMD ["python", "-m", "uvicorn", "main_probe_only:app", "--host", "0.0.0.0", "--port", "8090"]
