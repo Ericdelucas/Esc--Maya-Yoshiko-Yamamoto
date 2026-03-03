@@ -46,7 +46,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
-                android:src="@android:drawable/ic_menu_gallery" />
+                android:src="@drawable/ex_3" />
 
             <ImageView
                 android:layout_width="64dp"
