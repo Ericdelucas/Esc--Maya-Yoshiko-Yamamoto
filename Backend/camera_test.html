@@ -28,7 +28,7 @@
                 style="position:absolute; left:0; top:0; border:1px solid #ccc; border-radius:8px;"></video>
 
         <canvas id="canvas" width="480" height="360"
-                  style="position:absolute; left:0; top:0;"></canvas>
+                  style="position:absolute; left:0; top:0; z-index:10; pointer-events:none;"></canvas>
       </div>
       <div style="margin-top:10px;">
         <button id="btnStart">Iniciar</button>
@@ -91,34 +91,48 @@
   const debugEl = document.getElementById("debug");
   const statusEl = document.getElementById("phase"); // Usando phase como status temporário
 
+  // Adicionar evento de sincronização quando o vídeo carregar
+  video.onloadedmetadata = syncCanvasToVideo;
+
+  function syncCanvasToVideo() {
+    const w = video.videoWidth || 480;
+    const h = video.videoHeight || 360;
+    if (canvas.width !== w) canvas.width = w;
+    if (canvas.height !== h) canvas.height = h;
+  }
+
+  const LINKS = [
+    ["left_shoulder","left_elbow"], ["left_elbow","left_wrist"],
+    ["right_shoulder","right_elbow"], ["right_elbow","right_wrist"],
+    ["left_shoulder","right_shoulder"],
+    ["left_hip","right_hip"],
+    ["left_hip","left_knee"], ["left_knee","left_ankle"],
+    ["right_hip","right_knee"], ["right_knee","right_ankle"],
+    ["left_shoulder","left_hip"], ["right_shoulder","right_hip"],
+  ];
+
+  const mirror = true; // selfie mode
+
+  function toPx(pt) {
+    let x = pt[0] * canvas.width;
+    const y = pt[1] * canvas.height;
+    if (mirror) x = canvas.width - x;
+    return [x, y];
+  }
+
   function drawOverlay(data) {
+    syncCanvasToVideo();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    const lm = data.landmarks;
-    if (!lm || typeof lm !== "object") return;
-
-    const toPx = (p) => {
-      // p pode vir como [x,y] ou (x,y) convertido para array
-      const x = p[0] * canvas.width;
-      const y = p[1] * canvas.height;
-      return [x, y];
-    };
-
-    const links = [
-      ["left_shoulder","left_elbow"], ["left_elbow","left_wrist"],
-      ["right_shoulder","right_elbow"], ["right_elbow","right_wrist"],
-      ["left_shoulder","right_shoulder"],
-      ["left_hip","right_hip"],
-      ["left_shoulder","left_hip"], ["right_shoulder","right_hip"],
-      ["left_hip","left_knee"], ["left_knee","left_ankle"],
-      ["right_hip","right_knee"], ["right_knee","right_ankle"],
-    ];
+    const lm = data.landmarks || {};
+    const keys = Object.keys(lm);
+    if (keys.length === 0) return;
 
     // linhas
     ctx.lineWidth = 3;
-    ctx.strokeStyle = "lime";
-    for (const [a, b] of links) {
-      if (!(a in lm) || !(b in lm)) continue;
+    ctx.strokeStyle = "#0f0";
+    for (const [a,b] of LINKS) {
+      if (!lm[a] || !lm[b]) continue;
       const [ax, ay] = toPx(lm[a]);
       const [bx, by] = toPx(lm[b]);
       ctx.beginPath();
@@ -128,15 +142,46 @@
     }
 
     // pontos
-    ctx.fillStyle = "red";
-    for (const k of Object.keys(lm)) {
-      const p = lm[k];
-      if (!p || p.length < 2) continue;
-      const [x, y] = toPx(p);
+    ctx.fillStyle = "#f00";
+    for (const k of keys) {
+      const [x,y] = toPx(lm[k]);
       ctx.beginPath();
       ctx.arc(x, y, 5, 0, Math.PI * 2);
       ctx.fill();
     }
+
+    drawAngles(data);
+    renderStatus(data);
+  }
+
+  function drawAngles(data) {
+    const ctx = canvas.getContext("2d");
+    const lm = data.landmarks || {};
+    const ja = data.joint_angles || {};
+
+    function labelAt(jointKey, xKey, yKey) {
+      if (ja[jointKey] == null) return;
+      const p = lm[xKey] || lm[yKey];
+      if (!p) return;
+      const [x,y] = toPx(p);
+      ctx.font = "16px Arial";
+      ctx.fillStyle = "#fff";
+      ctx.strokeStyle = "#000";
+      const text = `${jointKey}: ${ja[jointKey].toFixed(0)}°`;
+      ctx.strokeText(text, x + 8, y - 8);
+      ctx.fillText(text, x + 8, y - 8);
+    }
+
+    labelAt("left_elbow", "left_elbow", "left_wrist");
+    labelAt("right_elbow", "right_elbow", "right_wrist");
+    labelAt("left_hip", "left_hip", "left_knee");
+    labelAt("right_hip", "right_hip", "right_knee");
+  }
+
+  function renderStatus(data) {
+    document.getElementById("phase").textContent = `Phase: ${data.phase || "-"}`;
+    document.getElementById("elbowAvg").textContent = `Elbow avg: ${data.elbow_avg?.toFixed?.(1) ?? "-"}`;
+    document.getElementById("instruction").textContent = data.detected ? (data.instruction || "") : "Não detectado. Ajuste luz/enquadramento.";
   }
 
   let ws = null;
@@ -201,9 +246,7 @@
         const data = JSON.parse(evt.data);
         debugEl.textContent = JSON.stringify(data, null, 2);
         if (typeof drawOverlay === "function") drawOverlay(data);
-        if (data.instruction) instructionEl.textContent = data.instruction;
-        if (data.phase) phaseEl.textContent = data.phase;
-        if (data.elbow_avg !== undefined) elbowAvgEl.textContent = String(data.elbow_avg);
+        if (data.feedback_level) setBadge(data.feedback_level);
       } catch (e) {
         console.error("WS message parse error:", e, evt.data);
       }

@@ -19,6 +19,7 @@ services:
       - backend
 
   auth-service:
+    image: backend-auth-service:latest
     build:
       context: ./auth-service
       dockerfile: Dockerfile
@@ -36,6 +37,7 @@ services:
       - backend
 
   ai-service:
+    image: backend-ai-service:latest
     build:
       context: ./ai-service
       dockerfile: Dockerfile
@@ -54,6 +56,7 @@ services:
       - backend
 
   notification-service:
+    image: backend-notification-service:latest
     build: ./notification-service
     container_name: smartsaude-notification
     ports:
@@ -68,6 +71,7 @@ services:
       - backend
 
   ehr-service:
+    image: backend-ehr-service:latest
     build: ./ehr-service
     container_name: smartsaude-ehr
     ports:
@@ -84,6 +88,7 @@ services:
       - backend
 
   analytics-service:
+    image: backend-analytics-service:latest
     build: ./analytics-service
     container_name: smartsaude-analytics
     ports:
@@ -100,10 +105,11 @@ services:
       - backend
 
   exercise-service:
+    image: backend-exercise-service:latest
     build: ./exercise-service
     container_name: smartsaude-exercise
     ports:
-      - "8040:8040"
+      - "8081:8080"
     environment:
       - DB_URL=mysql+pymysql://smartuser:smartpass@mysql:3306/smartsaude
       - AUTH_BASE_URL=http://auth-service:8080
@@ -119,6 +125,7 @@ services:
       - backend
 
   training-service:
+    image: backend-training-service:latest
     build: ./training-service
     container_name: smartsaude-training
     ports:

@@ -5,6 +5,7 @@ import time
 from typing import Dict, List
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+from starlette.websockets import WebSocketDisconnect
 
 from app.services.pose_detector import PoseDetector
 from app.services.movement_validator import MovementValidator
@@ -18,34 +19,30 @@ router = APIRouter(prefix="/ai/pose", tags=["AI - Pose WS"])
 
 
 @router.websocket("/ws")
-async def pose_ws(ws: WebSocket) -> None:
+async def pose_ws(ws: WebSocket):
     await ws.accept()
-    await ws.send_json({"hello": "ws_connected"})
-
-    detector = PoseDetector()
-    validator = MovementValidator()
-    smoother = AngleSmoother()
-    phase_service = RepPhaseService()
-    coach = RealtimeCoachService()
-    tts = TtsService()
-    client = TrainingClient()
-
-    last_said = ""
-    last_said_ts = 0.0
 
     try:
-        # Handshake com validação
-        try:
-            first = await ws.receive_text()
-            meta = json.loads(first)
-        except Exception:
-            await ws.send_json({"error": "INVALID_HANDSHAKE_JSON"})
-            await ws.close()
-            return
+        # handshake
+        meta = await ws.receive_text()
+        meta = json.loads(meta)
 
         exercise_id = int(meta.get("exercise_id", 1))
         token = str(meta.get("token", ""))
         send_audio = bool(meta.get("send_audio", False))
+
+        await ws.send_json({"status": "ready", "exercise_id": exercise_id})
+
+        detector = PoseDetector()
+        validator = MovementValidator()
+        smoother = AngleSmoother()
+        phase_service = RepPhaseService()
+        coach = RealtimeCoachService()
+        tts = TtsService()
+        client = TrainingClient()
+
+        last_said = ""
+        last_said_ts = 0.0
 
         # TrainingClient com fallback
         ideal_angles = {}
@@ -62,7 +59,6 @@ async def pose_ws(ws: WebSocket) -> None:
             "shoulder": ["left_shoulder", "right_shoulder"],
         }
 
-        # Loop principal com proteção
         while True:
             try:
                 msg = await ws.receive()
@@ -70,9 +66,7 @@ async def pose_ws(ws: WebSocket) -> None:
                 if not frame_bytes:
                     continue
 
-                # TESTE DE VIDA - verificar se frame chega
-                await ws.send_json({"ping": "frame_received", "bytes": len(frame_bytes)})
-
+                # 👇 TODA LÓGICA DE PROCESSAMENTO AQUI DENTRO
                 ok, landmarks = detector.detect_landmarks(frame_bytes)
                 if not ok:
                     await ws.send_json({"error": "INVALID_FRAME_BYTES"})
@@ -103,23 +97,36 @@ async def pose_ws(ws: WebSocket) -> None:
                     except Exception:
                         audio_base64 = None
 
-                await ws.send_json(
-                    {
-                        "detected": analysis.detected,
-                        "landmarks": landmarks or {},
-                        "joint_angles": smoothed,
-                        "phase": phase_result.phase,
-                        "elbow_avg": phase_result.elbow_avg,
-                        "feedback_level": result.level,
-                        "instruction": say,
-                        "reasons": result.reasons,
-                        "audio_base64": audio_base64,
-                    }
-                )
+                response = {
+                    "detected": analysis.detected,
+                    "landmarks": landmarks or {},
+                    "joint_angles": smoothed,
+                    "phase": phase_result.phase,
+                    "elbow_avg": phase_result.elbow_avg,
+                    "feedback_level": result.level,
+                    "instruction": say,
+                    "reasons": result.reasons,
+                    "audio_base64": audio_base64,
+                }
+                
+                try:
+                    await ws.send_json(response)
+                except Exception as e:
+                    print("Send failed:", repr(e))
+                    break
 
+            except WebSocketDisconnect:
+                print("Client disconnected during receive")
+                break
             except Exception as e:
-                await ws.send_json({"error": "FRAME_PROCESSING_ERROR", "detail": str(e)})
-                continue
+                print("🔥 REAL ERROR:", repr(e))
+                break  # importante: parar loop
 
-    except WebSocketDisconnect:
-        return
+    except Exception as e:
+        print("🔥 HANDLER LEVEL ERROR:", repr(e))
+
+    finally:
+        try:
+            await ws.close()
+        except:
+            pass
