@@ -1,4 +1,4 @@
-from sqlalchemy import String, Integer, Boolean, DateTime, func
+from sqlalchemy import String, Integer, Boolean, DateTime, LongText, func
 from sqlalchemy.orm import Mapped, mapped_column
 from app.storage.database.base import Base
 
@@ -12,4 +12,5 @@ class ConsentRecordORM(Base):
     granted: Mapped[bool] = mapped_column(Boolean, nullable=False)
     granted_at: Mapped[DateTime | None] = mapped_column(DateTime, nullable=True)
     revoked_at: Mapped[DateTime | None] = mapped_column(DateTime, nullable=True)
+    consent_data_encrypted: Mapped[str] = mapped_column(LongText, nullable=True)  # Encrypted consent details
     created_at: Mapped[DateTime] = mapped_column(DateTime, server_default=func.now())

@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS consent_records (
   granted TINYINT(1) NOT NULL,
   granted_at TIMESTAMP NULL,
   revoked_at TIMESTAMP NULL,
+  consent_data_encrypted LONGTEXT NULL,  -- Encrypted consent details
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   INDEX idx_consent_user_type (user_id, consent_type),
   INDEX idx_consent_granted (granted)
@@ -47,7 +48,8 @@ CREATE TABLE IF NOT EXISTS medical_records (
   id INT AUTO_INCREMENT PRIMARY KEY,
   patient_id INT NOT NULL,
   professional_id INT NOT NULL,
-  notes TEXT NOT NULL,
+  notes TEXT NULL,  -- Legacy field for migration
+  notes_encrypted LONGTEXT NULL,  -- Encrypted medical notes
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   INDEX idx_medical_patient_id (patient_id),
   INDEX idx_medical_professional_id (professional_id),
@@ -111,6 +113,7 @@ CREATE TABLE IF NOT EXISTS training_logs (
   perceived_effort INT NULL, -- 1-10
   pain_level INT NULL,       -- 0-10
   notes VARCHAR(512) NULL,
+  notes_encrypted LONGTEXT NULL,  -- Encrypted patient observations
   INDEX idx_training_logs_patient_id (patient_id),
   INDEX idx_training_logs_plan_id (plan_id),
   INDEX idx_training_logs_exercise_id (exercise_id),
