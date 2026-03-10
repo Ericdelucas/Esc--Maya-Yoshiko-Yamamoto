@@ -1,17 +1,14 @@
 package com.example.testbackend;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
 import android.widget.TextView;
-
 import androidx.appcompat.app.AppCompatActivity;
-
+import androidx.appcompat.widget.Toolbar;
 import com.example.testbackend.models.Exercise;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.chip.Chip;
 
-/**
- * Tela de detalhes do exercício da Clínica Maya.
- * Demonstra uso de ConstraintLayout, TextView, ImageView, Button, Intent e Fragments.
- */
 public class ExerciseDetailActivity extends AppCompatActivity {
 
     @Override
@@ -19,42 +16,42 @@ public class ExerciseDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exercise_detail);
 
-        // Recebe o objeto via Intent (Uso de Intent Explícita)
+        // Recebe o objeto do exercício
         Exercise exercise = (Exercise) getIntent().getSerializableExtra("exercise_data");
+
+        // Configura a Toolbar (Substitui o antigo btnBack)
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+        }
+        // Ação de voltar
+        toolbar.setNavigationOnClickListener(v -> finish());
 
         if (exercise != null) {
             setupUI(exercise);
-            setupFragment(exercise);
         }
 
-        Button btnBack = findViewById(R.id.btnBack);
-        btnBack.setOnClickListener(v -> finish());
+        // Configura o botão de iniciar exercício com IA
+        MaterialButton btnStartIA = findViewById(R.id.btnStartIA);
+        btnStartIA.setOnClickListener(v -> {
+            Intent intent = new Intent(this, IAWorkoutActivity.class);
+            intent.putExtra("exercise_data", exercise);
+            startActivity(intent);
+        });
     }
 
     private void setupUI(Exercise exercise) {
         TextView tvName = findViewById(R.id.tvDetailName);
-        TextView tvDescription = findViewById(R.id.tvDetailDescription);
-        TextView tvFrequency = findViewById(R.id.tvFrequency);
-        TextView tvWeeklyTotal = findViewById(R.id.tvWeeklyTotal);
+        TextView tvDescription = findViewById(R.id.tvDescription);
+        Chip chipCategory = findViewById(R.id.chipCategory);
 
         tvName.setText(exercise.getName());
         tvDescription.setText(exercise.getDescription());
-        tvFrequency.setText("Frequência: " + exercise.getFrequencyPerWeek() + "x por semana");
-
-        // Cálculo simples com dados numéricos conforme requisito
-        int totalMinutes = exercise.getDurationMinutes() * exercise.getFrequencyPerWeek();
-        tvWeeklyTotal.setText("Dedicação total semanal: " + totalMinutes + " minutos");
-    }
-
-    private void setupFragment(Exercise exercise) {
-        // Uso de Fragments para exibir informações adicionais
-        String tip = "Dica: Sempre realize este exercício em uma superfície firme.";
-        if (exercise.getCategory().contains("Postural")) {
-            tip = "Mantenha o olhar no horizonte para alinhar a cervical.";
-        }
         
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragmentContainer, ExerciseTipsFragment.newInstance(tip))
-                .commit();
+        if (exercise.getCategory() != null) {
+            chipCategory.setText(exercise.getCategory());
+        }
     }
 }

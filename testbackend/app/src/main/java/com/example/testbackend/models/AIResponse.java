@@ -12,7 +12,11 @@ public class AIResponse {
     @SerializedName("audio_feedback_url")
     private String audioFeedbackUrl;
 
+    @SerializedName("rep_count")
+    private Integer repCount;
+
     public List<Landmark> getLandmarks() { return landmarks; }
     public String getValidationStatus() { return validationStatus; }
     public String getAudioFeedbackUrl() { return audioFeedbackUrl; }
+    public Integer getRepCount() { return repCount; }
 }

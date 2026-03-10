@@ -8,6 +8,7 @@ import android.media.AudioAttributes;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,6 +52,8 @@ public class IAWorkoutActivity extends AppCompatActivity {
     private PreviewView viewFinder;
     private OverlayView overlayView;
     private TextView tvValidation;
+    private TextView tvCounter;
+    private View vFeedbackBorder;
     private ExecutorService cameraExecutor;
     private AiApi aiApi;
     private long lastAnalysisTimestamp = 0;
@@ -61,9 +64,12 @@ public class IAWorkoutActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ia_workout);
 
+        // Inicializar Views do novo Layout
         viewFinder = findViewById(R.id.viewFinder);
         overlayView = findViewById(R.id.overlayView);
         tvValidation = findViewById(R.id.tvValidation);
+        tvCounter = findViewById(R.id.tvCounter);
+        vFeedbackBorder = findViewById(R.id.vFeedbackBorder);
 
         aiApi = ApiClient.getAiClient().create(AiApi.class);
         cameraExecutor = Executors.newSingleThreadExecutor();
@@ -94,7 +100,7 @@ public class IAWorkoutActivity extends AppCompatActivity {
 
                 imageAnalysis.setAnalyzer(cameraExecutor, this::processImageProxy);
 
-                CameraSelector cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA;
+                CameraSelector cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA; // Usar frontal para IA de pose
 
                 cameraProvider.unbindAll();
                 cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageAnalysis);
@@ -107,7 +113,6 @@ public class IAWorkoutActivity extends AppCompatActivity {
 
     private void processImageProxy(ImageProxy image) {
         long currentTimestamp = System.currentTimeMillis();
-        // Enviar frame a cada 300ms para não sobrecarregar
         if (currentTimestamp - lastAnalysisTimestamp < 300) {
             image.close();
             return;
@@ -132,9 +137,10 @@ public class IAWorkoutActivity extends AppCompatActivity {
 
         Matrix matrix = new Matrix();
         matrix.postRotate(image.getImageInfo().getRotationDegrees());
-        Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+        // Inverter se usar frontal
+        matrix.postScale(-1, 1, bitmap.getWidth() / 2f, bitmap.getHeight() / 2f);
         
-        // Redimensionar para otimizar banda (480x640)
+        Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
         return Bitmap.createScaledBitmap(rotatedBitmap, 480, 640, true);
     }
 
@@ -152,12 +158,7 @@ public class IAWorkoutActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     runOnUiThread(() -> {
                         AIResponse aiRes = response.body();
-                        overlayView.setLandmarks(aiRes.getLandmarks());
-                        tvValidation.setText(aiRes.getValidationStatus());
-                        
-                        if (aiRes.getAudioFeedbackUrl() != null && !aiRes.getAudioFeedbackUrl().isEmpty()) {
-                            playAudioFeedback(aiRes.getAudioFeedbackUrl());
-                        }
+                        updateUI(aiRes);
                     });
                 }
             }
@@ -169,10 +170,33 @@ public class IAWorkoutActivity extends AppCompatActivity {
         });
     }
 
+    private void updateUI(AIResponse aiRes) {
+        overlayView.setLandmarks(aiRes.getLandmarks());
+        tvValidation.setText(aiRes.getValidationStatus());
+        
+        if (aiRes.getRepCount() != null) {
+            tvCounter.setText(String.valueOf(aiRes.getRepCount()));
+        }
+
+        // Feedback de borda
+        if (aiRes.getValidationStatus() != null) {
+            if (aiRes.getValidationStatus().contains("CORRETA")) {
+                vFeedbackBorder.setBackgroundResource(R.drawable.shape_feedback_border_green);
+            } else if (aiRes.getValidationStatus().contains("ERRO") || aiRes.getValidationStatus().contains("CORRIJA")) {
+                vFeedbackBorder.setBackgroundResource(R.drawable.shape_feedback_border_red);
+            } else {
+                vFeedbackBorder.setBackgroundResource(R.drawable.shape_feedback_border); // Transparente
+            }
+        }
+
+        if (aiRes.getAudioFeedbackUrl() != null && !aiRes.getAudioFeedbackUrl().isEmpty()) {
+            playAudioFeedback(aiRes.getAudioFeedbackUrl());
+        }
+    }
+
     private void playAudioFeedback(String url) {
         try {
-            if (mediaPlayer.isPlaying()) return; // Não interromper áudio em curso
-            
+            if (mediaPlayer.isPlaying()) return;
             mediaPlayer.reset();
             mediaPlayer.setAudioAttributes(new AudioAttributes.Builder()
                     .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
