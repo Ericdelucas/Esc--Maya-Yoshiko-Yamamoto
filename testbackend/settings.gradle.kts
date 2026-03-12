@@ -1,17 +1,12 @@
 pluginManagement {
     repositories {
-        google {
-            content {
-                includeGroupByRegex("com\\.android.*")
-                includeGroupByRegex("com\\.google.*")
-                includeGroupByRegex("androidx.*")
-            }
-        }
+        google()
         mavenCentral()
         gradlePluginPortal()
     }
 }
 dependencyResolutionManagement {
+    // PREFER_PROJECT permite que o script init.gradle da FECAP adicione o repositório Nexus sem erros
     repositoriesMode.set(RepositoriesMode.PREFER_PROJECT)
     repositories {
         google()
