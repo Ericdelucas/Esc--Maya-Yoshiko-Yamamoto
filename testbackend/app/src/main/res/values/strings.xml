@@ -1,3 +1,11 @@
 <resources>
-    <string name="app_name">testbackend</string>
+    <string name="app_name">SmartSaude</string>
+    <string name="login">Entrar</string>
+    <string name="email">Email</string>
+    <string name="password">Senha</string>
+    <string name="settings">Configurações</string>
+    <string name="language">Idioma</string>
+    <string name="register">Cadastrar</string>
+    <string name="logout">Sair</string>
+    <string name="welcome">Bem-vindo</string>
 </resources>

@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8FAFC">
+    android:background="?android:attr/windowBackground">
 
     <!-- Header com Saudação -->
     <View
         android:id="@+id/vHeaderBg"
         android:layout_width="match_parent"
         android:layout_height="180dp"
-        android:background="#1976D2"
+        android:background="?attr/colorPrimary"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -20,21 +20,25 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="48dp"
-        android:text="Olá, Paciente"
+        android:text="@string/welcome"
         android:textAppearance="@style/TextAppearance.Material3.HeadlineMedium"
         android:textColor="@color/white"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/tvDate"
+    <!-- Botão de Configurações no Header -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSettings"
+        style="@style/Widget.Material3.Button.IconButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hoje, 24 de Maio"
-        android:textColor="#E3F2FD"
-        app:layout_constraintStart_toStartOf="@+id/tvGreeting"
-        app:layout_constraintTop_toBottomOf="@+id/tvGreeting" />
+        android:layout_marginEnd="16dp"
+        app:icon="@android:drawable/ic_menu_manage"
+        app:iconTint="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/tvGreeting"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tvGreeting" />
 
     <!-- Card de Ação Principal (Hero Card) -->
     <com.google.android.material.card.MaterialCardView
@@ -60,7 +64,7 @@
                 android:layout_height="wrap_content"
                 android:text="Próxima Sessão"
                 android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
-                android:textColor="#1976D2" />
+                android:textColor="?attr/colorPrimary" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -70,46 +74,28 @@
                 android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
                 android:textStyle="bold" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="14:00 • 15 min • IA Assistida"
-                android:alpha="0.7" />
-
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnExercises"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:layout_marginTop="20dp"
-                android:text="INICIAR AGORA"
+                android:text="MEUS EXERCÍCIOS"
                 app:cornerRadius="12dp"
                 app:icon="@android:drawable/ic_media_play" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
     <!-- Progresso Semanal -->
-    <TextView
-        android:id="@+id/tvProgressTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="32dp"
-        android:text="Sua Evolução"
-        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardHero" />
-
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardProgress"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="24dp"
         app:cardCornerRadius="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvProgressTitle">
+        app:layout_constraintTop_toBottomOf="@+id/cardHero">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -121,14 +107,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:progress="75"
-                app:indicatorColor="#1976D2"
                 app:indicatorSize="80dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:trackColor="#E3F2FD"
                 app:trackThickness="8dp" />
 
             <TextView
+                android:id="@+id/tvProgressValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="75%"
@@ -142,7 +127,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:text="Ótimo trabalho! Você completou 3 de 4 sessões esta semana."
+                android:text="Veja seu progresso detalhado"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/progressWeekly"
@@ -150,23 +135,78 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 
+    <!-- Seção Saúde -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardHealth"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="16dp"
+        app:cardCornerRadius="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardProgress">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@android:drawable/ic_menu_myplaces"
+                app:tint="?attr/colorPrimary" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="16dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Saúde e Ferramentas"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="IMC, Gordura e Histórico"
+                    android:textSize="12sp"
+                    android:alpha="0.7" />
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnHealth"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ABRIR" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
     <!-- Ações Secundárias -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
         android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@+id/cardProgress">
+        app:layout_constraintTop_toBottomOf="@+id/cardHealth">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnStartIA"
             style="@style/Widget.Material3.Button.TonalButton"
             android:layout_width="0dp"
-            android:layout_height="100dp"
+            android:layout_height="80dp"
             android:layout_marginEnd="8dp"
             android:layout_weight="1"
-            android:text="Chat"
+            android:text="Chat IA"
             app:icon="@android:drawable/stat_notify_chat"
             app:iconGravity="top" />
 
@@ -174,14 +214,27 @@
             android:id="@+id/btnLogout"
             style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="0dp"
-            android:layout_height="100dp"
+            android:layout_height="80dp"
             android:layout_marginStart="8dp"
             android:layout_weight="1"
-            android:text="Sair"
+            android:text="@string/logout"
             android:textColor="#D32F2F"
             app:icon="@android:drawable/ic_menu_revert"
             app:iconGravity="top"
             app:iconTint="#D32F2F" />
     </LinearLayout>
+
+    <!-- Botão Flutuante do Assistente IA -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAssistant"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="24dp"
+        android:src="@android:drawable/stat_notify_chat"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:tint="@color/white"
+        app:backgroundTint="?attr/colorPrimary"
+        android:contentDescription="Assistente IA" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

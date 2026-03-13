@@ -36,6 +36,40 @@
             android:exported="false" />
             
         <activity
+            android:name=".SettingsActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ImcCalculatorActivity"
+            android:exported="false"
+            android:label="Calculadora de IMC" />
+
+        <activity
+            android:name=".BodyFatCalculatorActivity"
+            android:exported="false"
+            android:label="Gordura Corporal" />
+
+        <activity
+            android:name=".ProgressDashboardActivity"
+            android:exported="false"
+            android:label="Meu Progresso" />
+
+        <activity
+            android:name=".HealthQuestionnaireActivity"
+            android:exported="false"
+            android:label="Questionário de Saúde" />
+
+        <activity
+            android:name=".HealthHistoryActivity"
+            android:exported="false"
+            android:label="Histórico de Saúde" />
+
+        <activity
+            android:name=".AssistantActivity"
+            android:exported="false"
+            android:label="Assistente IA" />
+            
+        <activity
             android:name=".ExerciseListActivity"
             android:exported="false" />
 
