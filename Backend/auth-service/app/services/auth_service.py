@@ -12,13 +12,13 @@ class AuthService:
     hasher: PasswordHasher
     jwt: JwtService
 
-    def register(self, email: str, password: str) -> int:
+    def register(self, email: str, password: str, role: str = "Patient") -> int:
         if not email or not password:
             raise BadRequest("email and password required")
 
         password_hash = self.hasher.hash_password(password)
         try:
-            user = self.users.create(email=email.lower(), password_hash=password_hash, role="Patient")
+            user = self.users.create(email=email.lower(), password_hash=password_hash, role=role)
         except ValueError:
             raise Conflict("email already exists")
         return user.id

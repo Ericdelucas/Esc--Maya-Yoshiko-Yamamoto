@@ -15,7 +15,7 @@ def health() -> dict:
 
 @router.post("/register")
 def register(payload: UserCreateIn, svc: AuthService = Depends(get_auth_service)) -> dict:
-    user_id = svc.register(email=payload.email, password=payload.password)
+    user_id = svc.register(email=payload.email, password=payload.password, role=payload.role)
     return {"user_id": user_id}
 
 

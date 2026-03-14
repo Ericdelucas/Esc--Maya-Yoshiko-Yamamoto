@@ -29,10 +29,18 @@ def get_current_user(
     creds: HTTPAuthorizationCredentials = Depends(bearer),
     session=Depends(get_session),
 ) -> UserOut:
-    payload = decode_access_token(creds.credentials)
+    settings = get_settings()
+    payload = decode_access_token(
+        token=creds.credentials,
+        secret_key=settings.jwt_secret,
+        issuer="smartsaude-auth"
+    )
     user_id = int(payload["sub"])
 
-    repo = UserRepository(session)
-    user = repo.get_by_id(user_id)
+    repo = UserRepository()
+    user = repo.get_by_id(user_id, session)
 
-    return UserOut(id=user.id, email=user.email)
+    if user is None:
+        raise ValueError("User not found")
+
+    return UserOut(id=user.id, email=user.email, role=user.role)

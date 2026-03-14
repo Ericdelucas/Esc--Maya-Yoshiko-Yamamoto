@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from app.models.schemas.ehr_schema import MedicalRecordCreate, MedicalRecordOut
 from app.services.consent_guard_service import ConsentGuardService
 from app.storage.database.medical_record_repository import MedicalRecordRepository
-from shared.security.utils import encrypt_medical_notes, decrypt_medical_notes
+from app.utils.crypto_utils import encrypt_medical_notes, decrypt_medical_notes
 
 
 class EhrService:

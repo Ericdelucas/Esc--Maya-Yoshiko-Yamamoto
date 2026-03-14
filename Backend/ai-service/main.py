@@ -4,6 +4,7 @@ from app.routers.translate_router import router as translate_router
 from app.routers.pose_router import router as pose_router
 from app.routers.pose_ws_router import router as pose_ws_router
 from app.routers.ws_probe_router import router as ws_probe_router
+from app.routers.health_router import router as health_router
 
 
 def create_app() -> FastAPI:
@@ -15,6 +16,7 @@ def create_app() -> FastAPI:
         await websocket.accept()
         await websocket.send_json({"hello": "direct_test"})
     
+    app.include_router(health_router)
     app.include_router(translate_router, prefix="/ai", tags=["ai"])
     app.include_router(pose_router)
     app.include_router(pose_ws_router, tags=["websocket"])

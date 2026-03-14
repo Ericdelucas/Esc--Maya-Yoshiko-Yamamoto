@@ -1,8 +1,11 @@
+"""Health check router para ehr-service."""
+
 from fastapi import APIRouter
 
-router = APIRouter()
+router = APIRouter(tags=["health"])
 
 
 @router.get("/health")
-def health():
-    return {"status": "ok", "service": "ehr-service"}
+def health_check() -> dict:
+    """Health check endpoint."""
+    return {"status": "ok"}

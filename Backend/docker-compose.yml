@@ -28,6 +28,7 @@ services:
       DB_URL: "mysql+pymysql://smartuser:smartpass@mysql:3306/smartsaude"
       JWT_SECRET: "troque-por-uma-chave-com-32-bytes-no-minimo-123456"
       JWT_ISSUER: "smartsaude-auth"
+      APP_FERNET_KEYS: "${APP_FERNET_KEYS}"
     depends_on:
       mysql:
         condition: service_healthy

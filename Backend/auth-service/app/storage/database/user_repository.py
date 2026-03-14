@@ -42,3 +42,29 @@ class UserRepository:
                 password_hash=db_user.password_hash,
                 role=db_user.role,
             )
+
+    def get_by_id(self, user_id: int, session: Session = None) -> User | None:
+        """Get user by ID using provided session or creating new one."""
+        if session is None:
+            with SessionLocal() as new_session:
+                return self._get_by_id_query(new_session, user_id)
+        else:
+            return self._get_by_id_query(session, user_id)
+    
+    def _get_by_id_query(self, session: Session, user_id: int) -> User | None:
+        """Internal method to query user by ID."""
+        db_user: UserORM | None = (
+            session.query(UserORM)
+            .filter(UserORM.id == user_id)
+            .first()
+        )
+
+        if not db_user:
+            return None
+
+        return User(
+            id=db_user.id,
+            email=db_user.email,
+            password_hash=db_user.password_hash,
+            role=db_user.role,
+        )

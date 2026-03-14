@@ -4,6 +4,7 @@ from pydantic import BaseModel, EmailStr, Field
 class UserCreateIn(BaseModel):
     email: EmailStr
     password: str = Field(min_length=6, max_length=128)
+    role: str = Field(default="Patient", description="User role: Patient, Professional, Admin")
 
 
 class UserLoginIn(BaseModel):

@@ -2,13 +2,9 @@ from fastapi import FastAPI
 from app.routers.health_router import router as health_router
 from app.routers.ehr_router import router as ehr_router
 from app.routers.consent_router import router as consent_router
-from shared.security.validator import validate_crypto_config
 
 
 def create_app() -> FastAPI:
-    # Validate encryption configuration on startup
-    validate_crypto_config()
-    
     app = FastAPI(title="smartsaude-ehr", version="1.0.0")
     app.include_router(health_router)
     app.include_router(ehr_router, prefix="/ehr", tags=["ehr"])

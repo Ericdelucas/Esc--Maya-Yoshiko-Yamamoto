@@ -1,4 +1,4 @@
-"""Health check router para exercise-service."""
+"""Health check router para ai-service."""
 
 from fastapi import APIRouter
 
