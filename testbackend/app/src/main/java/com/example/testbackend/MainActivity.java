@@ -3,8 +3,9 @@ package com.example.testbackend;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.widget.Button;
-
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -13,7 +14,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        // Simple Session Check
+        // Verificação simples de sessão
         SharedPreferences prefs = getSharedPreferences("SmartSaudePrefs", MODE_PRIVATE);
         String token = prefs.getString("jwt_token", null);
         if (token == null) {
@@ -23,26 +24,57 @@ public class MainActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_main);
-
-        setupButtons();
+        setupNavigation();
     }
 
-    private void setupButtons() {
-        Button btnExercises = findViewById(R.id.btnExercises);
-        Button btnStartIA = findViewById(R.id.btnStartIA);
-        Button btnLogout = findViewById(R.id.btnLogout);
+    private void setupNavigation() {
+        // Botão Exercícios
+        MaterialButton btnExercises = findViewById(R.id.btnExercises);
+        if (btnExercises != null) {
+            btnExercises.setOnClickListener(v -> {
+                startActivity(new Intent(this, ExerciseListActivity.class));
+            });
+        }
 
-        btnExercises.setOnClickListener(v -> {
-            startActivity(new Intent(this, ExerciseListActivity.class));
-        });
+        // Botão Saúde (Health Hub)
+        MaterialButton btnHealth = findViewById(R.id.btnHealth);
+        if (btnHealth != null) {
+            btnHealth.setOnClickListener(v -> {
+                startActivity(new Intent(this, HealthHubActivity.class));
+            });
+        }
 
-        btnStartIA.setOnClickListener(v -> {
-            startActivity(new Intent(this, IAWorkoutActivity.class));
-        });
+        // Card Progresso
+        MaterialCardView cardProgress = findViewById(R.id.cardProgress);
+        if (cardProgress != null) {
+            cardProgress.setOnClickListener(v -> {
+                startActivity(new Intent(this, ProgressDashboardActivity.class));
+            });
+        }
 
-        btnLogout.setOnClickListener(v -> {
-            logout();
-        });
+        // Botão Configurações
+        MaterialButton btnSettings = findViewById(R.id.btnSettings);
+        if (btnSettings != null) {
+            btnSettings.setOnClickListener(v -> {
+                startActivity(new Intent(this, SettingsActivity.class));
+            });
+        }
+
+        // Assistente IA (Botão Flutuante)
+        FloatingActionButton fabAssistant = findViewById(R.id.fabAssistant);
+        if (fabAssistant != null) {
+            fabAssistant.setOnClickListener(v -> {
+                startActivity(new Intent(this, AssistantActivity.class));
+            });
+        }
+
+        // Botão Logout
+        MaterialButton btnLogout = findViewById(R.id.btnLogout);
+        if (btnLogout != null) {
+            btnLogout.setOnClickListener(v -> {
+                logout();
+            });
+        }
     }
 
     private void logout() {

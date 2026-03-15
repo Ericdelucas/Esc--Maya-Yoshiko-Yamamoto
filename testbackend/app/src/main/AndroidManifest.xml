@@ -40,6 +40,11 @@
             android:exported="false" />
 
         <activity
+            android:name=".HealthHubActivity"
+            android:exported="false"
+            android:label="Saúde e Ferramentas" />
+
+        <activity
             android:name=".ImcCalculatorActivity"
             android:exported="false"
             android:label="Calculadora de IMC" />
