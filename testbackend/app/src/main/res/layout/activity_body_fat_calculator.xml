@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
-        app:title="Calculadora de Gordura Corporal"
+        app:title="@string/body_fat_title"
         app:titleTextColor="@color/white"
         app:navigationIcon="@android:drawable/ic_menu_revert"
         app:navigationIconTint="@color/white" />
@@ -41,7 +41,7 @@
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Peso (kg)"
+                        android:hint="@string/bmi_weight_hint"
                         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                         android:layout_marginBottom="16dp">
 
@@ -55,7 +55,7 @@
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Altura (m)"
+                        android:hint="@string/bmi_height_hint"
                         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                         android:layout_marginBottom="16dp">
 
@@ -69,7 +69,7 @@
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Idade"
+                        android:hint="@string/age_hint"
                         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                         android:layout_marginBottom="16dp">
 
@@ -83,7 +83,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Sexo"
+                        android:text="@string/gender_label"
                         android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
                         android:layout_marginBottom="8dp"/>
 
@@ -98,14 +98,14 @@
                             android:id="@+id/rbMale"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Homem"
+                            android:text="@string/male"
                             android:checked="true" />
 
                         <com.google.android.material.radiobutton.MaterialRadioButton
                             android:id="@+id/rbFemale"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Mulher"
+                            android:text="@string/female"
                             android:layout_marginStart="16dp" />
                     </RadioGroup>
 
@@ -113,7 +113,7 @@
                         android:id="@+id/btnCalculate"
                         android:layout_width="match_parent"
                         android:layout_height="56dp"
-                        android:text="CALCULAR GORDURA"
+                        android:text="@string/calculate_bf_btn"
                         app:cornerRadius="12dp" />
 
                 </LinearLayout>
@@ -138,7 +138,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Gordura Corporal Estimada"
+                        android:text="@string/bf_result_label"
                         android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
 
                     <TextView
@@ -157,14 +157,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
-                android:text="Nota sobre o cálculo:"
+                android:text="@string/bf_note_title"
                 android:textStyle="bold"
                 android:layout_marginBottom="8dp"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Este cálculo utiliza a fórmula de Deurenberg, baseada no IMC, idade e sexo. O resultado é uma estimativa e não substitui uma avaliação profissional por bioimpedância ou dobras cutâneas."
+                android:text="@string/bf_note_text"
                 android:alpha="0.7"
                 android:lineSpacingExtra="4dp"/>
 

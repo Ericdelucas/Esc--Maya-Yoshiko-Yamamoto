@@ -30,7 +30,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Aparência"
+                android:text="@string/appearance"
                 android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
                 android:layout_marginBottom="8dp" />
 
@@ -50,19 +50,19 @@
                         android:id="@+id/rbLight"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Claro" />
+                        android:text="@string/theme_light" />
 
                     <com.google.android.material.radiobutton.MaterialRadioButton
                         android:id="@+id/rbDark"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Escuro" />
+                        android:text="@string/theme_dark" />
 
                     <com.google.android.material.radiobutton.MaterialRadioButton
                         android:id="@+id/rbSystem"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Seguir Sistema" />
+                        android:text="@string/theme_system" />
                 </RadioGroup>
             </com.google.android.material.card.MaterialCardView>
 
@@ -108,7 +108,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Sobre"
+                android:text="@string/about"
                 android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
                 android:layout_marginBottom="8dp" />
 
@@ -126,13 +126,14 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="SmartSaúde AI"
+                        android:text="@string/app_title"
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/tvVersion"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Versão 1.0.0"
+                        android:text="Version 1.0.0"
                         android:alpha="0.7" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

@@ -13,71 +13,53 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:orientation="vertical">
+
+        <!-- Imagem do Exercício (Thumbnail) -->
+        <ImageView
+            android:id="@+id/ivExerciseImage"
+            android:layout_width="match_parent"
+            android:layout_height="160dp"
+            android:scaleType="centerCrop"
+            android:src="@android:drawable/ic_menu_today"
+            android:background="#F5F5F5" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:orientation="vertical"
+            android:padding="16dp">
 
-            <ImageView
-                android:id="@+id/ivExerciseIcon"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:src="@android:drawable/ic_menu_today"
-                android:background="@drawable/circle_background"
-                android:padding="8dp"
-                app:tint="?attr/colorPrimary" />
-
-            <LinearLayout
-                android:layout_width="0dp"
+            <TextView
+                android:id="@+id/tvExerciseName"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="16dp"
-                android:orientation="vertical">
+                android:text="Agachamento"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorOnSurface" />
 
-                <TextView
-                    android:id="@+id/tvExerciseName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Agachamento"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/text_color" />
+            <TextView
+                android:id="@+id/tvExerciseDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Mantenha as costas eretas e os pés afastados na largura dos ombros."
+                android:textSize="14sp"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:maxLines="2"
+                android:ellipsize="end" />
 
-                <TextView
-                    android:id="@+id/tvExerciseCategory"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Fortalecimento de Pernas"
-                    android:textSize="14sp"
-                    android:textColor="@android:color/darker_gray" />
-            </LinearLayout>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnStartExercise"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="16dp"
+                android:text="INICIAR"
+                app:icon="@android:drawable/ic_media_play" />
+
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/tvExerciseDescription"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Mantenha as costas eretas e os pés afastados na largura dos ombros."
-            android:layout_marginTop="12dp"
-            android:textSize="14sp"
-            android:textColor="@color/text_color"
-            android:alpha="0.8" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnStartExercise"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginTop="8dp"
-            android:text="INICIAR"
-            android:textColor="?attr/colorPrimary"
-            android:textStyle="bold"
-            app:icon="@android:drawable/ic_media_play" />
-
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

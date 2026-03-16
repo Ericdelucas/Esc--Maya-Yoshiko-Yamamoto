@@ -1,11 +1,60 @@
 <resources>
-    <string name="app_name">SmartHealth</string>
+    <string name="app_name">SmartSaude</string>
     <string name="login">Login</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="settings">Settings</string>
     <string name="language">Language</string>
     <string name="register">Register</string>
-    <string name="logout">Logout</string>
+    <string name="logout">Sign out</string>
     <string name="welcome">Welcome</string>
+    
+    <!-- Settings Screen -->
+    <string name="appearance">Appearance</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_system">Follow System</string>
+    <string name="about">About</string>
+    <string name="app_title">SmartSaúde AI</string>
+    <string name="version_label">Version %1$s</string>
+
+    <!-- Main Menu -->
+    <string name="next_session">Next Session</string>
+    <string name="knee_strengthening">Knee Strengthening</string>
+    <string name="my_exercises">My Exercises</string>
+    <string name="see_detailed_progress">See your detailed progress</string>
+    <string name="health_tools">Health &amp; Tools</string>
+    <string name="health_tools_subtitle">BMI, Body Fat and History</string>
+    <string name="open">OPEN</string>
+    <string name="ai_chat">AI Chat</string>
+
+    <!-- Health Hub Screen -->
+    <string name="bmi_calculator">BMI Calculator</string>
+    <string name="body_fat">Body Fat</string>
+    <string name="questionnaire">Questionnaire</string>
+    <string name="health_history">Health History</string>
+
+    <!-- BMI Screen -->
+    <string name="bmi_weight_hint">Weight (kg)</string>
+    <string name="bmi_height_hint">Height (m)</string>
+    <string name="bmi_calculate_btn">CALCULATE BMI</string>
+    <string name="bmi_result_label">Your BMI is</string>
+    <string name="bmi_underweight">Underweight</string>
+    <string name="bmi_normal">Normal weight</string>
+    <string name="bmi_overweight">Overweight</string>
+    <string name="bmi_obese">Obesity</string>
+    <string name="bmi_reference_title">Reference Table:</string>
+    <string name="bmi_reference_table">• Below 18.5: Underweight\n• 18.5 - 24.9: Normal weight\n• 25.0 - 29.9: Overweight\n• 30.0 or more: Obesity</string>
+
+    <!-- Assistant -->
+    <string name="assistant_title">SmartSaúde Assistant</string>
+    <string name="assistant_welcome_message">Hello! I am the SmartSaúde assistant. How can I help you today?</string>
+    <string name="assistant_thinking">AI is thinking...</string>
+    <string name="assistant_error">I couldn\'t process your request right now.</string>
+    <string name="assistant_network_error">Network failure connecting to AI.</string>
+    <string name="assistant_input_hint">Type your question...</string>
+    <string name="assistant_dialog_title">Assistant Suggestion</string>
+    <string name="assistant_dialog_message">Do you want to open the recommended screen now?</string>
+    <string name="assistant_dialog_positive">Open now</string>
+    <string name="assistant_dialog_negative">Cancel</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.example.testbackend;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.RadioGroup;
@@ -67,15 +68,18 @@ public class SettingsActivity extends AppCompatActivity {
         MaterialButton btnPT = findViewById(R.id.btnPortuguese);
         MaterialButton btnEN = findViewById(R.id.btnEnglish);
 
-        btnPT.setOnClickListener(v -> {
-            LocaleHelper.setLocale(this, "pt");
-            recreate();
-        });
+        btnPT.setOnClickListener(v -> restartAppWithLocale("pt"));
+        btnEN.setOnClickListener(v -> restartAppWithLocale("en"));
+    }
 
-        btnEN.setOnClickListener(v -> {
-            LocaleHelper.setLocale(this, "en");
-            recreate();
-        });
+    private void restartAppWithLocale(String lang) {
+        LocaleHelper.setLocale(this, lang);
+        
+        // Reinicia a stack do app para garantir que strings.xml seja recarregado globalmente
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 
     @Override

@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
-        app:title="Calculadora de IMC"
+        app:title="@string/bmi_calculator"
         app:titleTextColor="@color/white"
         app:navigationIcon="@android:drawable/ic_menu_revert"
         app:navigationIconTint="@color/white" />
@@ -41,7 +41,7 @@
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Peso (kg)"
+                        android:hint="@string/bmi_weight_hint"
                         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                         android:layout_marginBottom="16dp">
 
@@ -55,7 +55,7 @@
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Altura (m)"
+                        android:hint="@string/bmi_height_hint"
                         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                         android:layout_marginBottom="24dp">
 
@@ -70,7 +70,7 @@
                         android:id="@+id/btnCalculate"
                         android:layout_width="match_parent"
                         android:layout_height="56dp"
-                        android:text="CALCULAR IMC"
+                        android:text="@string/bmi_calculate_btn"
                         app:cornerRadius="12dp" />
 
                 </LinearLayout>
@@ -95,7 +95,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Seu IMC é"
+                        android:text="@string/bmi_result_label"
                         android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
 
                     <TextView
@@ -123,14 +123,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
-                android:text="Tabela de Referência:"
+                android:text="@string/bmi_reference_title"
                 android:textStyle="bold"
                 android:layout_marginBottom="8dp"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="• Abaixo de 18.5: Abaixo do peso\n• 18.5 - 24.9: Peso normal\n• 25.0 - 29.9: Sobrepeso\n• 30.0 ou mais: Obesidade"
+                android:text="@string/bmi_reference_table"
                 android:alpha="0.7"
                 android:lineSpacingExtra="4dp"/>
 

@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
-        app:title="Histórico de Saúde"
+        app:title="@string/history_title"
         app:titleTextColor="@color/white"
         app:navigationIcon="@android:drawable/ic_menu_revert"
         app:navigationIconTint="@color/white" />
@@ -30,7 +30,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Informações Pessoais"
+                android:text="@string/personal_info_section"
                 android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
                 android:layout_marginBottom="8dp"
                 android:layout_marginStart="4dp"/>
@@ -50,7 +50,7 @@
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Idade"
+                        android:hint="@string/age_hint"
                         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                         android:layout_marginBottom="8dp">
                         <com.google.android.material.textfield.TextInputEditText
@@ -69,7 +69,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:hint="Peso (kg)"
+                            android:hint="@string/bmi_weight_hint"
                             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                             android:layout_marginEnd="4dp">
                             <com.google.android.material.textfield.TextInputEditText
@@ -83,7 +83,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:hint="Altura (m)"
+                            android:hint="@string/bmi_height_hint"
                             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                             android:layout_marginStart="4dp">
                             <com.google.android.material.textfield.TextInputEditText
@@ -100,7 +100,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Medicamentos em Uso"
+                android:text="@string/medications_section"
                 android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
                 android:layout_marginBottom="8dp"
                 android:layout_marginStart="4dp"/>
@@ -113,7 +113,7 @@
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Liste seus medicamentos..."
+                    android:hint="@string/medications_hint"
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_margin="16dp">
                     <com.google.android.material.textfield.TextInputEditText
@@ -130,7 +130,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Alergias"
+                android:text="@string/allergies_section"
                 android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
                 android:layout_marginBottom="8dp"
                 android:layout_marginStart="4dp"/>
@@ -143,7 +143,7 @@
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Informe suas alergias..."
+                    android:hint="@string/allergies_hint"
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_margin="16dp">
                     <com.google.android.material.textfield.TextInputEditText
@@ -160,7 +160,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Observações Médicas"
+                android:text="@string/observations_section"
                 android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
                 android:layout_marginBottom="8dp"
                 android:layout_marginStart="4dp"/>
@@ -173,7 +173,7 @@
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Observações adicionais..."
+                    android:hint="@string/observations_hint"
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_margin="16dp">
                     <com.google.android.material.textfield.TextInputEditText
@@ -190,7 +190,7 @@
                 android:id="@+id/btnSave"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:text="SALVAR HISTÓRICO"
+                android:text="@string/save_history_btn"
                 app:cornerRadius="12dp"
                 android:layout_marginBottom="32dp"/>
 

@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
-        app:title="Questionário de Saúde"
+        app:title="@string/questionnaire_title"
         app:titleTextColor="@color/white"
         app:navigationIcon="@android:drawable/ic_menu_revert"
         app:navigationIconTint="@color/white" />
@@ -24,17 +24,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="24dp">
+            android:padding="16dp">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Por favor, responda com sinceridade para melhorarmos sua experiência."
-                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                android:layout_marginBottom="24dp"
-                android:alpha="0.7"/>
-
-            <!-- Question 1 -->
+            <!-- Pergunta 1 -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -48,30 +40,19 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Utiliza medicamentos atualmente?"
-                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+                        android:text="@string/q1_text"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="8dp"/>
                     <RadioGroup
-                        android:id="@+id/rgMeds"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginTop="8dp">
-                        <com.google.android.material.radiobutton.MaterialRadioButton
-                            android:id="@+id/rbMedsYes"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Sim" />
-                        <com.google.android.material.radiobutton.MaterialRadioButton
-                            android:id="@+id/rbMedsNo"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Não"
-                            android:layout_marginStart="16dp" />
+                        android:layout_height="wrap_content">
+                        <RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/yes"/>
+                        <RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/no"/>
                     </RadioGroup>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Question 2 -->
+            <!-- Pergunta 2 -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -85,104 +66,19 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Possui lesões recentes?"
-                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+                        android:text="@string/q2_text"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="8dp"/>
                     <RadioGroup
-                        android:id="@+id/rgInjuries"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginTop="8dp">
-                        <com.google.android.material.radiobutton.MaterialRadioButton
-                            android:id="@+id/rbInjuriesYes"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Sim" />
-                        <com.google.android.material.radiobutton.MaterialRadioButton
-                            android:id="@+id/rbInjuriesNo"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Não"
-                            android:layout_marginStart="16dp" />
+                        android:layout_height="wrap_content">
+                        <RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/yes"/>
+                        <RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/no"/>
                     </RadioGroup>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Question 3 -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="12dp">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Sente dores articulares frequentes?"
-                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
-                    <RadioGroup
-                        android:id="@+id/rgJointPain"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginTop="8dp">
-                        <com.google.android.material.radiobutton.MaterialRadioButton
-                            android:id="@+id/rbJointPainYes"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Sim" />
-                        <com.google.android.material.radiobutton.MaterialRadioButton
-                            android:id="@+id/rbJointPainNo"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Não"
-                            android:layout_marginStart="16dp" />
-                    </RadioGroup>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Question 4 -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="12dp">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Possui problemas cardíacos conhecidos?"
-                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
-                    <RadioGroup
-                        android:id="@+id/rgHeart"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginTop="8dp">
-                        <com.google.android.material.radiobutton.MaterialRadioButton
-                            android:id="@+id/rbHeartYes"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Sim" />
-                        <com.google.android.material.radiobutton.MaterialRadioButton
-                            android:id="@+id/rbHeartNo"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Não"
-                            android:layout_marginStart="16dp" />
-                    </RadioGroup>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Question 5 -->
+            <!-- Pergunta 3 -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -196,34 +92,23 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Possui restrição médica para atividade física?"
-                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium" />
+                        android:text="@string/q3_text"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="8dp"/>
                     <RadioGroup
-                        android:id="@+id/rgRestriction"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginTop="8dp">
-                        <com.google.android.material.radiobutton.MaterialRadioButton
-                            android:id="@+id/rbRestrictionYes"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Sim" />
-                        <com.google.android.material.radiobutton.MaterialRadioButton
-                            android:id="@+id/rbRestrictionNo"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Não"
-                            android:layout_marginStart="16dp" />
+                        android:layout_height="wrap_content">
+                        <RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/yes"/>
+                        <RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/no"/>
+                        <RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/sometimes"/>
                     </RadioGroup>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnSave"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:text="SALVAR RESPOSTAS"
+                android:text="@string/save_btn"
                 app:cornerRadius="12dp" />
 
         </LinearLayout>

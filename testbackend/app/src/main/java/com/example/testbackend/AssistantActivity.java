@@ -1,5 +1,6 @@
 package com.example.testbackend;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import com.example.testbackend.models.AssistantResponse;
 import com.example.testbackend.models.AssistantAction;
 import com.example.testbackend.network.ApiClient;
 import com.example.testbackend.network.AssistantApi;
+import com.example.testbackend.utils.LocaleHelper;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
@@ -64,7 +66,7 @@ public class AssistantActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("Assistente SmartSaúde");
+            getSupportActionBar().setTitle(R.string.assistant_title);
         }
         toolbar.setNavigationOnClickListener(v -> onBackPressed());
     }
@@ -72,7 +74,7 @@ public class AssistantActivity extends AppCompatActivity {
     private void setupChat() {
         rvChat = findViewById(R.id.rvChat);
         messages = new ArrayList<>();
-        messages.add(new ChatMessage("Olá! Sou o assistente do SmartSaúde. Como posso ajudar você hoje?", ChatMessage.TYPE_ASSISTANT));
+        messages.add(new ChatMessage(getString(R.string.assistant_welcome_message), ChatMessage.TYPE_ASSISTANT));
         
         adapter = new ChatAdapter(messages);
         rvChat.setLayoutManager(new LinearLayoutManager(this));
@@ -95,7 +97,7 @@ public class AssistantActivity extends AppCompatActivity {
         etMessage.setText("");
         btnSend.setEnabled(false);
 
-        addMessage("IA está pensando...", ChatMessage.TYPE_ASSISTANT);
+        addMessage(getString(R.string.assistant_thinking), ChatMessage.TYPE_ASSISTANT);
         final int thinkingPos = messages.size() - 1;
 
         AssistantApi api = ApiClient.getAiClient().create(AssistantApi.class);
@@ -119,7 +121,6 @@ public class AssistantActivity extends AppCompatActivity {
                     addMessage(res.getReply(), ChatMessage.TYPE_ASSISTANT);
 
                     AssistantAction action = res.getAction();
-                    // Fallback local se o backend não retornar uma ação clara
                     if (action == null) {
                         action = resolveLocalNavigation(text);
                     }
@@ -129,9 +130,8 @@ public class AssistantActivity extends AppCompatActivity {
                     }
                 } else {
                     Log.e(TAG, "Erro na resposta: " + response.code());
-                    addMessage("Não consegui processar sua solicitação agora.", ChatMessage.TYPE_ASSISTANT);
+                    addMessage(getString(R.string.assistant_error), ChatMessage.TYPE_ASSISTANT);
                     
-                    // Fallback mesmo em caso de erro do servidor
                     AssistantAction localAction = resolveLocalNavigation(text);
                     if (localAction != null) {
                         showNavigationAction(localAction);
@@ -147,9 +147,8 @@ public class AssistantActivity extends AppCompatActivity {
                 messages.remove(thinkingPos);
                 Log.e(TAG, "Falha de rede", t);
                 
-                addMessage("Falha de rede: " + t.getClass().getSimpleName(), ChatMessage.TYPE_ASSISTANT);
+                addMessage(getString(R.string.assistant_network_error), ChatMessage.TYPE_ASSISTANT);
                 
-                // Fallback local para offline
                 AssistantAction localAction = resolveLocalNavigation(text);
                 if (localAction != null) {
                     showNavigationAction(localAction);
@@ -172,35 +171,35 @@ public class AssistantActivity extends AppCompatActivity {
         String lower = text.toLowerCase();
 
         if (lower.contains("imc") || lower.contains("indice de massa corporal")) {
-            return new AssistantAction("open_screen", "imc_calculator", "Abrir Calculadora de IMC");
+            return new AssistantAction("open_screen", "imc_calculator", getString(R.string.assistant_dialog_positive));
         }
         if (lower.contains("gordura")) {
-            return new AssistantAction("open_screen", "body_fat_calculator", "Abrir Calculadora de Gordura");
+            return new AssistantAction("open_screen", "body_fat_calculator", getString(R.string.assistant_dialog_positive));
         }
         if (lower.contains("histórico") || lower.contains("historico")) {
-            return new AssistantAction("open_screen", "health_history", "Abrir Histórico de Saúde");
+            return new AssistantAction("open_screen", "health_history", getString(R.string.assistant_dialog_positive));
         }
         if (lower.contains("questionário") || lower.contains("questionario")) {
-            return new AssistantAction("open_screen", "health_questionnaire", "Abrir Questionário");
+            return new AssistantAction("open_screen", "health_questionnaire", getString(R.string.assistant_dialog_positive));
         }
         if (lower.contains("progresso") || lower.contains("evolução") || lower.contains("evolucao")) {
-            return new AssistantAction("open_screen", "progress_dashboard", "Abrir Painel de Progresso");
+            return new AssistantAction("open_screen", "progress_dashboard", getString(R.string.assistant_dialog_positive));
         }
         if (lower.contains("exerc") || lower.contains("treino") || lower.contains("lista")) {
-            return new AssistantAction("open_screen", "exercise_list", "Abrir Lista de Exercícios");
+            return new AssistantAction("open_screen", "exercise_list", getString(R.string.assistant_dialog_positive));
         }
         if (lower.contains("config") || lower.contains("ajuste")) {
-            return new AssistantAction("open_screen", "settings", "Abrir Configurações");
+            return new AssistantAction("open_screen", "settings", getString(R.string.assistant_dialog_positive));
         }
         return null;
     }
 
     private void showNavigationAction(AssistantAction action) {
         new MaterialAlertDialogBuilder(this)
-            .setTitle(action.getLabel() != null ? action.getLabel() : "Sugestão do Assistente")
-            .setMessage("Deseja abrir a tela recomendada agora?")
-            .setPositiveButton("Abrir agora", (dialog, which) -> openTargetScreen(action.getTarget()))
-            .setNegativeButton("Cancelar", null)
+            .setTitle(action.getLabel() != null ? action.getLabel() : getString(R.string.assistant_dialog_title))
+            .setMessage(R.string.assistant_dialog_message)
+            .setPositiveButton(R.string.assistant_dialog_positive, (dialog, which) -> openTargetScreen(action.getTarget()))
+            .setNegativeButton(R.string.assistant_dialog_negative, null)
             .show();
     }
 
@@ -233,7 +232,12 @@ public class AssistantActivity extends AppCompatActivity {
         if (intent != null) {
             startActivity(intent);
         } else {
-            Toast.makeText(this, "Tela não reconhecida: " + target, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Screen not recognized: " + target, Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(LocaleHelper.onAttach(newBase));
     }
 }

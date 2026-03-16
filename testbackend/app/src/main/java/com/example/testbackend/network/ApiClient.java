@@ -16,13 +16,15 @@ public class ApiClient {
 
     private static OkHttpClient getOkHttpClient() {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        // NÍVEL BODY para ver o JSON completo no Logcat
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         
         return new OkHttpClient.Builder()
                 .addInterceptor(interceptor)
-                .connectTimeout(15, TimeUnit.SECONDS)
-                .readTimeout(20, TimeUnit.SECONDS)
-                .writeTimeout(20, TimeUnit.SECONDS)
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
+                .retryOnConnectionFailure(true)
                 .build();
     }
 
@@ -39,8 +41,6 @@ public class ApiClient {
 
     public static Retrofit getAiClient() {
         if (aiRetrofit == null) {
-            // USANDO A PORTA 8080 COMO GATEWAY PARA O ASSISTENTE
-            // O backend deve redirecionar requests de /ai/chat internamente
             aiRetrofit = new Retrofit.Builder()
                     .baseUrl(Constants.AUTH_BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())

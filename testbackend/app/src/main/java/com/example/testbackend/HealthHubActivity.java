@@ -1,9 +1,11 @@
 package com.example.testbackend;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import com.example.testbackend.utils.LocaleHelper;
 import com.google.android.material.card.MaterialCardView;
 
 public class HealthHubActivity extends AppCompatActivity {
@@ -31,8 +33,13 @@ public class HealthHubActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("Saúde e Ferramentas");
+            getSupportActionBar().setTitle(R.string.health_tools);
         }
         toolbar.setNavigationOnClickListener(v -> onBackPressed());
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(LocaleHelper.onAttach(newBase));
     }
 }

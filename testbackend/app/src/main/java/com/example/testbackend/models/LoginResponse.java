@@ -3,19 +3,26 @@ package com.example.testbackend.models;
 import com.google.gson.annotations.SerializedName;
 
 public class LoginResponse {
-    // Mapping for "token" or "access_token"
-    @SerializedName(value = "token", alternate = {"access_token"})
+    @SerializedName("token")
     private String token;
 
-    // Mapping for "type" or "token_type"
-    @SerializedName(value = "type", alternate = {"token_type"})
-    private String type;
-    
-    // Mapping for "user_role" or "role"
-    @SerializedName(value = "user_role", alternate = {"role"})
+    @SerializedName("access_token")
+    private String accessToken;
+
+    @SerializedName("user_role")
     private String userRole;
 
-    public String getToken() { return token; }
-    public String getType() { return type; }
-    public String getUserRole() { return userRole; }
+    @SerializedName("role")
+    private String role;
+
+    public String getToken() {
+        if (token != null && !token.isEmpty()) return token;
+        return accessToken;
+    }
+
+    public String getUserRole() {
+        if (userRole != null && !userRole.isEmpty()) return userRole;
+        if (role != null && !role.isEmpty()) return role;
+        return "Patient"; // Default seguro
+    }
 }

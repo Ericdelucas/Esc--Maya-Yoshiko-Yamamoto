@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -12,13 +13,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.testbackend.ExerciseDetailActivity;
 import com.example.testbackend.R;
 import com.example.testbackend.models.Exercise;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.List;
 
-/**
- * Adaptador para a lista de exercícios.
- * Gerencia a exibição e a navegação para os detalhes.
- */
 public class ExerciseAdapter extends RecyclerView.Adapter<ExerciseAdapter.ExerciseViewHolder> {
 
     private List<Exercise> exercises;
@@ -37,16 +35,23 @@ public class ExerciseAdapter extends RecyclerView.Adapter<ExerciseAdapter.Exerci
     @Override
     public void onBindViewHolder(@NonNull ExerciseViewHolder holder, int position) {
         Exercise exercise = exercises.get(position);
-        holder.tvName.setText(exercise.getName());
-        holder.tvCategory.setText(exercise.getCategory());
+        
+        holder.tvName.setText(exercise.getTitle());
         holder.tvDescription.setText(exercise.getDescription());
 
-        // Navegação via Intent Explícita ao clicar no item
-        holder.itemView.setOnClickListener(v -> {
+        // Placeholder para imagem (Glide/Picasso podem ser adicionados depois para carregar exercise.getImageUrl())
+        holder.ivExerciseImage.setImageResource(android.R.drawable.ic_menu_today);
+
+        // Navegação para detalhes
+        View.OnClickListener detailLauncher = v -> {
             Intent intent = new Intent(v.getContext(), ExerciseDetailActivity.class);
-            intent.putExtra("exercise_data", exercise);
+            // Passando o ID para carregar mídias e instruções no detalhe
+            intent.putExtra("exercise_id", exercise.getId());
             v.getContext().startActivity(intent);
-        });
+        };
+
+        holder.itemView.setOnClickListener(detailLauncher);
+        holder.btnStart.setOnClickListener(detailLauncher);
     }
 
     @Override
@@ -55,13 +60,20 @@ public class ExerciseAdapter extends RecyclerView.Adapter<ExerciseAdapter.Exerci
     }
 
     static class ExerciseViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvCategory, tvDescription;
+        ImageView ivExerciseImage;
+        TextView tvName, tvDescription;
+        MaterialButton btnStart;
 
         public ExerciseViewHolder(@NonNull View itemView) {
             super(itemView);
+            ivExerciseImage = itemView.findViewById(R.id.ivExerciseImage);
             tvName = itemView.findViewById(R.id.tvExerciseName);
-            tvCategory = itemView.findViewById(R.id.tvExerciseCategory);
             tvDescription = itemView.findViewById(R.id.tvExerciseDescription);
+            btnStart = findViewById(R.id.btnStartExercise);
+        }
+
+        private <T extends View> T findViewById(int id) {
+            return itemView.findViewById(id);
         }
     }
 }

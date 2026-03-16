@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5">
+    android:background="?android:attr/windowBackground">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -18,7 +18,7 @@
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <ImageView
-                android:id="@+id/ivExerciseDemo"
+                android:id="@+id/ivExerciseDetail"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
@@ -49,40 +49,46 @@
                 android:id="@+id/tvDetailName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Nome do Exercício"
                 android:textAppearance="@style/TextAppearance.Material3.HeadlineMedium"
-                android:textColor="#1976D2"
-                android:textStyle="bold" />
-
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chipGroup"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp">
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/chipCategory"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Categoria" />
-            </com.google.android.material.chip.ChipGroup>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="Descrição:"
                 android:textStyle="bold"
-                android:textSize="16sp" />
+                android:textColor="?attr/colorPrimary" />
 
             <TextView
                 android:id="@+id/tvDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Instruções detalhadas aparecerão aqui."
-                android:lineSpacingExtra="4dp" />
+                android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                android:alpha="0.7" />
 
-            <Space android:layout_width="match_parent" android:layout_height="100dp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Instruções de Execução"
+                android:textStyle="bold"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/tvInstructions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:lineSpacingExtra="4dp"
+                android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
+
+            <!-- Botão de Vídeo -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnWatchVideo"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="VER VÍDEO EXPLICATIVO"
+                android:visibility="gone"
+                app:icon="@android:drawable/presence_video_online" />
+
+            <Space android:layout_width="match_parent" android:layout_height="120dp" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
@@ -93,8 +99,7 @@
         android:layout_height="64dp"
         android:layout_gravity="bottom"
         android:layout_margin="24dp"
-        android:text="COMEÇAR EXERCÍCIO"
-        android:textSize="16sp"
+        android:text="INICIAR COM IA"
         app:cornerRadius="16dp"
         app:icon="@android:drawable/ic_media_play" />
 
