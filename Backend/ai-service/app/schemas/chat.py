@@ -13,6 +13,7 @@ class ChatRequest(BaseModel):
     user_id: int = Field(..., description="ID do usuário")
     message: str = Field(..., description="Mensagem do usuário")
     screen_context: Optional[str] = Field(None, description="Tela atual do app")
+    locale: Optional[str] = Field("pt", description="Idioma do usuário (pt/en)")
 
 
 class ChatResponse(BaseModel):

@@ -29,6 +29,8 @@ services:
       JWT_SECRET: "troque-por-uma-chave-com-32-bytes-no-minimo-123456"
       JWT_ISSUER: "smartsaude-auth"
       APP_FERNET_KEYS: "${APP_FERNET_KEYS}"
+    volumes:
+      - smartsaude_profile_photos:/app/storage/profile_photos
     depends_on:
       mysql:
         condition: service_healthy
@@ -80,6 +82,9 @@ services:
     environment:
       - DB_URL=mysql+pymysql://smartuser:smartpass@mysql:3306/smartsaude
       - AUTH_BASE_URL=http://auth-service:8080
+      - APP_FERNET_KEYS=${APP_FERNET_KEYS}
+    volumes:
+      - ./shared:/app/shared
     depends_on:
       mysql:
         condition: service_healthy
@@ -117,6 +122,7 @@ services:
       - UPLOAD_DIR=/data/uploads
     volumes:
       - smartsaude_uploads:/data/uploads
+      - ./shared:/app/shared
     depends_on:
       mysql:
         condition: service_healthy
@@ -148,6 +154,7 @@ services:
 volumes:
   smartsaude_mysql_data:
   smartsaude_uploads:
+  smartsaude_profile_photos:
 
 networks:
   backend:

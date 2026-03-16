@@ -63,8 +63,11 @@ CREATE TABLE IF NOT EXISTS exercises (
   id INT AUTO_INCREMENT PRIMARY KEY,
   title VARCHAR(120) NOT NULL,
   description TEXT NOT NULL,
+  instructions TEXT NULL,
   tags_csv VARCHAR(512) NOT NULL DEFAULT '',
-  media_path VARCHAR(512) NULL,
+  image_path VARCHAR(512) NULL,
+  video_path VARCHAR(512) NULL,
+  created_by INT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   INDEX idx_exercises_created_at (created_at)
 );

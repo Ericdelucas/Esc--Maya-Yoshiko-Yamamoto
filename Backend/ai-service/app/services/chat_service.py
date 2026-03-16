@@ -12,12 +12,13 @@ class ChatService:
         self.system_prompt = SMARTSAUDE_SYSTEM_PROMPT
         self.context_info = APP_CONTEXT_INFO
     
-    def detect_navigation_intent(self, message: str) -> Optional[Dict]:
+    def detect_navigation_intent(self, message: str, locale: str = "pt") -> Optional[Dict]:
         """
-        Classificador de intenção de navegação por palavras-chave
+        Classificador de intenção de navegação por palavras-chave (bilíngue)
         
         Args:
             message: Mensagem do usuário
+            locale: Idioma do usuário (pt/en)
             
         Returns:
             Dict com resposta estruturada ou None
@@ -25,7 +26,17 @@ class ChatService:
         text = (message or "").lower()
         
         # IMC
-        if "imc" in text or "indice de massa corporal" in text or "índice de massa corporal" in text:
+        if "imc" in text or "indice de massa corporal" in text or "índice de massa corporal" in text or "bmi" in text or "body mass index" in text:
+            if locale == "en":
+                return {
+                    "reply": "To access BMI calculation, go to: Home → Health & Tools → BMI.",
+                    "intent": "navigation",
+                    "action": {
+                        "type": "open_screen",
+                        "target": "imc_calculator",
+                        "label": "Open BMI"
+                    }
+                }
             return {
                 "reply": "Para acessar o cálculo de IMC, siga: Início → Saúde e Ferramentas → IMC.",
                 "intent": "navigation",
@@ -37,7 +48,17 @@ class ChatService:
             }
         
         # Gordura Corporal
-        if "gordura" in text and ("corporal" in text or "corpo" in text):
+        if ("gordura" in text or "fat" in text) and ("corporal" in text or "body" in text):
+            if locale == "en":
+                return {
+                    "reply": "To access body fat calculation, go to: Home → Health & Tools → Body Fat.",
+                    "intent": "navigation",
+                    "action": {
+                        "type": "open_screen",
+                        "target": "body_fat_calculator",
+                        "label": "Open Body Fat"
+                    }
+                }
             return {
                 "reply": "Para acessar o cálculo de gordura corporal, siga: Início → Saúde e Ferramentas → Gordura Corporal.",
                 "intent": "navigation",
@@ -49,7 +70,17 @@ class ChatService:
             }
         
         # Histórico
-        if "histórico" in text or "historico" in text or "meus dados" in text:
+        if "histórico" in text or "historico" in text or "meus dados" in text or "history" in text or "my data" in text:
+            if locale == "en":
+                return {
+                    "reply": "To access your health history, go to: Home → Health & Tools → Health History.",
+                    "intent": "navigation",
+                    "action": {
+                        "type": "open_screen",
+                        "target": "health_history",
+                        "label": "Open History"
+                    }
+                }
             return {
                 "reply": "Para acessar seu histórico de saúde, siga: Início → Saúde e Ferramentas → Histórico de Saúde.",
                 "intent": "navigation",
@@ -61,7 +92,17 @@ class ChatService:
             }
         
         # Questionário
-        if "questionário" in text or "questionario" in text or "triagem" in text or "avaliação" in text:
+        if "questionário" in text or "questionario" in text or "triagem" in text or "avaliação" in text or "questionnaire" in text or "screening" in text or "assessment" in text:
+            if locale == "en":
+                return {
+                    "reply": "To access the health questionnaire, go to: Home → Health & Tools → Questionnaire.",
+                    "intent": "navigation",
+                    "action": {
+                        "type": "open_screen",
+                        "target": "health_questionnaire",
+                        "label": "Open Questionnaire"
+                    }
+                }
             return {
                 "reply": "Para acessar o questionário de saúde, siga: Início → Saúde e Ferramentas → Questionário.",
                 "intent": "navigation",
@@ -73,7 +114,17 @@ class ChatService:
             }
         
         # Progresso
-        if "progresso" in text or "evolução" in text or "evolucao" in text or "estatísticas" in text:
+        if "progresso" in text or "evolução" in text or "evolucao" in text or "estatísticas" in text or "progress" in text or "statistics" in text:
+            if locale == "en":
+                return {
+                    "reply": "To access your progress, go to: Home → Progress Dashboard.",
+                    "intent": "navigation",
+                    "action": {
+                        "type": "open_screen",
+                        "target": "progress_dashboard",
+                        "label": "Open Progress"
+                    }
+                }
             return {
                 "reply": "Para acessar seu progresso, siga: Início → Dashboard de Progresso.",
                 "intent": "navigation",
@@ -85,7 +136,17 @@ class ChatService:
             }
         
         # Exercícios
-        if "exerc" in text or "treino" in text or "atividade" in text:
+        if "exerc" in text or "treino" in text or "atividade" in text or "exercise" in text or "workout" in text or "activity" in text:
+            if locale == "en":
+                return {
+                    "reply": "To access your exercises, go to: Home → My Exercises.",
+                    "intent": "navigation",
+                    "action": {
+                        "type": "open_screen",
+                        "target": "exercise_list",
+                        "label": "Open Exercises"
+                    }
+                }
             return {
                 "reply": "Para acessar seus exercícios, siga: Início → Meus Exercícios.",
                 "intent": "navigation",
@@ -97,7 +158,17 @@ class ChatService:
             }
         
         # Configurações
-        if "config" in text or "idioma" in text or "tema" in text or "perfil" in text:
+        if "config" in text or "idioma" in text or "tema" in text or "perfil" in text or "settings" in text or "language" in text or "theme" in text or "profile" in text:
+            if locale == "en":
+                return {
+                    "reply": "To access settings, go to: Home → Settings icon.",
+                    "intent": "navigation",
+                    "action": {
+                        "type": "open_screen",
+                        "target": "settings",
+                        "label": "Open Settings"
+                    }
+                }
             return {
                 "reply": "Para acessar as configurações, siga: Início → ícone de configurações.",
                 "intent": "navigation",
@@ -122,7 +193,7 @@ class ChatService:
         """
         
         # 1. Tentar detectar navegação por palavras-chave primeiro
-        navigation_result = self.detect_navigation_intent(request.message)
+        navigation_result = self.detect_navigation_intent(request.message, request.locale or "pt")
         
         if navigation_result:
             # 2. Se for navegação, usar resposta estruturada
@@ -154,13 +225,20 @@ class ChatService:
         # Obtém contexto da sessão
         session_context = memory_service.get_session_context(request.session_id)
         
-        # Prepara mensagens para Ollama
+        # Prepara mensagens para Ollama com instrução de idioma
         messages = self._prepare_messages(request, session_context)
+        
+        # Adiciona instrução de idioma ao prompt
+        locale = request.locale or "pt"
+        if locale == "en":
+            language_instruction = "Always answer in English."
+        else:
+            language_instruction = "Sempre responda em português."
         
         # Envia para Ollama
         ollama_response = ollama_client.chat(
             messages=messages,
-            system_prompt=self.system_prompt,
+            system_prompt=f"{self.system_prompt}\n\n{language_instruction}",
             temperature=0.7,
             max_tokens=500
         )
@@ -224,10 +302,16 @@ class ChatService:
         
         # Adiciona histórico (exceto a última mensagem do usuário que será adicionada separadamente)
         for msg in history[:-1]:  # Exclui última msg user que será a atual
-            messages.append({
-                "role": msg.role,
-                "content": msg.content
-            })
+            # Verifica se msg é dict ou ChatMessage
+            if isinstance(msg, dict):
+                # Já é dict (formato para Ollama)
+                messages.append(msg)
+            else:
+                # É ChatMessage, converte para dict
+                messages.append({
+                    "role": msg.role,
+                    "content": msg.content
+                })
         
         # Adiciona mensagem atual
         messages.append({

@@ -6,8 +6,18 @@ class ExerciseRepository:
     def __init__(self, db: Session) -> None:
         self._db = db
 
-    def create(self, title: str, description: str, tags_csv: str) -> ExerciseORM:
-        row = ExerciseORM(title=title, description=description, tags_csv=tags_csv)
+    def create(self, title: str, description: str, instructions: str = None, 
+               tags_csv: str = "", image_path: str = None, video_path: str = None, 
+               created_by: int = None) -> ExerciseORM:
+        row = ExerciseORM(
+            title=title,
+            description=description,
+            instructions=instructions,
+            tags_csv=tags_csv,
+            image_path=image_path,
+            video_path=video_path,
+            created_by=created_by
+        )
         self._db.add(row)
         self._db.commit()
         self._db.refresh(row)
@@ -23,10 +33,3 @@ class ExerciseRepository:
             .limit(limit)
             .all()
         )
-
-    def set_media_path(self, exercise_id: int, media_path: str) -> None:
-        row = self.get_by_id(exercise_id)
-        if not row:
-            return
-        row.media_path = media_path
-        self._db.commit()

@@ -1,5 +1,7 @@
 import uvicorn
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+import os
 
 from app.core.config import get_settings
 from app.core.error_handler import register_error_handlers
@@ -14,6 +16,11 @@ def create_app() -> FastAPI:
     app = FastAPI(title="SmartSaúde Auth Service", version="0.0.1")
 
     register_error_handlers(app)
+
+    # Configurar arquivos estáticos para fotos de perfil
+    profile_photos_dir = "/app/storage/profile_photos"
+    if os.path.exists(profile_photos_dir):
+        app.mount("/media/profiles", StaticFiles(directory=profile_photos_dir), name="profile_photos")
 
     app.include_router(health_router)
     app.include_router(auth_router, tags=["auth"])
