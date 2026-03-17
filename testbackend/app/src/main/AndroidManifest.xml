@@ -104,6 +104,31 @@
             android:name=".ChangePasswordActivity"
             android:exported="false"
             android:label="Alterar Senha" />
+
+        <activity
+            android:name=".ProgressActivity"
+            android:exported="false"
+            android:label="Evolução" />
+
+        <activity
+            android:name=".ChallengesActivity"
+            android:exported="false"
+            android:label="Desafios" />
+
+        <activity
+            android:name=".GoalsActivity"
+            android:exported="false"
+            android:label="Metas" />
+
+        <activity
+            android:name=".LeaderboardActivity"
+            android:exported="false"
+            android:label="Ranking" />
+
+        <activity
+            android:name=".ProfessionalsActivity"
+            android:exported="false"
+            android:label="Profissionais" />
     </application>
 
 </manifest>

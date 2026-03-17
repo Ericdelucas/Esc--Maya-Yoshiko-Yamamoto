@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,10 +19,10 @@ import com.google.android.material.button.MaterialButton;
 
 public class ProfileActivity extends AppCompatActivity {
 
+    private static final String TAG = "PROFILE_DEBUG";
     private TextView tvProfileInitial, tvProfileName, tvProfileEmail, tvProfileRole;
     private MaterialButton btnChangePhoto, btnChangePassword, btnProfileLogout;
 
-    // Seletor de Imagem da Galeria
     private final ActivityResultLauncher<String> galleryLauncher = registerForActivityResult(
             new ActivityResultContracts.GetContent(),
             uri -> {
@@ -34,6 +35,7 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "### PROFILE_ACTIVITY: onCreate executado com sucesso! ###");
         setContentView(R.layout.activity_profile);
 
         setupToolbar();
@@ -68,6 +70,8 @@ public class ProfileActivity extends AppCompatActivity {
         String email = prefs.getString("user_email", "usuario@email.com");
         String role = prefs.getString("user_role", "Patient");
 
+        Log.d(TAG, "Dados carregados: Email=[" + email + "], Role=[" + role + "]");
+
         tvProfileEmail.setText(email);
         tvProfileRole.setText(role.toUpperCase());
         
@@ -81,12 +85,14 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void setupListeners() {
         btnChangePhoto.setOnClickListener(v -> {
-            // ABRIR GALERIA REAL
+            Log.d(TAG, "Clique detectado: ALTERAR FOTO");
+            Toast.makeText(this, "ABRINDO GALERIA REAL...", Toast.LENGTH_SHORT).show();
             galleryLauncher.launch("image/*");
         });
 
         btnChangePassword.setOnClickListener(v -> {
-            // ABRIR TELA DE ALTERAR SENHA REAL
+            Log.d(TAG, "Clique detectado: ALTERAR SENHA");
+            Toast.makeText(this, "ABRINDO TELA DE SENHA REAL...", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(this, ChangePasswordActivity.class);
             startActivity(intent);
         });
@@ -95,16 +101,15 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void onImageSelected(Uri uri) {
-        // No futuro aqui faremos o upload para o backend
-        Toast.makeText(this, "Foto selecionada! Iniciando processamento...", Toast.LENGTH_SHORT).show();
-        // tvProfileInitial.setVisibility(View.GONE); // Se fosse colocar a imagem no lugar da letra
+        Log.d(TAG, "Imagem selecionada: " + uri.toString());
+        Toast.makeText(this, "FOTO SELECIONADA COM SUCESSO!", Toast.LENGTH_LONG).show();
     }
 
     private void logout() {
+        Log.d(TAG, "Executando LOGOUT...");
         SharedPreferences prefs = getSharedPreferences("SmartSaudePrefs", MODE_PRIVATE);
         prefs.edit().clear().apply();
         
-        Toast.makeText(this, "Sessão encerrada", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
