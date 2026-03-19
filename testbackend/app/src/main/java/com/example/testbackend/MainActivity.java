@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MAIN_DEBUG";
     private TextView tvUserInitial;
-    private MaterialCardView cardAccountAvatar;
+    private MaterialCardView cardAccountAvatar, cardProfessionalExams;
     private ImageButton btnSettings;
 
     @Override
@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences("SmartSaudePrefs", MODE_PRIVATE);
         String token = prefs.getString("jwt_token", null);
         String email = prefs.getString("user_email", "usuário");
+        String role = prefs.getString("user_role", "Patient");
         
         if (token == null) {
             startActivity(new Intent(this, LoginActivity.class));
@@ -38,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         
         setupAvatar(email);
-        setupNavigation();
+        setupNavigation(role);
     }
 
     private void setupAvatar(String email) {
@@ -51,54 +52,43 @@ public class MainActivity extends AppCompatActivity {
             tvUserInitial.setText(initial);
         }
 
-        cardAccountAvatar.setOnClickListener(v -> {
-            startActivity(new Intent(this, ProfileActivity.class));
-        });
-
+        cardAccountAvatar.setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
         if (btnSettings != null) {
-            btnSettings.setOnClickListener(v -> {
-                startActivity(new Intent(this, SettingsActivity.class));
-            });
+            btnSettings.setOnClickListener(v -> startActivity(new Intent(this, SettingsActivity.class)));
         }
     }
 
-    private void setupNavigation() {
-        // Botão Meus Exercícios (Hero)
-        MaterialButton btnExercises = findViewById(R.id.btnExercises);
-        if (btnExercises != null) {
-            btnExercises.setOnClickListener(v -> startActivity(new Intent(this, ExerciseListActivity.class)));
+    private void setupNavigation(String role) {
+        // --- VISIBILIDADE DO MÉDICO ---
+        cardProfessionalExams = findViewById(R.id.cardProfessionalExams);
+        if (role != null && (role.equalsIgnoreCase("Professional") || role.equalsIgnoreCase("Doctor"))) {
+            cardProfessionalExams.setVisibility(View.VISIBLE);
+            cardProfessionalExams.setOnClickListener(v -> {
+                // TODO: Criar PatientExamsActivity
+                Toast.makeText(this, "Abrindo Gestão de Exames...", Toast.LENGTH_SHORT).show();
+            });
         }
 
-        // --- SEÇÃO DE GAMIFICAÇÃO (AGORA TODAS FUNCIONAIS) ---
-        findViewById(R.id.cardChallenges).setOnClickListener(v -> 
-            startActivity(new Intent(this, ChallengesActivity.class)));
-        
-        findViewById(R.id.cardLeaderboard).setOnClickListener(v -> 
-            startActivity(new Intent(this, LeaderboardActivity.class)));
-        
-        findViewById(R.id.cardGoals).setOnClickListener(v -> 
-            startActivity(new Intent(this, GoalsActivity.class)));
+        // Botão Meus Exercícios
+        findViewById(R.id.btnExercises).setOnClickListener(v -> startActivity(new Intent(this, ExerciseListActivity.class)));
 
-        // Card de Profissionais
-        findViewById(R.id.cardProfessionals).setOnClickListener(v -> 
-            startActivity(new Intent(this, ProfessionalsActivity.class)));
+        // Seção Gamificação
+        findViewById(R.id.cardChallenges).setOnClickListener(v -> startActivity(new Intent(this, ChallengesActivity.class)));
+        findViewById(R.id.cardLeaderboard).setOnClickListener(v -> startActivity(new Intent(this, LeaderboardActivity.class)));
+        findViewById(R.id.cardGoals).setOnClickListener(v -> startActivity(new Intent(this, GoalsActivity.class)));
+        findViewById(R.id.cardProfessionals).setOnClickListener(v -> startActivity(new Intent(this, ProfessionalsActivity.class)));
 
-        // --- SEÇÃO DE SAÚDE ---
-        MaterialButton btnHealth = findViewById(R.id.btnHealth);
-        if (btnHealth != null) {
-            btnHealth.setOnClickListener(v -> startActivity(new Intent(this, HealthHubActivity.class)));
-        }
+        // Seção Saúde
+        findViewById(R.id.btnHealth).setOnClickListener(v -> startActivity(new Intent(this, HealthHubActivity.class)));
 
-        // Card de Progresso (Card Inferior)
-        findViewById(R.id.cardProgress).setOnClickListener(v -> 
-            startActivity(new Intent(this, ProgressActivity.class)));
+        // Card de Progresso
+        findViewById(R.id.cardProgress).setOnClickListener(v -> startActivity(new Intent(this, ProgressActivity.class)));
 
         // Botão de Logout
         findViewById(R.id.btnLogout).setOnClickListener(v -> logout());
 
         // FAB Assistente IA
-        findViewById(R.id.fabAssistant).setOnClickListener(v -> 
-            startActivity(new Intent(this, AssistantActivity.class)));
+        findViewById(R.id.fabAssistant).setOnClickListener(v -> startActivity(new Intent(this, AssistantActivity.class)));
     }
 
     private void logout() {

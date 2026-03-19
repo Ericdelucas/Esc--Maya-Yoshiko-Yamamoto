@@ -27,7 +27,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- NOVO: Botão de Configurações (Engrenagem) -->
+    <!-- Botão de Configurações -->
     <ImageButton
         android:id="@+id/btnSettings"
         android:layout_width="48dp"
@@ -41,7 +41,7 @@
         app:layout_constraintTop_toTopOf="@+id/tvGreeting"
         android:contentDescription="@string/settings" />
 
-    <!-- Avatar da Conta (Estilo Gmail) -->
+    <!-- Avatar da Conta -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardAccountAvatar"
         android:layout_width="48dp"
@@ -118,6 +118,62 @@
                         android:text="@string/my_exercises"
                         app:cornerRadius="12dp"
                         app:icon="@android:drawable/ic_media_play" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- NOVO: Seção Exclusiva para Profissionais -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardProfessionalExams"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginTop="24dp"
+                android:visibility="gone"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="#2A2A3A">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="20dp">
+
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@android:drawable/ic_menu_agenda"
+                        app:tint="#BBA0FF" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="16dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Exames dos Pacientes"
+                            android:textColor="@color/white"
+                            android:textStyle="bold"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Gerencie laudos e exames de imagem"
+                            android:textColor="#C9B6F2"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@android:drawable/ic_media_play"
+                        app:tint="#BBA0FF" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
