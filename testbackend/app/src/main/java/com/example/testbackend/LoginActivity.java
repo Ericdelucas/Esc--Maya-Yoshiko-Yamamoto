@@ -3,6 +3,7 @@ package com.example.testbackend;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -46,15 +47,9 @@ public class LoginActivity extends AppCompatActivity {
         loadingIndicator = findViewById(R.id.loadingIndicator);
 
         btnLogin.setOnClickListener(v -> {
-            String email = etEmail.getText().toString().trim();
-            String password = etPassword.getText().toString().trim();
-
-            if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(LoginActivity.this, "Preencha todos os campos", Toast.LENGTH_SHORT).show();
-                return;
+            if (validateLoginForm()) {
+                performLogin();
             }
-
-            performLogin(email, password);
         });
 
         btnGoToRegister.setOnClickListener(v -> {
@@ -62,8 +57,38 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void performLogin(String email, String password) {
+    private boolean validateLoginForm() {
+        String email = etEmail.getText().toString().trim();
+        String password = etPassword.getText().toString().trim();
+
+        if (email.isEmpty()) {
+            etEmail.setError("E-mail é obrigatório");
+            return false;
+        }
+
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            etEmail.setError("E-mail inválido. Use o formato: usuario@exemplo.com");
+            Toast.makeText(this, "Por favor, insira um e-mail válido.", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if (password.isEmpty()) {
+            etPassword.setError("Senha é obrigatória");
+            return false;
+        }
+
+        if (password.length() < 6) {
+            etPassword.setError("A senha deve ter pelo menos 6 caracteres");
+            return false;
+        }
+
+        return true;
+    }
+
+    private void performLogin() {
         setLoading(true);
+        String email = etEmail.getText().toString().trim();
+        String password = etPassword.getText().toString().trim();
 
         AuthApi authApi = ApiClient.getAuthClient().create(AuthApi.class);
         LoginRequest loginRequest = new LoginRequest(email, password);
@@ -86,8 +111,14 @@ public class LoginActivity extends AppCompatActivity {
                         Toast.makeText(LoginActivity.this, "Erro: Token não recebido", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    String errorMsg = ApiErrorHandler.getHttpErrorMessage(response.code());
-                    Toast.makeText(LoginActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
+                    if (response.code() == 401) {
+                        Toast.makeText(LoginActivity.this, "E-mail ou senha incorretos", Toast.LENGTH_LONG).show();
+                    } else if (response.code() == 422) {
+                        Toast.makeText(LoginActivity.this, "Formato de e-mail inválido pelo servidor", Toast.LENGTH_LONG).show();
+                    } else {
+                        String errorMsg = ApiErrorHandler.getHttpErrorMessage(response.code());
+                        Toast.makeText(LoginActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
 
