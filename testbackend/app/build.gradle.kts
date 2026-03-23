@@ -56,6 +56,9 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
+    // Image Loading
+    implementation("com.squareup.picasso:picasso:2.8")
+
     // CameraX
     val camerax_version = "1.4.0"
     implementation("androidx.camera:camera-core:$camerax_version")
