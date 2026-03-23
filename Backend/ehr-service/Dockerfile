@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     build-essential \
     pkg-config \
+    libmagic1 \
     && update-ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 

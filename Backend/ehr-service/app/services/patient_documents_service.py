@@ -1,7 +1,7 @@
 import os
 import uuid
 import magic
-from typing import Optional
+from typing import Optional, List
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 from fastapi import UploadFile, HTTPException, status
