@@ -122,7 +122,6 @@ public class AddExerciseActivity extends AppCompatActivity {
         try {
             File file = getFileFromUri(imageUri, "img_upload");
             RequestBody requestFile = RequestBody.create(file, MediaType.parse(getContentResolver().getType(imageUri)));
-            // Chave "file" conforme contrato padrão
             MultipartBody.Part body = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
 
             ExerciseApi api = ApiClient.getExerciseClient().create(ExerciseApi.class);
