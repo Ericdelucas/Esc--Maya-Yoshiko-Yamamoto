@@ -1,0 +1,1 @@
+# chat_schema.py
