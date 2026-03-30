@@ -151,6 +151,25 @@ services:
     networks:
       - backend
 
+  health-service:
+    image: backend-health-service:latest
+    build: ./health-service
+    container_name: smartsaude-health
+    ports:
+      - "8071:8070"
+    environment:
+      - DB_URL=mysql+pymysql://smartuser:smartpass@mysql:3306/smartsaude
+      - AUTH_BASE_URL=http://auth-service:8080
+    volumes:
+      - ./shared:/app/shared
+    depends_on:
+      mysql:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+    networks:
+      - backend
+
 volumes:
   smartsaude_mysql_data:
   smartsaude_uploads:
