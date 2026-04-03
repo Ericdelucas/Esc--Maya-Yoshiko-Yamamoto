@@ -1,10 +1,20 @@
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import FastAPI, Request, HTTPException, Depends
 from fastapi.responses import JSONResponse
 import os
 import traceback
 from datetime import datetime
+from sqlalchemy.orm import Session
+from app.storage.database import get_db, init_db
+from app.services.health_service import HealthService
 
 app = FastAPI(title="SmartSaúde Health Service", version="1.0.0")
+
+# Initialize database tables
+@app.on_event("startup")
+async def startup_event():
+    print("HEALTH: Initializing database...")
+    init_db()
+    print("HEALTH: Database initialized successfully")
 
 # Global exception handler para debug
 @app.exception_handler(Exception)
@@ -23,7 +33,7 @@ def health():
     return {"status": "ok", "service": "health-service"}
 
 @app.post("/metrics/imc")
-def calculate_imc(weight: float, height: float, user_id: int):
+def calculate_imc(weight: float, height: float, user_id: int, db: Session = Depends(get_db)):
     print(f"HEALTH: IMC Request - User: {user_id}, Weight: {weight}, Height: {height}")
     
     try:
@@ -42,7 +52,20 @@ def calculate_imc(weight: float, height: float, user_id: int):
         
         print(f"HEALTH: IMC Result - User: {user_id}, IMC: {imc:.2f}, Classification: {classification}")
         
-        # TODO: Salvar no banco de dados
+        # Salvar no banco de dados
+        try:
+            health_service = HealthService(db)
+            metric = health_service.create_health_metric(
+                user_id=user_id,
+                metric_type="imc",
+                value=round(imc, 2),
+                unit="kg/m²",
+                classification=classification
+            )
+            print(f"HEALTH: IMC saved to database with ID: {metric.id}")
+        except Exception as db_error:
+            print(f"HEALTH: Database error saving IMC: {str(db_error)}")
+            # Continue even if DB fails
         
         return {
             "metric_type": "imc",
@@ -57,7 +80,7 @@ def calculate_imc(weight: float, height: float, user_id: int):
         raise HTTPException(status_code=500, detail=f"IMC calculation failed: {str(e)}")
 
 @app.post("/metrics/body-fat")
-def calculate_body_fat(weight: float, height: float, age: int, gender: str, waist_circumference: float, user_id: int):
+def calculate_body_fat(weight: float, height: float, age: int, gender: str, waist_circumference: float, user_id: int, db: Session = Depends(get_db)):
     print(f"HEALTH: Body Fat Request - User: {user_id}, Weight: {weight}, Height: {height}, Age: {age}, Gender: {gender}")
     
     try:
@@ -95,7 +118,20 @@ def calculate_body_fat(weight: float, height: float, age: int, gender: str, wais
         
         print(f"HEALTH: Body Fat Result - User: {user_id}, Body Fat: {body_fat:.2f}%, Classification: {classification}")
         
-        # TODO: Salvar no banco de dados
+        # Salvar no banco de dados
+        try:
+            health_service = HealthService(db)
+            metric = health_service.create_health_metric(
+                user_id=user_id,
+                metric_type="body_fat",
+                value=round(body_fat, 2),
+                unit="%",
+                classification=classification
+            )
+            print(f"HEALTH: Body Fat saved to database with ID: {metric.id}")
+        except Exception as db_error:
+            print(f"HEALTH: Database error saving Body Fat: {str(db_error)}")
+            # Continue even if DB fails
         
         return {
             "metric_type": "body_fat",
@@ -110,7 +146,7 @@ def calculate_body_fat(weight: float, height: float, age: int, gender: str, wais
         raise HTTPException(status_code=500, detail=f"Body fat calculation failed: {str(e)}")
 
 @app.post("/questionnaire")
-def save_questionnaire(user_id: int, medical_history: dict = {}, medications: list = [], allergies: list = [], habits: dict = {}):
+def save_questionnaire(user_id: int, medical_history: dict = {}, medications: list = [], allergies: list = [], habits: dict = {}, db: Session = Depends(get_db)):
     print(f"HEALTH: Questionnaire Save - User: {user_id}")
     print(f"HEALTH: Medical History: {medical_history}")
     print(f"HEALTH: Medications: {medications}")
@@ -126,32 +162,48 @@ def save_questionnaire(user_id: int, medical_history: dict = {}, medications: li
             "completed_at": datetime.now().isoformat()
         }
         
-        # TODO: Salvar no banco de dados
+        # Salvar no banco de dados
+        try:
+            health_service = HealthService(db)
+            questionnaire = health_service.create_questionnaire(
+                user_id=user_id,
+                questionnaire_data=questionnaire_data,
+                version="1.0"
+            )
+            print(f"HEALTH: Questionnaire saved to database with ID: {questionnaire.id}")
+            
+            return {
+                "id": questionnaire.id,
+                "user_id": user_id,
+                "questionnaire_data": questionnaire_data,
+                "version": "1.0",
+                "completed_at": datetime.now().isoformat()
+            }
+        except Exception as db_error:
+            print(f"HEALTH: Database error saving questionnaire: {str(db_error)}")
+            raise HTTPException(status_code=500, detail=f"Database error: {str(db_error)}")
         
-        print(f"HEALTH: Questionnaire Saved - User: {user_id}")
-        
-        return {
-            "id": 1,  # TODO: Retornar ID real do banco
-            "user_id": user_id,
-            "questionnaire_data": questionnaire_data,
-            "version": "1.0",
-            "completed_at": datetime.now().isoformat()
-        }
     except Exception as e:
         print(f"HEALTH: Questionnaire Save Error - {str(e)}")
         raise HTTPException(status_code=500, detail=f"Questionnaire save failed: {str(e)}")
 
 @app.post("/goals")
-def create_goal(user_id: int, goal_type: str, target_value: float, notes: str = ""):
+def create_goal(user_id: int, goal_type: str, target_value: float, notes: str = "", db: Session = Depends(get_db)):
     print(f"HEALTH: Goal Create - User: {user_id}, Type: {goal_type}, Target: {target_value}")
     
     try:
-        # TODO: Salvar no banco de dados
-        
-        print(f"HEALTH: Goal Created - User: {user_id}")
+        # Salvar no banco de dados
+        health_service = HealthService(db)
+        goal = health_service.create_goal(
+            user_id=user_id,
+            goal_type=goal_type,
+            target_value=target_value,
+            notes=notes
+        )
+        print(f"HEALTH: Goal saved to database with ID: {goal.id}")
         
         return {
-            "id": 1,  # TODO: Retornar ID real do banco
+            "id": goal.id,
             "user_id": user_id,
             "goal_type": goal_type,
             "target_value": target_value,
@@ -167,14 +219,28 @@ def create_goal(user_id: int, goal_type: str, target_value: float, notes: str = 
         raise HTTPException(status_code=500, detail=f"Goal creation failed: {str(e)}")
 
 @app.get("/metrics/history/{user_id}")
-def get_health_history(user_id: int, metric_type: str = None, period: str = "all"):
+def get_health_history(user_id: int, metric_type: str = None, period: str = "all", db: Session = Depends(get_db)):
     print(f"HEALTH: History Request - User: {user_id}, Type: {metric_type}, Period: {period}")
     
     try:
-        # TODO: Buscar do banco de dados
+        # Buscar do banco de dados
+        health_service = HealthService(db)
+        metrics = health_service.get_health_metrics(user_id, metric_type)
         
-        # Retornar dados de exemplo por enquanto
-        return []
+        # Converter para formato de resposta
+        result = []
+        for metric in metrics:
+            result.append({
+                "id": metric.id,
+                "metric_type": metric.metric_type,
+                "value": float(metric.value),
+                "unit": metric.unit,
+                "classification": metric.classification,
+                "measured_at": metric.measured_at.isoformat(),
+                "user_id": metric.user_id
+            })
+        
+        return result
     except Exception as e:
         print(f"HEALTH: History Request Error - {str(e)}")
         raise HTTPException(status_code=500, detail=f"History request failed: {str(e)}")
