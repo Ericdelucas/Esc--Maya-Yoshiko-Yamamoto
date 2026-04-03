@@ -39,7 +39,6 @@ Vide tutoriais do PI.
     </td>
   </tr>
 </table>
-<br>
 
 
 <p> A SmartSaude é uma plataforma desenvolvida para auxiliar no acompanhamento de tratamentos fisioterapêuticos, unindo um aplicativo mobile a um sistema backend responsável por gerenciar dados, usuários e funcionalidades. A proposta do projeto é facilitar o acesso do paciente aos exercícios e permitir o registro contínuo do seu progresso, tornando o processo mais organizado e eficiente.
