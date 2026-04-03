@@ -20,18 +20,30 @@ Vide tutoriais do PI.
 
 ## Descrição
 
-<p align="center">
-<img src="https://drive.google.com/file/d/1dgNmqZv4osrOEt74jemblTZPd_ydNzgs/view?usp=sharing" alt="SmartSaude" border="0">
-  Game by <a href="http://www.nyphotographic.com/">Nick Youngson</a> <a rel="license" href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a> <a href="http://pix4free.org/">Pix4free</a>
-</p>
+<div style="display: flex; justify-content: center; gap: 20px; text-align: center;">
+
+  <div style="width: 400px;">
+    <a href="https://ibb.co/bgxV7RGn"><img src="https://i.ibb.co/KjYgmz8H/337-Sem-T-tulo-20260403154319.png" alt="Tela de login" border="0"></a>
+    <p><b>Tela de Login</b></p>
+  </div>
+
+  <div style="width: 400px;">
+    <a href="https://ibb.co/B2vjs9M8"><img src="https://i.ibb.co/5hCvcPHq/337-Sem-T-tulo-20260403154311.png" alt="Tela de Home" border="0"></a>
+    <p><b>Tela Principal(Home)</b></p>
+  </div>
+
+  <div style="width: 400px;">
+    <a href="https://ibb.co/DgPqHdGz"><img src="https://i.ibb.co/rfKWR9bF/337-Sem-T-tulo-20260403154305.png" alt="337-Sem-T-tulo-20260403154305" border="0"></a>
+    <p><b>Tela de Meu Progresso</b></p>
+  </div>
+</div>
+<br>
 
 
-De um a dois parágrafos sobre o que é seu projeto e o que ele faz.
-<br><br>
-Meu projeto ajuda estudantes FECAP a configurarem seus githubs.
-<br><br>
-May the force be with you!
-<br><br>
+<p> A SmartSaude é uma plataforma desenvolvida para auxiliar no acompanhamento de tratamentos fisioterapêuticos, unindo um aplicativo mobile a um sistema backend responsável por gerenciar dados, usuários e funcionalidades. A proposta do projeto é facilitar o acesso do paciente aos exercícios e permitir o registro contínuo do seu progresso, tornando o processo mais organizado e eficiente.
+
+Como diferencial, o sistema utiliza inteligência artificial para analisar os movimentos realizados durante os exercícios, ajudando a identificar se estão sendo executados corretamente. Dessa forma, o projeto contribui tanto para o paciente, que recebe orientações durante o uso, quanto para o profissional de saúde, que pode acompanhar a evolução de forma mais precisa e prática. </p>
+<br>
 
 ## 🛠 Estrutura de pastas
 
@@ -110,9 +122,7 @@ Utilize o link <https://chooser-beta.creativecommons.org/> para fazer uma licen�
 
 Aqui estão as referências usadas no projeto.
 
-1. <https://github.com/iuricode/readme-template>
-2. <https://github.com/gabrieldejesus/readme-model>
-3. <https://chooser-beta.creativecommons.org/>
-4. <https://freesound.org/>
-5. <https://www.toptal.com/developers/gitignore>
-6. Músicas por: <a href="https://freesound.org/people/DaveJf/sounds/616544/"> DaveJf </a> e <a href="https://freesound.org/people/DRFX/sounds/338986/"> DRFX </a> ambas com Licença CC 0.
+1. <https://mayayamamoto.com.br/>
+2. <https://www.linkedin.com/in/maya-yoshiko-yamamoto-bb18a736/.org/>
+3. <https://www.instagram.com/rpg.maya/>
+4. <https://www.toptal.com/developers/gitignore>
