@@ -2,12 +2,11 @@ package com.example.testbackend.utils;
 
 public class Constants {
     /**
-     * OPÇÃO A: DESENVOLVIMENTO LOCAL
-     * Substitua pelo IP da sua máquina (comando: ip addr show)
-     * se estiver usando um dispositivo físico na mesma rede Wi-Fi.
-     * Se estiver usando o emulador, pode usar "10.0.2.2" ou o IP da rede.
+     * SOLUÇÃO: Usar localhost com adb reverse
+     * O adb reverse redireciona localhost:8080 do emulador para a porta 8080 do host.
+     * Execute no terminal: adb reverse tcp:8080 tcp:8080 && adb reverse tcp:8071 tcp:8071
      */
-    public static final String HOST = "192.168.15.8";
+    public static final String HOST = "localhost";
 
     // AUTH SERVICE (Porta 8080)
     public static final String BASE_URL = "http://" + HOST + ":8080/";

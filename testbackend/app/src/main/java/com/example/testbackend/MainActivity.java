@@ -2,6 +2,7 @@ package com.example.testbackend;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import com.example.testbackend.models.UserProfileResponse;
 import com.example.testbackend.network.ApiClient;
@@ -36,6 +38,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // FORÇAR TEMA SALVO OU MODO CLARO ANTES DE TUDO
+        SharedPreferences prefs = getSharedPreferences("settings", MODE_PRIVATE);
+        int themeMode = prefs.getInt("theme_mode", AppCompatDelegate.MODE_NIGHT_NO);
+        AppCompatDelegate.setDefaultNightMode(themeMode);
+
         super.onCreate(savedInstanceState);
         
         tokenManager = new TokenManager(this);
@@ -143,12 +150,16 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupProfessionalFeatures(String role) {
         if (role != null && (role.equalsIgnoreCase("Professional") || role.equalsIgnoreCase("Doctor") || role.equalsIgnoreCase("admin"))) {
-            cardProfessionalExams.setVisibility(View.VISIBLE);
-            cardProfessionalExams.setOnClickListener(v -> {
-                Toast.makeText(this, "Abrindo Gestão de Exames...", Toast.LENGTH_SHORT).show();
-            });
+            if (cardProfessionalExams != null) {
+                cardProfessionalExams.setVisibility(View.VISIBLE);
+                cardProfessionalExams.setOnClickListener(v -> {
+                    Toast.makeText(this, "Abrindo Gestão de Exames...", Toast.LENGTH_SHORT).show();
+                });
+            }
         } else {
-            cardProfessionalExams.setVisibility(View.GONE);
+            if (cardProfessionalExams != null) {
+                cardProfessionalExams.setVisibility(View.GONE);
+            }
         }
     }
 

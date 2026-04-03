@@ -99,7 +99,9 @@
                 android:layout_marginHorizontal="24dp"
                 android:layout_marginTop="-40dp"
                 app:cardCornerRadius="20dp"
-                app:cardElevation="8dp">
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="?attr/colorSurface"
+                app:strokeWidth="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -120,6 +122,7 @@
                         android:layout_marginTop="8dp"
                         android:text="@string/knee_strengthening"
                         android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+                        android:textColor="?android:attr/textColorPrimary"
                         android:textStyle="bold" />
 
                     <com.google.android.material.button.MaterialButton
@@ -128,8 +131,11 @@
                         android:layout_height="56dp"
                         android:layout_marginTop="20dp"
                         android:text="@string/my_exercises"
+                        android:textColor="@color/white"
+                        app:backgroundTint="?attr/colorPrimary"
                         app:cornerRadius="12dp"
-                        app:icon="@android:drawable/ic_media_play" />
+                        app:icon="@android:drawable/ic_media_play"
+                        app:iconTint="@color/white" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -143,7 +149,8 @@
                 android:visibility="gone"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="4dp"
-                app:cardBackgroundColor="#2A2A3A">
+                app:cardBackgroundColor="?attr/colorSurface"
+                app:strokeWidth="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -156,7 +163,7 @@
                         android:layout_width="48dp"
                         android:layout_height="48dp"
                         android:src="@android:drawable/ic_menu_agenda"
-                        app:tint="#BBA0FF" />
+                        app:tint="?attr/colorPrimary" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -169,7 +176,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Exames dos Pacientes"
-                            android:textColor="@color/white"
+                            android:textColor="?android:attr/textColorPrimary"
                             android:textStyle="bold"
                             android:textSize="16sp" />
 
@@ -177,7 +184,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Gerencie laudos e exames de imagem"
-                            android:textColor="#C9B6F2"
+                            android:textColor="?android:attr/textColorSecondary"
                             android:textSize="12sp" />
                     </LinearLayout>
 
@@ -185,7 +192,7 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@android:drawable/ic_media_play"
-                        app:tint="#BBA0FF" />
+                        app:tint="?attr/colorPrimary" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -202,16 +209,20 @@
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cardChallenges"
                     android:layout_width="0dp"
-                    android:layout_height="100dp"
+                    android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
                     android:layout_margin="4dp"
                     app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp"
+                    app:cardBackgroundColor="?attr/colorSurface"
+                    app:strokeWidth="0dp"
                     android:clickable="true"
                     android:focusable="true">
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:gravity="center"
+                        android:padding="16dp"
                         android:orientation="vertical">
                         <ImageView
                             android:layout_width="32dp"
@@ -221,7 +232,9 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
                             android:text="Desafios"
+                            android:textColor="?android:attr/textColorPrimary"
                             android:textStyle="bold" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -230,16 +243,20 @@
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cardLeaderboard"
                     android:layout_width="0dp"
-                    android:layout_height="100dp"
+                    android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
                     android:layout_margin="4dp"
                     app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp"
+                    app:cardBackgroundColor="?attr/colorSurface"
+                    app:strokeWidth="0dp"
                     android:clickable="true"
                     android:focusable="true">
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:gravity="center"
+                        android:padding="16dp"
                         android:orientation="vertical">
                         <ImageView
                             android:layout_width="32dp"
@@ -249,7 +266,9 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
                             android:text="Ranking"
+                            android:textColor="?android:attr/textColorPrimary"
                             android:textStyle="bold" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -258,16 +277,20 @@
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cardGoals"
                     android:layout_width="0dp"
-                    android:layout_height="100dp"
+                    android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
                     android:layout_margin="4dp"
                     app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp"
+                    app:strokeWidth="0dp"
+                    app:cardBackgroundColor="?attr/colorSurface"
                     android:clickable="true"
                     android:focusable="true">
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:gravity="center"
+                        android:padding="16dp"
                         android:orientation="vertical">
                         <ImageView
                             android:layout_width="32dp"
@@ -277,7 +300,9 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
                             android:text="Metas"
+                            android:textColor="?android:attr/textColorPrimary"
                             android:textStyle="bold" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -286,16 +311,20 @@
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cardProfessionals"
                     android:layout_width="0dp"
-                    android:layout_height="100dp"
+                    android:layout_height="wrap_content"
                     android:layout_columnWeight="1"
                     android:layout_margin="4dp"
                     app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp"
+                    app:strokeWidth="0dp"
+                    app:cardBackgroundColor="?attr/colorSurface"
                     android:clickable="true"
                     android:focusable="true">
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:gravity="center"
+                        android:padding="16dp"
                         android:orientation="vertical">
                         <ImageView
                             android:layout_width="32dp"
@@ -305,7 +334,9 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
                             android:text="Profissionais"
+                            android:textColor="?android:attr/textColorPrimary"
                             android:textStyle="bold" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -319,6 +350,9 @@
                 android:layout_marginHorizontal="24dp"
                 android:layout_marginTop="16dp"
                 app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:strokeWidth="0dp"
+                app:cardBackgroundColor="?attr/colorSurface"
                 android:clickable="true"
                 android:focusable="true">
 
@@ -346,14 +380,15 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/health_tools"
+                            android:textColor="?android:attr/textColorPrimary"
                             android:textStyle="bold" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/health_tools_subtitle"
-                            android:textSize="12sp"
-                            android:alpha="0.7" />
+                            android:textColor="?android:attr/textColorSecondary"
+                            android:textSize="12sp" />
                     </LinearLayout>
 
                     <com.google.android.material.button.MaterialButton
@@ -361,6 +396,7 @@
                         style="@style/Widget.Material3.Button.TextButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textColor="?attr/colorPrimary"
                         android:text="@string/open" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -373,6 +409,9 @@
                 android:layout_marginHorizontal="24dp"
                 android:layout_marginTop="16dp"
                 app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:strokeWidth="0dp"
+                app:cardBackgroundColor="?attr/colorSurface"
                 android:clickable="true"
                 android:focusable="true">
 
@@ -386,6 +425,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:progress="75"
+                        app:indicatorColor="?attr/colorPrimary"
                         app:indicatorSize="80dp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -396,6 +436,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="75%"
+                        android:textColor="?android:attr/textColorPrimary"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="@+id/progressWeekly"
                         app:layout_constraintEnd_toEndOf="@+id/progressWeekly"
@@ -407,6 +448,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
                         android:text="@string/see_detailed_progress"
+                        android:textColor="?android:attr/textColorPrimary"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/progressWeekly"

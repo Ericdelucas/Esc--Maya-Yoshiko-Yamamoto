@@ -1,10 +1,23 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+    <!-- Tema Base - Agora como DayNight para permitir a troca -->
     <style name="Theme.SmartSaude" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Main theme colors -->
+        <!-- Cores Primárias (Azul Médico) -->
         <item name="colorPrimary">@color/primary</item>
-        <item name="android:colorBackground">@color/background</item>
-        <item name="android:textColor">@color/text_color</item>
+        <item name="colorPrimaryVariant">@color/primary_variant</item>
+        
+        <!-- Background e Superfície -->
+        <item name="android:windowBackground">@color/app_background</item>
+        <item name="colorSurface">@color/card_background</item>
+        
+        <!-- Texto -->
+        <item name="android:textColor">@color/text_main</item>
+        
+        <!-- Estilo dos Cards Premium -->
+        <item name="materialCardViewStyle">@style/Widget.Material3.CardView.Elevated</item>
+        
+        <!-- Barra de Status Inteligente -->
+        <item name="android:statusBarColor">?android:attr/windowBackground</item>
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 
     <style name="Theme.Testbackend" parent="Theme.SmartSaude" />

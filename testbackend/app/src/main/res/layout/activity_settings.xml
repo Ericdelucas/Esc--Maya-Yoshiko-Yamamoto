@@ -4,13 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="?android:attr/windowBackground">
+    android:background="@color/app_background">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
+        android:background="@color/primary"
         app:title="@string/settings"
         app:titleTextColor="@color/white"
         app:navigationIcon="@android:drawable/ic_menu_revert"
@@ -31,14 +31,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/appearance"
-                android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                android:textColor="@color/text_main"
+                android:textStyle="bold"
+                android:textSize="18sp"
                 android:layout_marginBottom="8dp" />
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
-                app:cardCornerRadius="12dp">
+                app:cardBackgroundColor="@color/card_background"
+                app:cardElevation="2dp"
+                app:cardCornerRadius="12dp"
+                app:strokeWidth="0dp">
 
                 <RadioGroup
                     android:id="@+id/rgTheme"
@@ -50,18 +55,24 @@
                         android:id="@+id/rbLight"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:buttonTint="@color/primary"
+                        android:textColor="@color/text_main"
                         android:text="@string/theme_light" />
 
                     <com.google.android.material.radiobutton.MaterialRadioButton
                         android:id="@+id/rbDark"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:buttonTint="@color/primary"
+                        android:textColor="@color/text_main"
                         android:text="@string/theme_dark" />
 
                     <com.google.android.material.radiobutton.MaterialRadioButton
                         android:id="@+id/rbSystem"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:buttonTint="@color/primary"
+                        android:textColor="@color/text_main"
                         android:text="@string/theme_system" />
                 </RadioGroup>
             </com.google.android.material.card.MaterialCardView>
@@ -71,14 +82,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/language"
-                android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                android:textColor="@color/text_main"
+                android:textStyle="bold"
+                android:textSize="18sp"
                 android:layout_marginBottom="8dp" />
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
-                app:cardCornerRadius="12dp">
+                app:cardBackgroundColor="@color/card_background"
+                app:cardElevation="2dp"
+                app:cardCornerRadius="12dp"
+                app:strokeWidth="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -92,6 +108,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Português 🇧🇷"
+                        android:textColor="@color/text_main"
                         android:gravity="start|center_vertical" />
 
                     <com.google.android.material.button.MaterialButton
@@ -100,6 +117,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="English 🇺🇸"
+                        android:textColor="@color/text_main"
                         android:gravity="start|center_vertical" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -109,13 +127,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/about"
-                android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                android:textColor="@color/text_main"
+                android:textStyle="bold"
+                android:textSize="18sp"
                 android:layout_marginBottom="8dp" />
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="12dp">
+                app:cardBackgroundColor="@color/card_background"
+                app:cardElevation="2dp"
+                app:cardCornerRadius="12dp"
+                app:strokeWidth="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -127,6 +150,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/app_title"
+                        android:textColor="@color/primary"
                         android:textStyle="bold" />
 
                     <TextView
@@ -134,7 +158,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Version 1.0.0"
-                        android:alpha="0.7" />
+                        android:textColor="@color/text_secondary" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 

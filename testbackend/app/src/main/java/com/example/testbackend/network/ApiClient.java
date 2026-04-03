@@ -13,10 +13,10 @@ public class ApiClient {
     private static Retrofit authRetrofit = null;
     private static Retrofit aiRetrofit = null;
     private static Retrofit exerciseRetrofit = null;
+    private static Retrofit healthRetrofit = null;
 
     private static OkHttpClient getOkHttpClient() {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        // NÍVEL BODY para ver o JSON completo no Logcat
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         
         return new OkHttpClient.Builder()
@@ -37,6 +37,17 @@ public class ApiClient {
                     .build();
         }
         return authRetrofit;
+    }
+
+    public static Retrofit getHealthClient() {
+        if (healthRetrofit == null) {
+            healthRetrofit = new Retrofit.Builder()
+                    .baseUrl(Constants.HEALTH_BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .client(getOkHttpClient())
+                    .build();
+        }
+        return healthRetrofit;
     }
 
     public static Retrofit getAiClient() {
