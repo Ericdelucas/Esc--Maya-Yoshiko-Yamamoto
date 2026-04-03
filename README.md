@@ -20,24 +20,26 @@ Vide tutoriais do PI.
 
 ## Descrição
 
-<div style="display: flex; justify-content: center; gap: 20px; text-align: center;">
+<table style="width: 100%; text-align: center;">
+  <tr>
+    <td align="center" valign="top">
+      <a href="https://ibb.co/bgxV7RGn"><img src="https://i.ibb.co/KjYgmz8H/337-Sem-T-tulo-20260403154319.png" alt="Tela de login" border="0"></a>   
+      </a>
+      <p><b>Tela de Login</b></p>
+    </td>
+    <td align="center" valign="top">
+      <a href="https://ibb.co/B2vjs9M8"><img src="https://i.ibb.co/5hCvcPHq/337-Sem-T-tulo-20260403154311.png" alt="337-Sem-T-tulo-20260403154311" border="0"></a>
+      </a>
+      <p><b>Tela Principal (Home)</b></p>
+    </td>
+    <td align="center" valign="top">
+      <a href="https://ibb.co/DgPqHdGz"><img src="https://i.ibb.co/rfKWR9bF/337-Sem-T-tulo-20260403154305.png" alt="337-Sem-T-tulo-20260403154305" border="0"></a>
+      </a>
+      <p><b>Tela de Meu Progresso</b></p>
+    </td>
+  </tr>
+</table>
 
-  <div style="width: 30px;">
-    <a href="https://ibb.co/bgxV7RGn"><img src="https://i.ibb.co/KjYgmz8H/337-Sem-T-tulo-20260403154319.png" alt="Tela de login" border="0"></a>
-    <p><b>Tela de Login</b></p>
-  </div>
-
-  <div style="width: 30px;">
-    <a href="https://ibb.co/B2vjs9M8"><img src="https://i.ibb.co/5hCvcPHq/337-Sem-T-tulo-20260403154311.png" alt="Tela de Home" border="0"></a>
-    <p><b>Tela Principal (Home)</b></p>
-  </div>
-
-  <div style="width: 30px;">
-    <a href="https://ibb.co/DgPqHdGz"><img src="https://i.ibb.co/rfKWR9bF/337-Sem-T-tulo-20260403154305.png" alt="337-Sem-T-tulo-20260403154305" border="0"></a>
-    <p><b>Tela de Meu Progresso</b></p>
-  </div>
-</div>
-<br>
 
 
 <p> A SmartSaude é uma plataforma desenvolvida para auxiliar no acompanhamento de tratamentos fisioterapêuticos, unindo um aplicativo mobile a um sistema backend responsável por gerenciar dados, usuários e funcionalidades. A proposta do projeto é facilitar o acesso do paciente aos exercícios e permitir o registro contínuo do seu progresso, tornando o processo mais organizado e eficiente.
