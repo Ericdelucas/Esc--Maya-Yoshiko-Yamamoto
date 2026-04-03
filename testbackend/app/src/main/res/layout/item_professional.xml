@@ -4,30 +4,31 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="12dp"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="2dp"
-    app:cardBackgroundColor="#161622">
+    app:cardCornerRadius="20dp"
+    app:cardElevation="4dp"
+    app:cardBackgroundColor="@color/primary">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:padding="16dp">
+        android:padding="18dp">
 
         <com.google.android.material.card.MaterialCardView
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            app:cardCornerRadius="30dp"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            app:cardCornerRadius="32dp"
             app:cardElevation="0dp"
-            app:cardBackgroundColor="#2A2A3A">
+            app:cardBackgroundColor="#4DFFFFFF">
             <ImageView
                 android:id="@+id/img_professional"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
+                android:padding="12dp"
                 android:src="@android:drawable/ic_menu_gallery"
-                app:tint="#C9B6F2" />
+                app:tint="@color/white" />
         </com.google.android.material.card.MaterialCardView>
 
         <LinearLayout
@@ -42,7 +43,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Nome do Profissional"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/white"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -52,7 +53,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:text="Fisioterapeuta"
-                android:textColor="#C9B6F2"
+                android:textColor="#E0F7FA"
                 android:textSize="14sp" />
 
             <TextView
@@ -61,19 +62,20 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="● Disponível"
-                android:textColor="#4CAF50"
+                android:textColor="#CCFFCC"
                 android:textSize="12sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_contact_prof"
-            style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            style="@style/Widget.Material3.Button.IconButton.Filled"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
             app:icon="@android:drawable/stat_notify_chat"
-            app:iconTint="#BBA0FF"
-            app:backgroundTint="#2A2A3A" />
+            app:iconTint="@color/primary"
+            app:backgroundTint="@color/white"
+            app:cornerRadius="16dp" />
 
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

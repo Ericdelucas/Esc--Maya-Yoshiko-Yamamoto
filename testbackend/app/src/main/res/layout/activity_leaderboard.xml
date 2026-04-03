@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0B0B12">
+    android:background="?android:attr/windowBackground">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        app:elevation="0dp">
+        android:background="?attr/colorPrimary"
+        app:elevation="4dp">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
@@ -34,7 +34,9 @@
             android:layout_margin="20dp"
             app:cardCornerRadius="20dp"
             app:cardElevation="4dp"
-            app:cardBackgroundColor="#161622">
+            app:cardBackgroundColor="?attr/colorSurface"
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/border_soft">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -47,7 +49,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="#4"
-                    android:textColor="#BBA0FF"
+                    android:textColor="@color/primary"
                     android:textSize="32sp"
                     android:textStyle="bold" />
 
@@ -61,13 +63,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Sua Posição"
-                        android:textColor="#C9B6F2"
+                        android:textColor="@color/text_secondary"
                         android:textSize="14sp" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="860 Pontos"
-                        android:textColor="#FFFFFF"
+                        android:textColor="@color/text_main"
                         android:textSize="16sp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -76,7 +78,7 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:src="@android:drawable/btn_star_big_on"
-                    app:tint="#BBA0FF" />
+                    app:tint="@color/primary" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
