@@ -29,9 +29,10 @@
 
         <activity android:name=".RegisterActivity" android:exported="false" />
         <activity android:name=".MainActivity" android:exported="false" />
-        
-        <!-- 🔥 ADICIONADO: Registro da tela do profissional para evitar Crash -->
         <activity android:name=".ProfessionalMainActivity" android:exported="false" />
+        
+        <!-- 🔥 CORREÇÃO: Registro da lista de pacientes para evitar Crash ao clicar no card -->
+        <activity android:name=".PatientsListActivity" android:exported="false" />
 
         <activity android:name=".SettingsActivity" android:exported="false" />
         <activity android:name=".HealthHubActivity" android:exported="false" />

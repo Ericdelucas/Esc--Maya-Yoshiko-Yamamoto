@@ -102,10 +102,14 @@ public class ProfessionalMainActivity extends AppCompatActivity {
             btnSettings.setOnClickListener(v -> startActivity(new Intent(this, SettingsActivity.class)));
         }
         
-        // Clicks dos Cards de Gestão
+        // 🔥 CORREÇÃO: Clicar em "Meus Pacientes" deve levar para a lista de pacientes
         if (cardPatients != null) {
-            cardPatients.setOnClickListener(v -> startActivity(new Intent(this, ProfessionalsActivity.class)));
+            cardPatients.setOnClickListener(v -> {
+                Log.d(TAG, "Navegando para PatientsListActivity");
+                startActivity(new Intent(this, PatientsListActivity.class));
+            });
         }
+        
         if (cardAddPatient != null) {
             cardAddPatient.setOnClickListener(v -> Toast.makeText(this, "Funcionalidade: Novo Paciente (Em breve)", Toast.LENGTH_SHORT).show());
         }
