@@ -17,9 +17,7 @@ import com.example.testbackend.models.LoginResponse;
 import com.example.testbackend.network.ApiClient;
 import com.example.testbackend.network.ApiErrorHandler;
 import com.example.testbackend.network.AuthApi;
-import com.example.testbackend.utils.Constants;
 import com.example.testbackend.utils.TokenManager;
-import com.google.gson.Gson;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -27,7 +25,7 @@ import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private static final String TAG = "API_DEBUG";
+    private static final String TAG = "LOGIN_DEBUG";
     private EditText etEmail, etPassword;
     private Button btnLogin, btnGoToRegister;
     private ProgressBar loadingIndicator;
@@ -36,28 +34,41 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        
+        try {
+            setContentView(R.layout.activity_login);
+            tokenManager = new TokenManager(this);
 
-        tokenManager = new TokenManager(this);
+            etEmail = findViewById(R.id.etEmail);
+            etPassword = findViewById(R.id.etPassword);
+            btnLogin = findViewById(R.id.btnLogin);
+            btnGoToRegister = findViewById(R.id.btnGoToRegister);
+            loadingIndicator = findViewById(R.id.loadingIndicator);
 
-        etEmail = findViewById(R.id.etEmail);
-        etPassword = findViewById(R.id.etPassword);
-        btnLogin = findViewById(R.id.btnLogin);
-        btnGoToRegister = findViewById(R.id.btnGoToRegister);
-        loadingIndicator = findViewById(R.id.loadingIndicator);
-
-        btnLogin.setOnClickListener(v -> {
-            if (validateLoginForm()) {
-                performLogin();
+            if (btnLogin == null) {
+                Log.e(TAG, "Erro: Componentes do layout não encontrados. Verifique activity_login.xml");
+                return;
             }
-        });
 
-        btnGoToRegister.setOnClickListener(v -> {
-            startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
-        });
+            btnLogin.setOnClickListener(v -> {
+                if (validateLoginForm()) {
+                    performLogin();
+                }
+            });
+
+            btnGoToRegister.setOnClickListener(v -> {
+                startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
+            });
+            
+        } catch (Exception e) {
+            Log.e(TAG, "Erro fatal no onCreate da LoginActivity", e);
+            Toast.makeText(this, "Erro ao iniciar aplicativo", Toast.LENGTH_LONG).show();
+        }
     }
 
     private boolean validateLoginForm() {
+        if (etEmail == null || etPassword == null) return false;
+        
         String email = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
 
@@ -67,18 +78,12 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            etEmail.setError("E-mail inválido. Use o formato: usuario@exemplo.com");
-            Toast.makeText(this, "Por favor, insira um e-mail válido.", Toast.LENGTH_SHORT).show();
+            etEmail.setError("E-mail inválido");
             return false;
         }
 
         if (password.isEmpty()) {
             etPassword.setError("Senha é obrigatória");
-            return false;
-        }
-
-        if (password.length() < 6) {
-            etPassword.setError("A senha deve ter pelo menos 6 caracteres");
             return false;
         }
 
@@ -104,36 +109,45 @@ public class LoginActivity extends AppCompatActivity {
                     
                     if (token != null && !token.isEmpty()) {
                         tokenManager.saveSession(token, role, email);
-                        Toast.makeText(LoginActivity.this, "Login realizado!", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                        finish();
+                        navigateToMain();
                     } else {
                         Toast.makeText(LoginActivity.this, "Erro: Token não recebido", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    if (response.code() == 401) {
-                        Toast.makeText(LoginActivity.this, "E-mail ou senha incorretos", Toast.LENGTH_LONG).show();
-                    } else if (response.code() == 422) {
-                        Toast.makeText(LoginActivity.this, "Formato de e-mail inválido pelo servidor", Toast.LENGTH_LONG).show();
-                    } else {
-                        String errorMsg = ApiErrorHandler.getHttpErrorMessage(response.code());
-                        Toast.makeText(LoginActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
-                    }
+                    Toast.makeText(LoginActivity.this, "Credenciais inválidas", Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onFailure(Call<LoginResponse> call, Throwable t) {
                 setLoading(false);
-                Toast.makeText(LoginActivity.this, ApiErrorHandler.getErrorMessage(t), Toast.LENGTH_LONG).show();
+                Log.e(TAG, "Falha na conexão", t);
+                Toast.makeText(LoginActivity.this, "Erro de rede: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    private void navigateToMain() {
+        String userRole = tokenManager.getUserRole();
+        Class<?> targetActivity;
+        
+        // Lógica de navegação segura
+        if (userRole != null && (userRole.equalsIgnoreCase("professional") || userRole.equalsIgnoreCase("doctor") || userRole.equalsIgnoreCase("admin"))) {
+            targetActivity = ProfessionalMainActivity.class;
+        } else {
+            targetActivity = MainActivity.class;
+        }
+        
+        Intent intent = new Intent(this, targetActivity);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 
     private void setLoading(boolean isLoading) {
         if (loadingIndicator != null) {
             loadingIndicator.setVisibility(isLoading ? View.VISIBLE : View.GONE);
         }
-        btnLogin.setEnabled(!isLoading);
+        if (btnLogin != null) btnLogin.setEnabled(!isLoading);
     }
 }

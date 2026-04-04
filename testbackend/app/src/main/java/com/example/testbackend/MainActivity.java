@@ -29,7 +29,7 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = "MAIN_DEBUG";
+    private static final String TAG = "PATIENT_DEBUG";
     private TextView tvUserInitial, tvGreeting;
     private ImageView ivUserPhoto;
     private MaterialCardView cardAccountAvatar, cardProfessionalExams;
@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // FORÇAR TEMA SALVO OU MODO CLARO ANTES DE TUDO
+        // FORÇAR TEMA SALVO
         SharedPreferences prefs = getSharedPreferences("settings", MODE_PRIVATE);
         int themeMode = prefs.getInt("theme_mode", AppCompatDelegate.MODE_NIGHT_NO);
         AppCompatDelegate.setDefaultNightMode(themeMode);
@@ -53,11 +53,33 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
+        // 🔥 ADICIONAR: Verificar se usuário é paciente
+        if (!isPatientUser()) {
+            redirectToCorrectActivity();
+            return;
+        }
+
         setContentView(R.layout.activity_main);
         
         initViews();
         loadUserProfile();
         setupNavigation();
+    }
+
+    private boolean isPatientUser() {
+        String role = tokenManager.getUserRole();
+        // Se não for profissional, doctor ou admin, consideramos paciente
+        boolean isPatient = role == null || !(role.equalsIgnoreCase("professional") || role.equalsIgnoreCase("doctor") || role.equalsIgnoreCase("admin"));
+        Log.d(TAG, "Verificando perfil: " + role + " -> isPatient: " + isPatient);
+        return isPatient;
+    }
+
+    private void redirectToCorrectActivity() {
+        Log.d(TAG, "Usuário não é paciente, redirecionando para ProfessionalMainActivity");
+        Intent intent = new Intent(this, ProfessionalMainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 
     private void initViews() {
@@ -143,23 +165,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             ivUserPhoto.setVisibility(View.GONE);
             tvUserInitial.setVisibility(View.VISIBLE);
-        }
-
-        setupProfessionalFeatures(profile.getRole());
-    }
-
-    private void setupProfessionalFeatures(String role) {
-        if (role != null && (role.equalsIgnoreCase("Professional") || role.equalsIgnoreCase("Doctor") || role.equalsIgnoreCase("admin"))) {
-            if (cardProfessionalExams != null) {
-                cardProfessionalExams.setVisibility(View.VISIBLE);
-                cardProfessionalExams.setOnClickListener(v -> {
-                    Toast.makeText(this, "Abrindo Gestão de Exames...", Toast.LENGTH_SHORT).show();
-                });
-            }
-        } else {
-            if (cardProfessionalExams != null) {
-                cardProfessionalExams.setVisibility(View.GONE);
-            }
         }
     }
 
