@@ -20,6 +20,12 @@ class UserOut(BaseModel):
 
 class TokenOut(BaseModel):
     token: str
+    user_role: str = None
+    full_name: str | None = None
+    email: str = None
+    # 🔥 NOVO: Backend diz para qual tela ir
+    target_activity: str = None
+    is_professional: bool = False
     type: str = "Bearer"
 
 

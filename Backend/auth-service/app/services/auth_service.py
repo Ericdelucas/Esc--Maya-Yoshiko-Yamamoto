@@ -29,7 +29,7 @@ class AuthService:
             raise Conflict("email already exists")
         return user.id
 
-    def login(self, email: str, password: str) -> str:
+    def login(self, email: str, password: str) -> dict:
         if not email or not password:
             raise BadRequest("email and password required")
 
@@ -37,7 +37,27 @@ class AuthService:
         if not user or not self.hasher.verify_password(password, user.password_hash):
             raise Unauthorized("invalid credentials")
 
-        return self.jwt.sign(user_id=user.id, email=user.email, role=user.role)
+        token = self.jwt.sign(user_id=user.id, email=user.email, role=user.role)
+        
+        # 🔥 Backend decide para qual tela ir
+        target_activity = self.determine_target_activity(user.role)
+        is_professional = user.role in ["professional", "doctor", "admin"]
+        
+        return {
+            "token": token,
+            "user_role": user.role,
+            "full_name": user.full_name,
+            "email": user.email,
+            "target_activity": target_activity,
+            "is_professional": is_professional
+        }
+    
+    def determine_target_activity(self, role: str) -> str:
+        """Backend decide qual activity abrir"""
+        if role in ["professional", "doctor", "admin"]:
+            return "ProfessionalMainActivity"
+        else:
+            return "MainActivity"
 
     def verify(self, token: str) -> dict:
         if not token:

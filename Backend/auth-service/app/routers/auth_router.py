@@ -25,8 +25,8 @@ def register(payload: UserCreateIn, svc: AuthService = Depends(get_auth_service)
 
 @router.post("/login", response_model=TokenOut)
 def login(payload: UserLoginIn, svc: AuthService = Depends(get_auth_service)) -> TokenOut:
-    token = svc.login(email=payload.email, password=payload.password)
-    return TokenOut(token=token)
+    login_data = svc.login(email=payload.email, password=payload.password)
+    return TokenOut(**login_data)
 
 
 @router.get("/verify")
