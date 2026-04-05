@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?android:attr/windowBackground">
@@ -255,29 +256,17 @@
                     android:focusable="true"
                     android:foreground="?android:attr/selectableItemBackground">
 
-                    <LinearLayout
+                    <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="16dp">
-
-                        <ImageView
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:src="@android:drawable/ic_menu_myplaces"
-                            app:tint="?attr/colorPrimary"
-                            android:contentDescription="Meus Pacientes" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text="Meus Pacientes"
-                            android:textAlignment="center"
-                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                            android:textColor="?attr/colorOnSurface" />
-                    </LinearLayout>
+                        android:drawableTop="@android:drawable/ic_menu_myplaces"
+                        android:drawableTint="?attr/colorPrimary"
+                        android:padding="16dp"
+                        android:text="Meus Pacientes"
+                        android:textAlignment="center"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                        android:textColor="?attr/colorOnSurface" />
                 </com.google.android.material.card.MaterialCardView>
 
                 <!-- Card Adicionar Paciente -->
@@ -295,29 +284,17 @@
                     android:focusable="true"
                     android:foreground="?android:attr/selectableItemBackground">
 
-                    <LinearLayout
+                    <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="16dp">
-
-                        <ImageView
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:src="@android:drawable/ic_menu_add"
-                            app:tint="?attr/colorSecondary"
-                            android:contentDescription="Novo Paciente" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text="Novo Paciente"
-                            android:textAlignment="center"
-                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                            android:textColor="?attr/colorOnSurface" />
-                    </LinearLayout>
+                        android:drawableTop="@android:drawable/ic_menu_add"
+                        android:drawableTint="?attr/colorSecondary"
+                        android:padding="16dp"
+                        android:text="Novo Paciente"
+                        android:textAlignment="center"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                        android:textColor="?attr/colorOnSurface" />
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
 
@@ -355,29 +332,17 @@
                     android:focusable="true"
                     android:foreground="?android:attr/selectableItemBackground">
 
-                    <LinearLayout
+                    <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="16dp">
-
-                        <ImageView
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:src="@android:drawable/ic_menu_recent_history"
-                            app:tint="?attr/colorTertiary"
-                            android:contentDescription="Exercícios" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text="Exercícios"
-                            android:textAlignment="center"
-                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                            android:textColor="?attr/colorOnSurface" />
-                    </LinearLayout>
+                        android:drawableTop="@android:drawable/ic_menu_recent_history"
+                        android:drawableTint="?attr/colorTertiary"
+                        android:padding="16dp"
+                        android:text="Exercícios"
+                        android:textAlignment="center"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                        android:textColor="?attr/colorOnSurface" />
                 </com.google.android.material.card.MaterialCardView>
 
                 <!-- Card Relatórios -->
@@ -395,29 +360,17 @@
                     android:focusable="true"
                     android:foreground="?android:attr/selectableItemBackground">
 
-                    <LinearLayout
+                    <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:orientation="vertical"
-                        android:padding="16dp">
-
-                        <ImageView
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:src="@android:drawable/ic_menu_sort_by_size"
-                            app:tint="?attr/colorPrimary"
-                            android:contentDescription="Relatórios" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text="Relatórios"
-                            android:textAlignment="center"
-                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                            android:textColor="?attr/colorOnSurface" />
-                    </LinearLayout>
+                        android:drawableTop="@android:drawable/ic_menu_sort_by_size"
+                        android:drawableTint="?attr/colorPrimary"
+                        android:padding="16dp"
+                        android:text="Relatórios"
+                        android:textAlignment="center"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                        android:textColor="?attr/colorOnSurface" />
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
 

@@ -37,9 +37,10 @@ public class ProfessionalsActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         List<Professional> professionals = new ArrayList<>();
-        professionals.add(new Professional("Dr. Ricardo Oliveira", "Fisioterapeuta", "● Disponível", ""));
-        professionals.add(new Professional("Dra. Ana Beatriz", "Fisioterapeuta Esportiva", "● Disponível", ""));
-        professionals.add(new Professional("Dr. Marcos Vinícius", "Ortopedista", "● Em atendimento", ""));
+        // 🔥 CORREÇÃO: Adicionando IDs aos profissionais (Mock)
+        professionals.add(new Professional(1, "Dr. Ricardo Oliveira", "Fisioterapeuta", "● Disponível", ""));
+        professionals.add(new Professional(2, "Dra. Ana Beatriz", "Fisioterapeuta Esportiva", "● Disponível", ""));
+        professionals.add(new Professional(3, "Dr. Marcos Vinícius", "Ortopedista", "● Em atendimento", ""));
 
         ProfessionalAdapter adapter = new ProfessionalAdapter(professionals);
         recyclerView.setAdapter(adapter);

@@ -23,10 +23,12 @@ import retrofit2.Response;
 
 public class RegisterActivity extends AppCompatActivity {
 
+    private static final String TAG = "REGISTER_DEBUG";
     private EditText etName, etEmail, etPassword, etConfirmPassword;
     private Spinner spinnerRole;
     private CheckBox cbLgpd;
     private Button btnRegister, btnBack;
+    private boolean isProcessing = false; // ✅ Trava de estado para evitar loop
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +60,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void setupListeners() {
         btnRegister.setOnClickListener(v -> {
-            if (validateForm()) {
+            if (!isProcessing && validateForm()) {
                 performRegister();
             }
         });
@@ -82,7 +84,6 @@ public class RegisterActivity extends AppCompatActivity {
             return false;
         }
 
-        // ✅ Validação crucial: Mínimo 6 caracteres (Exigência do Backend)
         if (password.length() < 6) {
             etPassword.setError("A senha deve ter pelo menos 6 caracteres");
             Toast.makeText(this, "Senha muito curta! Mínimo 6 caracteres.", Toast.LENGTH_SHORT).show();
@@ -103,6 +104,10 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void performRegister() {
+        // ✅ Prevenção dupla contra registro em loop
+        if (isProcessing) return;
+        isProcessing = true;
+
         String name = etName.getText().toString().trim();
         String email = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
@@ -114,32 +119,43 @@ public class RegisterActivity extends AppCompatActivity {
         AuthApi authApi = ApiClient.getAuthClient().create(AuthApi.class);
         RegisterRequest registerRequest = new RegisterRequest(name, email, password, role);
 
+        Log.d(TAG, "Iniciando tentativa de registro para: " + email);
+
         authApi.register(registerRequest).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                isProcessing = false; // Libera a trava
                 btnRegister.setEnabled(true);
                 btnRegister.setText("Criar conta");
                 
                 if (response.isSuccessful()) {
+                    Log.i(TAG, "Registro bem-sucedido: " + email);
                     Toast.makeText(RegisterActivity.this, "Cadastro realizado! Faça login.", Toast.LENGTH_LONG).show();
                     finish();
                 } else {
-                    Log.e("RegisterActivity", "Erro: " + response.code());
-                    if (response.code() == 422) {
-                        Toast.makeText(RegisterActivity.this, "Dados inválidos. Verifique a senha (mín. 6 caracteres).", Toast.LENGTH_LONG).show();
-                    } else {
-                        Toast.makeText(RegisterActivity.this, "Erro no cadastro: " + response.code(), Toast.LENGTH_SHORT).show();
-                    }
+                    Log.e(TAG, "Erro no registro: HTTP " + response.code());
+                    handleRegisterError(response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
+                isProcessing = false; // Libera a trava
                 btnRegister.setEnabled(true);
                 btnRegister.setText("Criar conta");
-                Log.e("RegisterActivity", "Erro de rede", t);
+                Log.e(TAG, "Falha de rede no registro", t);
                 Toast.makeText(RegisterActivity.this, "Erro de rede: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    private void handleRegisterError(int errorCode) {
+        if (errorCode == 409) {
+            Toast.makeText(this, "E-mail já cadastrado! Use outro e-mail ou faça login.", Toast.LENGTH_LONG).show();
+        } else if (errorCode == 422) {
+            Toast.makeText(this, "Dados inválidos. Verifique a senha (mín. 6 caracteres).", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, "Erro no servidor (" + errorCode + "). Tente novamente.", Toast.LENGTH_SHORT).show();
+        }
     }
 }

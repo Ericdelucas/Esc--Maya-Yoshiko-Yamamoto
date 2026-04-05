@@ -1,11 +1,13 @@
 package com.example.testbackend.adapters;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import com.example.testbackend.ChatActivity;
 import com.example.testbackend.R;
 import com.example.testbackend.models.Professional;
 import java.util.List;
@@ -31,6 +33,14 @@ public class ProfessionalAdapter extends RecyclerView.Adapter<ProfessionalAdapte
         holder.name.setText(professional.getName());
         holder.specialty.setText(professional.getSpecialty());
         holder.status.setText(professional.getStatus());
+
+        // 🔥 INTEGRAÇÃO COM O CHAT: Clique para abrir conversa
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(v.getContext(), ChatActivity.class);
+            intent.putExtra("RECEIVER_ID", professional.getId());
+            intent.putExtra("RECEIVER_NAME", professional.getName());
+            v.getContext().startActivity(intent);
+        });
     }
 
     @Override

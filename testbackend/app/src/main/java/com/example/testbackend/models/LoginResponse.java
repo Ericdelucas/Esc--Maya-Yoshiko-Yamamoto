@@ -15,6 +15,19 @@ public class LoginResponse {
     @SerializedName("role")
     private String role;
 
+    @SerializedName("full_name")
+    private String fullName;
+
+    @SerializedName("email")
+    private String email;
+
+    // 🔥 NOVOS CAMPOS - Backend controla o direcionamento
+    @SerializedName("target_activity")
+    private String targetActivity;
+
+    @SerializedName("is_professional")
+    private boolean isProfessional;
+
     public String getToken() {
         if (token != null && !token.isEmpty()) return token;
         return accessToken;
@@ -23,6 +36,23 @@ public class LoginResponse {
     public String getUserRole() {
         if (userRole != null && !userRole.isEmpty()) return userRole;
         if (role != null && !role.isEmpty()) return role;
-        return "Patient"; // Default seguro
+        return "patient"; // Default consistente
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    // 🔥 NOVOS GETTERS
+    public String getTargetActivity() {
+        return targetActivity;
+    }
+
+    public boolean isProfessional() {
+        return isProfessional;
     }
 }
