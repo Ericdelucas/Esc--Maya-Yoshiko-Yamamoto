@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F8F9FA"
+    android:padding="16dp">
+
+    <!-- Header do Calendário -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="16dp">
+
+        <ImageButton
+            android:id="@+id/btnPrevMonth"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@android:drawable/ic_media_previous"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:tint="#2196F3" />
+
+        <TextView
+            android:id="@+id/tvMonthYear"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Janeiro 2024"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:gravity="center" />
+
+        <ImageButton
+            android:id="@+id/btnNextMonth"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@android:drawable/ic_media_next"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:tint="#2196F3" />
+
+    </LinearLayout>
+
+    <!-- Dias da Semana Header -->
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="7"
+        android:layout_marginBottom="8dp">
+        <TextView android:text="Dom" android:layout_columnWeight="1" android:gravity="center" android:textStyle="bold" />
+        <TextView android:text="Seg" android:layout_columnWeight="1" android:gravity="center" android:textStyle="bold" />
+        <TextView android:text="Ter" android:layout_columnWeight="1" android:gravity="center" android:textStyle="bold" />
+        <TextView android:text="Qua" android:layout_columnWeight="1" android:gravity="center" android:textStyle="bold" />
+        <TextView android:text="Qui" android:layout_columnWeight="1" android:gravity="center" android:textStyle="bold" />
+        <TextView android:text="Sex" android:layout_columnWeight="1" android:gravity="center" android:textStyle="bold" />
+        <TextView android:text="Sáb" android:layout_columnWeight="1" android:gravity="center" android:textStyle="bold" />
+    </GridLayout>
+
+    <!-- Grid do Calendário -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvCalendar"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <!-- FAB para adicionar agendamento -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAddAppointment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:src="@android:drawable/ic_input_add"
+        app:backgroundTint="#2196F3"
+        app:tint="#FFFFFF"
+        android:contentDescription="Adicionar Agendamento" />
+
+</LinearLayout>
