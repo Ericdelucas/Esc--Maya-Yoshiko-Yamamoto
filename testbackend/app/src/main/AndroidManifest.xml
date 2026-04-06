@@ -16,8 +16,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Testbackend"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true"
+        android:networkSecurityConfig="@xml/network_security_config">
         
+        <!-- 🔥 VOLTANDO A LOGINACTIVITY COMO PRINCIPAL -->
         <activity
             android:name=".LoginActivity"
             android:exported="true">
@@ -27,16 +29,13 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".TestConnectionActivity" android:exported="true" />
         <activity android:name=".RegisterActivity" android:exported="false" />
         <activity android:name=".MainActivity" android:exported="false" />
         <activity android:name=".ProfessionalMainActivity" android:exported="false" />
         <activity android:name=".PatientsListActivity" android:exported="false" />
-        
         <activity android:name=".ChatActivity" android:exported="false" />
-        
-        <!-- 🔥 ADICIONADO: Registro da tela de Calendário -->
         <activity android:name=".CalendarActivity" android:exported="false" />
-
         <activity android:name=".SettingsActivity" android:exported="false" />
         <activity android:name=".HealthHubActivity" android:exported="false" />
         <activity android:name=".ImcCalculatorActivity" android:exported="false" />
