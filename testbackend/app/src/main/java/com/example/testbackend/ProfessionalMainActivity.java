@@ -12,10 +12,17 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.testbackend.models.DashboardStats;
+import com.example.testbackend.network.ApiClient;
+import com.example.testbackend.network.AuthApi;
 import com.example.testbackend.storage.SessionManager;
 import com.example.testbackend.utils.TokenManager;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ProfessionalMainActivity extends AppCompatActivity {
     
@@ -37,7 +44,6 @@ public class ProfessionalMainActivity extends AppCompatActivity {
         tokenManager = new TokenManager(this);
         sessionManager = new SessionManager(this);
         
-        // 🔥 CORREÇÃO: Verificação de segurança flexível
         if (!isProfessionalUser()) {
             redirectToCorrectActivity();
             return;
@@ -48,7 +54,13 @@ public class ProfessionalMainActivity extends AppCompatActivity {
         setupViews();
         setupClickListeners();
         loadUserInfo();
-        loadStatistics();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // 🔥 TAREFA 3: Sempre buscar dados atualizados ao voltar para a tela
+        carregarDadosPainel();
     }
     
     private boolean isProfessionalUser() {
@@ -56,20 +68,12 @@ public class ProfessionalMainActivity extends AppCompatActivity {
         if (role == null) return false;
         
         String normalizedRole = role.trim().toLowerCase();
-        
-        // ✅ ACEITA MÚLTIPLAS VARIAÇÕES DE CARGO PROFISSIONAL
-        boolean isProfessional = normalizedRole.contains("prof") || 
-                                normalizedRole.contains("doc") || 
-                                normalizedRole.contains("admin") ||
-                                normalizedRole.contains("medico") ||
-                                normalizedRole.contains("fisio");
-                                
-        Log.d(TAG, "Verificando perfil: " + role + " -> isProfessional: " + isProfessional);
-        return isProfessional;
+        return normalizedRole.contains("prof") || 
+               normalizedRole.contains("doc") || 
+               normalizedRole.contains("admin");
     }
     
     private void redirectToCorrectActivity() {
-        Log.d(TAG, "Usuário não é profissional, redirecionando para MainActivity");
         Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
@@ -96,6 +100,38 @@ public class ProfessionalMainActivity extends AppCompatActivity {
         btnProfile = findViewById(R.id.btnProfile);
         btnCalendar = findViewById(R.id.btnCalendar);
         fabLogout = findViewById(R.id.fabLogout);
+    }
+
+    private void carregarDadosPainel() {
+        // 🔥 TAREFA 2: Substituir dados ilusórios por chamada real à API
+        Log.d(TAG, "Carregando estatísticas reais da API...");
+        
+        AuthApi authApi = ApiClient.getAuthClient().create(AuthApi.class);
+        authApi.getDashboardStats(tokenManager.getAuthToken()).enqueue(new Callback<DashboardStats>() {
+            @Override
+            public void onResponse(Call<DashboardStats> call, Response<DashboardStats> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    DashboardStats stats = response.body();
+                    
+                    // ✅ Atualizando com dados reais do banco
+                    if (tvTotalPacientes != null) tvTotalPacientes.setText(String.valueOf(stats.getTotalPatients()));
+                    if (tvConsultasHoje != null) tvConsultasHoje.setText(String.valueOf(stats.getAppointmentsToday()));
+                    if (tvExerciciosAtivos != null) tvExerciciosAtivos.setText(String.valueOf(stats.getActiveExercises()));
+                    
+                    Log.d(TAG, "Estatísticas atualizadas: " + stats.getTotalPatients() + " pacientes.");
+                } else {
+                    Log.e(TAG, "Erro ao buscar estatísticas: " + response.code());
+                    // Fallback para zero se der erro, nunca usar dados mock
+                    if (tvTotalPacientes != null) tvTotalPacientes.setText("0");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<DashboardStats> call, Throwable t) {
+                Log.e(TAG, "Falha na conexão ao buscar estatísticas", t);
+                if (tvTotalPacientes != null) tvTotalPacientes.setText("-");
+            }
+        });
     }
     
     private void setupClickListeners() {
@@ -132,12 +168,6 @@ public class ProfessionalMainActivity extends AppCompatActivity {
                 tvUserInitial.setText(name.substring(0, 1).toUpperCase());
             }
         }
-    }
-
-    private void loadStatistics() {
-        if (tvTotalPacientes != null) tvTotalPacientes.setText("12");
-        if (tvConsultasHoje != null) tvConsultasHoje.setText("4");
-        if (tvExerciciosAtivos != null) tvExerciciosAtivos.setText("9");
     }
     
     private void logout() {

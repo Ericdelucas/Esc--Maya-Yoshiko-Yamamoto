@@ -1,6 +1,7 @@
 package com.example.testbackend.network;
 
 import com.example.testbackend.models.ChangePasswordRequest;
+import com.example.testbackend.models.DashboardStats;
 import com.example.testbackend.models.FileUploadResponse;
 import com.example.testbackend.models.LoginRequest;
 import com.example.testbackend.models.LoginResponse;
@@ -40,4 +41,8 @@ public interface AuthApi {
         @Header("Authorization") String token,
         @Part MultipartBody.Part file
     );
+
+    // 🔥 NOVO: Endpoint para estatísticas do dashboard do profissional
+    @GET("professional/dashboard-stats")
+    Call<DashboardStats> getDashboardStats(@Header("Authorization") String token);
 }
