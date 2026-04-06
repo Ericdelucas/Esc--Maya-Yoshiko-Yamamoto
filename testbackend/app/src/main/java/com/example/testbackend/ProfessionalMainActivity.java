@@ -150,6 +150,12 @@ public class ProfessionalMainActivity extends AppCompatActivity {
         if (btnProfile != null) {
             btnProfile.setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
         }
+        if (btnCalendar != null) {
+            btnCalendar.setOnClickListener(v -> {
+                Intent intent = new Intent(this, CalendarActivity.class);
+                startActivity(intent);
+            });
+        }
         if (fabLogout != null) {
             fabLogout.setOnClickListener(v -> logout());
         }
