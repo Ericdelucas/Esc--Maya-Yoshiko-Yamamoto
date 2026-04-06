@@ -1,0 +1,93 @@
+<resources>
+    <string name="app_name">SmartSaude</string>
+    <string name="login">Entrar</string>
+    <string name="email">Email</string>
+    <string name="password">Senha</string>
+    <string name="settings">Configurações</string>
+    <string name="language">Idioma</string>
+    <string name="register">Cadastrar</string>
+    <string name="logout">Sair</string>
+    <string name="welcome">Bem-vindo</string>
+    
+    <!-- Settings Screen -->
+    <string name="appearance">Aparência</string>
+    <string name="theme_light">Claro</string>
+    <string name="theme_dark">Escuro</string>
+    <string name="theme_system">Seguir Sistema</string>
+    <string name="about">Sobre</string>
+    <string name="app_title">SmartSaúde AI</string>
+    <string name="version_label">Versão %1$s</string>
+
+    <!-- Main Menu -->
+    <string name="next_session">Próxima Sessão</string>
+    <string name="knee_strengthening">Fortalecimento de Joelho</string>
+    <string name="my_exercises">Meus Exercícios</string>
+    <string name="see_detailed_progress">Veja seu progresso detalhado</string>
+    <string name="health_tools">Saúde e Ferramentas</string>
+    <string name="health_tools_subtitle">IMC, Gordura e Histórico</string>
+    <string name="open">ABRIR</string>
+    <string name="ai_chat">Chat IA</string>
+
+    <!-- Health Hub Screen -->
+    <string name="bmi_calculator">Calculadora IMC</string>
+    <string name="body_fat">Gordura Corporal</string>
+    <string name="questionnaire">Questionário</string>
+    <string name="health_history">Histórico Saúde</string>
+
+    <!-- BMI Screen -->
+    <string name="bmi_weight_hint">Peso (kg)</string>
+    <string name="bmi_height_hint">Altura (m)</string>
+    <string name="bmi_calculate_btn">CALCULAR IMC</string>
+    <string name="bmi_result_label">Seu IMC é</string>
+    <string name="bmi_underweight">Abaixo do peso</string>
+    <string name="bmi_normal">Peso normal</string>
+    <string name="bmi_overweight">Sobrepeso</string>
+    <string name="bmi_obese">Obesidade</string>
+    <string name="bmi_reference_title">Tabela de Referência:</string>
+    <string name="bmi_reference_table">• Abaixo de 18.5: Abaixo do peso\n• 18.5 - 24.9: Peso normal\n• 25.0 - 29.9: Sobrepeso\n• 30.0 ou mais: Obesidade</string>
+
+    <!-- Body Fat Screen -->
+    <string name="body_fat_title">Calculadora de Gordura Corporal</string>
+    <string name="age_hint">Idade</string>
+    <string name="gender_label">Sexo</string>
+    <string name="male">Homem</string>
+    <string name="female">Mulher</string>
+    <string name="calculate_bf_btn">CALCULAR GORDURA</string>
+    <string name="bf_result_label">Gordura Corporal Estimada</string>
+    <string name="bf_note_title">Nota sobre o cálculo:</string>
+    <string name="bf_note_text">Este cálculo utiliza a fórmula de Deurenberg, baseada no IMC, idade e sexo. O resultado é uma estimativa e não substitui uma avaliação profissional por bioimpedância ou dobras cutâneas.</string>
+
+    <!-- Questionnaire Screen -->
+    <string name="questionnaire_title">Questionário de Saúde</string>
+    <string name="save_btn">SALVAR RESPOSTAS</string>
+    <string name="q1_text">Você pratica exercícios físicos regularmente?</string>
+    <string name="q2_text">Você possui alguma condição médica crônica?</string>
+    <string name="q3_text">Você fuma ou consome bebidas alcoólicas?</string>
+    <string name="yes">Sim</string>
+    <string name="no">Não</string>
+    <string name="sometimes">Às vezes</string>
+
+    <!-- Health History Screen -->
+    <string name="history_title">Histórico de Saúde</string>
+    <string name="no_history_yet">Nenhum registro encontrado ainda.</string>
+    <string name="personal_info_section">Informações Pessoais</string>
+    <string name="medications_hint">Liste seus medicamentos...</string>
+    <string name="medications_section">Medicamentos em Uso</string>
+    <string name="allergies_section">Alergias</string>
+    <string name="allergies_hint">Informe suas alergias...</string>
+    <string name="observations_section">Observações Médicas</string>
+    <string name="observations_hint">Observações adicionais...</string>
+    <string name="save_history_btn">SALVAR HISTÓRICO</string>
+
+    <!-- Assistant -->
+    <string name="assistant_title">Assistente SmartSaúde</string>
+    <string name="assistant_welcome_message">Olá! Sou o assistente do SmartSaúde. Como posso ajudar você hoje?</string>
+    <string name="assistant_thinking">IA está pensando...</string>
+    <string name="assistant_error">Não consegui processar sua solicitação agora.</string>
+    <string name="assistant_network_error">Falha de rede ao conectar com a IA.</string>
+    <string name="assistant_input_hint">Digite sua dúvida...</string>
+    <string name="assistant_dialog_title">Sugestão do Assistente</string>
+    <string name="assistant_dialog_message">Deseja abrir a tela recomendada agora?</string>
+    <string name="assistant_dialog_positive">Abrir agora</string>
+    <string name="assistant_dialog_negative">Cancelar</string>
+</resources>

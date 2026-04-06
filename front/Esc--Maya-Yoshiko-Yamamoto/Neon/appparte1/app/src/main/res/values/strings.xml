@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">AppParte1</string>
+    <string name="search_hint">Buscar exercícios...</string>
+    <string name="back_button_desc">Voltar</string>
+</resources>
