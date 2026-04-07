@@ -16,7 +16,13 @@ import com.example.testbackend.models.LoginRequest;
 import com.example.testbackend.models.LoginResponse;
 import com.example.testbackend.network.ApiClient;
 import com.example.testbackend.network.AuthApi;
+import com.example.testbackend.utils.Constants;
 import com.example.testbackend.utils.TokenManager;
+
+import java.io.IOException;
+import java.net.ConnectException;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -29,7 +35,7 @@ public class LoginActivity extends AppCompatActivity {
     private Button btnLogin, btnGoToRegister;
     private ProgressBar loadingIndicator;
     private TokenManager tokenManager;
-    private LoginResponse loginResponse; // 🔥 GUARDAR RESPOSTA DO BACKEND
+    private LoginResponse loginResponse;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,45 +98,80 @@ public class LoginActivity extends AppCompatActivity {
         String email = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
 
+        Log.d(TAG, "🔐 Tentando login com: " + email);
+        Log.d(TAG, "🌐 URL Base: " + Constants.AUTH_BASE_URL);
+
         AuthApi authApi = ApiClient.getAuthClient().create(AuthApi.class);
         LoginRequest loginRequest = new LoginRequest(email, password);
-
-        Log.d(TAG, "Iniciando login: " + email);
 
         authApi.login(loginRequest).enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                 setLoading(false);
+                Log.d(TAG, "📡 Resposta Recebida - Code: " + response.code());
+                
                 if (response.isSuccessful() && response.body() != null) {
                     LoginResponse responseBody = response.body();
                     String token = responseBody.getToken();
                     String role = responseBody.getUserRole();
                     
-                    Log.d(TAG, "Sucesso! Token recebido, Role: '" + role + "'");
+                    Log.d(TAG, "✅ Sucesso! Token recebido, Role: '" + role + "'");
 
                     if (token != null && !token.isEmpty()) {
-                        // ✅ Salva a sessão
                         tokenManager.saveSession(token, role, email);
-                        
-                        // 🔥 GUARDAR RESPOSTA DO BACKEND PARA NAVEGAÇÃO
                         loginResponse = responseBody;
-                        
-                        // 🔥 Navegar baseado no que o BACKEND mandou
                         navigateToCorrectActivity();
                     } else {
+                        Log.e(TAG, "❌ Erro: Token veio vazio do backend");
                         Toast.makeText(LoginActivity.this, "Erro: Token vazio", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Log.e(TAG, "Erro HTTP: " + response.code());
-                    Toast.makeText(LoginActivity.this, "Credenciais inválidas", Toast.LENGTH_LONG).show();
+                    // 🔥 ERRO HTTP DETALHADO
+                    String errorBody = "";
+                    try {
+                        if (response.errorBody() != null) {
+                            errorBody = response.errorBody().string();
+                        }
+                    } catch (IOException e) {
+                        Log.e(TAG, "Erro ao ler corpo do erro", e);
+                    }
+                    
+                    Log.e(TAG, "❌ Login falhou - Code: " + response.code());
+                    Log.e(TAG, "❌ Login falhou - Body: " + errorBody);
+                    
+                    String message = "Credenciais inválidas (" + response.code() + ")";
+                    if (response.code() == 401) message = "E-mail ou senha incorretos";
+                    else if (response.code() == 404) message = "Serviço de autenticação não encontrado";
+                    else if (response.code() == 500) message = "Erro interno no servidor";
+                    
+                    Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onFailure(Call<LoginResponse> call, Throwable t) {
                 setLoading(false);
-                Log.e(TAG, "Falha de rede", t);
-                Toast.makeText(LoginActivity.this, "Erro de conexão", Toast.LENGTH_LONG).show();
+                
+                // 🔥 ERRO DE CONEXÃO DETALHADO
+                String errorType = t.getClass().getSimpleName();
+                String errorMessage = t.getMessage();
+                String requestUrl = call.request().url().toString();
+                
+                Log.e(TAG, "❌ FALHA DE REDE DETALHADA:");
+                Log.e(TAG, "   Tipo: " + errorType);
+                Log.e(TAG, "   Mensagem: " + errorMessage);
+                Log.e(TAG, "   URL tentada: " + requestUrl);
+                
+                String userMessage = "Erro de conexão";
+                if (t instanceof SocketTimeoutException) {
+                    userMessage = "O servidor demorou muito para responder (Timeout)";
+                } else if (t instanceof ConnectException) {
+                    userMessage = "Não foi possível conectar ao servidor. Verifique se o Docker está rodando.";
+                } else if (t instanceof UnknownHostException) {
+                    userMessage = "Endereço do servidor não encontrado. Verifique o Constants.HOST.";
+                }
+                
+                Toast.makeText(LoginActivity.this, userMessage + "\n(" + errorType + ")", Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -143,25 +184,16 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        // 🔥 SIMPLIFICADO: Usa o que o backend mandou
         String targetActivity = loginResponse.getTargetActivity();
-        boolean isProfessional = loginResponse.isProfessional();
-        
-        Log.d(TAG, "Backend mandou ir para: " + targetActivity);
-        Log.d(TAG, "É profissional? " + isProfessional);
-        
         Class<?> activityClass;
         
-        // Backend decide, frontend só executa
         if ("ProfessionalMainActivity".equals(targetActivity)) {
             activityClass = ProfessionalMainActivity.class;
-            Log.d(TAG, "🏥 PROFISSIONAL -> ProfessionalMainActivity");
         } else {
             activityClass = MainActivity.class;
-            Log.d(TAG, "👤 PACIENTE -> MainActivity");
         }
         
-        Log.d(TAG, "ABRINDO ACTIVITY: " + activityClass.getSimpleName());
+        Log.d(TAG, "➡️ Navegando para: " + activityClass.getSimpleName());
         
         Intent intent = new Intent(this, activityClass);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

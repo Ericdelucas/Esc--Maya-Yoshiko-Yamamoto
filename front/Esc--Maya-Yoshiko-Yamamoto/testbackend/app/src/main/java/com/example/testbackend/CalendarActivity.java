@@ -87,6 +87,7 @@ public class CalendarActivity extends AppCompatActivity {
 
         Log.d(TAG, "Chamando API para: Month=" + month + ", Year=" + year);
         
+        // ✅ CORREÇÃO: Usar getAuthClient() que aponta para a porta correta 8080
         AppointmentApi api = ApiClient.getAuthClient().create(AppointmentApi.class);
         api.getAppointmentsByMonth(token, year, month).enqueue(new Callback<AppointmentListResponse>() {
             @Override
@@ -99,16 +100,13 @@ public class CalendarActivity extends AppCompatActivity {
                     Log.d(TAG, "✅ " + apiAppointments.size() + " agendamentos carregados do banco");
                 } else {
                     Log.e(TAG, "❌ Erro API (" + response.code() + "): " + response.message());
-                    if (response.code() == 404) {
-                        Log.e(TAG, "Dica: Verifique se o endpoint /appointments/month/" + year + "/" + month + " existe no backend.");
-                    }
                 }
             }
             
             @Override
             public void onFailure(Call<AppointmentListResponse> call, Throwable t) {
                 Log.e(TAG, "❌ Falha na conexão", t);
-                Toast.makeText(CalendarActivity.this, "Erro de conexão", Toast.LENGTH_SHORT).show();
+                Toast.makeText(CalendarActivity.this, "Erro de conexão com o servidor", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -123,7 +121,6 @@ public class CalendarActivity extends AppCompatActivity {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
                 Date date = sdf.parse(dateStr);
                 
-                // Tratar ID que pode vir como Double do Gson
                 int id;
                 Object idObj = apt.get("id");
                 if (idObj instanceof Double) {
@@ -187,6 +184,7 @@ public class CalendarActivity extends AppCompatActivity {
         String token = tokenManager.getAuthToken();
         if (token == null) return;
 
+        // ✅ CORREÇÃO: Usar getAuthClient() para salvar (Porta 8080)
         AppointmentApi api = ApiClient.getAuthClient().create(AppointmentApi.class);
         
         AppointmentCreateRequest request = new AppointmentCreateRequest();
@@ -208,14 +206,14 @@ public class CalendarActivity extends AppCompatActivity {
                     loadAppointmentsForMonth(currentCalendar.get(Calendar.YEAR), currentCalendar.get(Calendar.MONTH) + 1);
                 } else {
                     Log.e(TAG, "❌ Erro ao salvar agendamento: " + response.code());
-                    Toast.makeText(CalendarActivity.this, "Erro ao salvar", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CalendarActivity.this, "Erro ao salvar agendamento", Toast.LENGTH_SHORT).show();
                 }
             }
             
             @Override
             public void onFailure(Call<Map<String, Object>> call, Throwable t) {
                 Log.e(TAG, "❌ Falha ao salvar", t);
-                Toast.makeText(CalendarActivity.this, "Erro de conexão", Toast.LENGTH_SHORT).show();
+                Toast.makeText(CalendarActivity.this, "Erro de conexão ao salvar", Toast.LENGTH_SHORT).show();
             }
         });
     }
