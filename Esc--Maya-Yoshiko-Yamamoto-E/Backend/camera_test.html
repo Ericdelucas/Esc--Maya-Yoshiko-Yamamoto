@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SmartSaúde SUS - Pose WS Test</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 16px; }
+    .row { display: flex; gap: 16px; flex-wrap: wrap; }
+    video, canvas { border: 1px solid #ccc; border-radius: 8px; }
+    .panel { min-width: 320px; max-width: 520px; }
+    .badge { display:inline-block; padding: 6px 10px; border-radius: 999px; font-weight: 700; }
+    .ok { background:#e7f7ee; }
+    .warn { background:#fff6db; }
+    .urgent { background:#ffe1e1; }
+    pre { background:#f6f6f6; padding: 12px; border-radius: 8px; overflow:auto; }
+    input, button { padding: 8px; }
+    button { cursor:pointer; }
+  </style>
+</head>
+<body>
+  <h2>Teste em tempo real (WebSocket) - Flexão</h2>
+
+  <div class="row">
+    <div>
+      <div style="position:relative; width:480px; height:360px;">
+        <video id="video" width="480" height="360" autoplay playsinline muted
+                style="position:absolute; left:0; top:0; border:1px solid #ccc; border-radius:8px;"></video>
+
+        <canvas id="canvas" width="480" height="360"
+                  style="position:absolute; left:0; top:0; z-index:10; pointer-events:none;"></canvas>
+      </div>
+      <div style="margin-top:10px;">
+        <button id="btnStart">Iniciar</button>
+        <button id="btnStop" disabled>Parar</button>
+      </div>
+      <div style="margin-top:10px;">
+        <label>FPS envio: </label>
+        <input id="fps" type="number" value="12" min="3" max="30" style="width:80px;" />
+        <label style="margin-left:10px;">Qualidade JPEG: </label>
+        <input id="q" type="number" value="0.7" min="0.3" max="0.95" step="0.05" style="width:90px;" />
+      </div>
+    </div>
+
+    <div class="panel">
+      <div>WS URL:</div>
+      <input id="wsUrl" style="width:100%;" value="ws://127.0.0.1:8090/ai/pose/ws" />
+      <div style="margin-top:10px;">exercise_id:</div>
+      <input id="exerciseId" style="width:120px;" value="1" />
+      <div style="margin-top:10px;">token (opcional):</div>
+      <input id="token" style="width:100%;" placeholder="Bearer token sem 'Bearer '" />
+
+      <div style="margin-top:10px;">
+        <label><input id="sendAudio" type="checkbox" /> Enviar áudio (TTS)</label>
+      </div>
+
+      <h3>Status</h3>
+      <div>Phase: <b id="phase">-</b></div>
+      <div>Elbow avg: <b id="elbowAvg">-</b></div>
+      <div style="margin-top:8px;">
+        <span class="badge ok" id="badge">-</span>
+      </div>
+      <h3>Instrução</h3>
+      <div style="font-size:18px; font-weight:700;" id="instruction">-</div>
+
+      <h3>Debug (JSON)</h3>
+      <pre id="debug">{}</pre>
+    </div>
+  </div>
+
+<script>
+  const video = document.getElementById("video");
+  const canvas = document.getElementById("canvas");
+  const ctx = canvas.getContext("2d", { willReadFrequently: false });
+
+  const btnStart = document.getElementById("btnStart");
+  const btnStop = document.getElementById("btnStop");
+
+  const wsUrlEl = document.getElementById("wsUrl");
+  const exerciseIdEl = document.getElementById("exerciseId");
+  const tokenEl = document.getElementById("token");
+  const sendAudioEl = document.getElementById("sendAudio");
+
+  const fpsEl = document.getElementById("fps");
+  const qEl = document.getElementById("q");
+
+  const phaseEl = document.getElementById("phase");
+  const elbowAvgEl = document.getElementById("elbowAvg");
+  const badgeEl = document.getElementById("badge");
+  const instructionEl = document.getElementById("instruction");
+  const debugEl = document.getElementById("debug");
+  const statusEl = document.getElementById("phase"); // Usando phase como status temporário
+
+  // Adicionar evento de sincronização quando o vídeo carregar
+  video.onloadedmetadata = syncCanvasToVideo;
+
+  function syncCanvasToVideo() {
+    const w = video.videoWidth || 480;
+    const h = video.videoHeight || 360;
+    if (canvas.width !== w) canvas.width = w;
+    if (canvas.height !== h) canvas.height = h;
+  }
+
+  const LINKS = [
+    ["left_shoulder","left_elbow"], ["left_elbow","left_wrist"],
+    ["right_shoulder","right_elbow"], ["right_elbow","right_wrist"],
+    ["left_shoulder","right_shoulder"],
+    ["left_hip","right_hip"],
+    ["left_hip","left_knee"], ["left_knee","left_ankle"],
+    ["right_hip","right_knee"], ["right_knee","right_ankle"],
+    ["left_shoulder","left_hip"], ["right_shoulder","right_hip"],
+  ];
+
+  const mirror = true; // selfie mode
+
+  function toPx(pt) {
+    let x = pt[0] * canvas.width;
+    const y = pt[1] * canvas.height;
+    if (mirror) x = canvas.width - x;
+    return [x, y];
+  }
+
+  function drawOverlay(data) {
+    syncCanvasToVideo();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const lm = data.landmarks || {};
+    const keys = Object.keys(lm);
+    if (keys.length === 0) return;
+
+    // linhas
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = "#0f0";
+    for (const [a,b] of LINKS) {
+      if (!lm[a] || !lm[b]) continue;
+      const [ax, ay] = toPx(lm[a]);
+      const [bx, by] = toPx(lm[b]);
+      ctx.beginPath();
+      ctx.moveTo(ax, ay);
+      ctx.lineTo(bx, by);
+      ctx.stroke();
+    }
+
+    // pontos
+    ctx.fillStyle = "#f00";
+    for (const k of keys) {
+      const [x,y] = toPx(lm[k]);
+      ctx.beginPath();
+      ctx.arc(x, y, 5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    drawAngles(data);
+    renderStatus(data);
+  }
+
+  function drawAngles(data) {
+    const ctx = canvas.getContext("2d");
+    const lm = data.landmarks || {};
+    const ja = data.joint_angles || {};
+
+    function labelAt(jointKey, xKey, yKey) {
+      if (ja[jointKey] == null) return;
+      const p = lm[xKey] || lm[yKey];
+      if (!p) return;
+      const [x,y] = toPx(p);
+      ctx.font = "16px Arial";
+      ctx.fillStyle = "#fff";
+      ctx.strokeStyle = "#000";
+      const text = `${jointKey}: ${ja[jointKey].toFixed(0)}°`;
+      ctx.strokeText(text, x + 8, y - 8);
+      ctx.fillText(text, x + 8, y - 8);
+    }
+
+    labelAt("left_elbow", "left_elbow", "left_wrist");
+    labelAt("right_elbow", "right_elbow", "right_wrist");
+    labelAt("left_hip", "left_hip", "left_knee");
+    labelAt("right_hip", "right_hip", "right_knee");
+  }
+
+  function renderStatus(data) {
+    document.getElementById("phase").textContent = `Phase: ${data.phase || "-"}`;
+    document.getElementById("elbowAvg").textContent = `Elbow avg: ${data.elbow_avg?.toFixed?.(1) ?? "-"}`;
+    document.getElementById("instruction").textContent = data.detected ? (data.instruction || "") : "Não detectado. Ajuste luz/enquadramento.";
+  }
+
+  let ws = null;
+  let sending = false;
+  let stream = null;
+  let lastAudioKey = "";
+  let lastSend = 0;
+
+  function setBadge(level) {
+    badgeEl.className = "badge " + (level || "").toLowerCase();
+    badgeEl.textContent = level || "-";
+    if (!level) badgeEl.className = "badge ok";
+    if (level === "OK") badgeEl.className = "badge ok";
+    if (level === "WARN") badgeEl.className = "badge warn";
+    if (level === "URGENT") badgeEl.className = "badge urgent";
+  }
+
+  async function startCamera() {
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: { width: 480, height: 360, facingMode: "user" },
+      audio: false
+    });
+    video.srcObject = stream;
+    await video.play();
+  }
+
+  function stopCamera() {
+    if (stream) {
+      stream.getTracks().forEach(t => t.stop());
+      stream = null;
+    }
+  }
+
+  function playBase64Mp3(b64) {
+    // Evita tocar o mesmo áudio repetidamente (extra throttle do lado cliente)
+    if (!b64 || b64 === lastAudioKey) return;
+    lastAudioKey = b64;
+
+    const audio = new Audio("data:audio/mp3;base64," + b64);
+    audio.play().catch(() => {});
+  }
+
+  function connectWsAndStart() {
+    const url = wsUrlEl.value.trim();
+    ws = new WebSocket(url);
+    ws.binaryType = "arraybuffer";
+
+    ws.onopen = () => {
+      statusEl.textContent = "WS conectado. Enviando handshake...";
+      const meta = {
+        exercise_id: Number(exerciseIdEl.value || 1),
+        token: (tokenEl.value || "").trim(), // SOMENTE JWT, sem "Bearer "
+        send_audio: sendAudioEl.checked,
+      };
+      ws.send(JSON.stringify(meta));
+      sending = true;
+      requestAnimationFrame(sendLoop);
+    };
+
+    ws.onmessage = (evt) => {
+      try {
+        const data = JSON.parse(evt.data);
+        debugEl.textContent = JSON.stringify(data, null, 2);
+        if (typeof drawOverlay === "function") drawOverlay(data);
+        if (data.feedback_level) setBadge(data.feedback_level);
+      } catch (e) {
+        console.error("WS message parse error:", e, evt.data);
+      }
+    };
+
+    ws.onerror = (e) => {
+      console.error("WS error:", e);
+    };
+
+    ws.onclose = (e) => {
+      sending = false;
+      statusEl.textContent = `WS fechado (code=${e.code}).`;
+      console.warn("WS closed:", e);
+    };
+  }
+
+  async function sendFrameOnce() {
+    // desenha frame atual no canvas
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    const quality = Number(qEl.value || 0.85);
+    const blob = await new Promise((resolve) =>
+      canvas.toBlob(resolve, "image/jpeg", quality)
+    );
+    if (!blob) return;
+
+    const buf = await blob.arrayBuffer();
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(buf);
+    }
+  }
+
+  function sendLoop(ts) {
+    if (!sending) return;
+
+    const fps = Number(fpsEl.value || 8);
+    const minInterval = 1000 / fps;
+
+    if (ts - lastSend >= minInterval) {
+      lastSend = ts;
+      sendFrameOnce().catch((err) => console.error("sendFrameOnce error:", err));
+    }
+    requestAnimationFrame(sendLoop);
+  }
+
+  btnStart.onclick = async () => {
+    btnStart.disabled = true;
+
+    try {
+      await startCamera();
+      connectWsAndStart();
+      btnStop.disabled = false;
+    } catch (err) {
+      console.error("Start error:", err);
+      btnStart.disabled = false;
+    }
+  };
+
+  btnStop.onclick = () => {
+    sending = false;
+    stopCamera();
+    if (ws) {
+      ws.close();
+      ws = null;
+    }
+    btnStart.disabled = false;
+    btnStop.disabled = true;
+  };
+</script>
+</body>
+</html>

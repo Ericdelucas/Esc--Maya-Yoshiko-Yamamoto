@@ -1,0 +1,132 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: smartsaude-mysql
+    environment:
+      MYSQL_DATABASE: smartsaude
+      MYSQL_USER: smartuser
+      MYSQL_PASSWORD: smartpass
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    volumes:
+      - smartsaude_mysql_data:/var/lib/mysql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "smartuser", "-psmartpass"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    networks:
+      - backend
+
+  auth-service:
+    image: backend-auth-service:latest
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    container_name: smartsaude-auth
+    environment:
+      DB_URL: "mysql+pymysql://smartuser:smartpass@mysql:3306/smartsaude"
+      JWT_SECRET: "troque-por-uma-chave-com-32-bytes-no-minimo-123456"
+      JWT_ISSUER: "smartsaude-auth"
+      APP_FERNET_KEYS: "${APP_FERNET_KEYS:-hPThbQLqXC3VrbwLDvKCFP1EGOTGAxEkhpsFZzFAne0=}"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    networks:
+      - backend
+
+  exercise-service:
+    image: backend-exercise-service:latest
+    build:
+      context: ./exercise-service
+      dockerfile: Dockerfile
+    container_name: smartsaude-exercise
+    environment:
+      DB_URL: "mysql+pymysql://smartuser:smartpass@mysql:3306/smartsaude"
+      AUTH_BASE_URL: "http://auth-service:8080"
+      UPLOAD_DIR: /data/uploads
+      APP_FERNET_KEYS: "${APP_FERNET_KEYS:-hPThbQLqXC3VrbwLDvKCFP1EGOTGAxEkhpsFZzFAne0=}"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+    ports:
+      - "8081:8080"
+    volumes:
+      - smartsaude_uploads:/data/uploads
+    networks:
+      - backend
+
+  training-service:
+    image: backend-training-service:latest
+    build:
+      context: ./training-service
+      dockerfile: Dockerfile
+    container_name: smartsaude-training
+    environment:
+      DB_URL: "mysql+pymysql://smartuser:smartpass@mysql:3306/smartsaude"
+      AUTH_BASE_URL: "http://auth-service:8080"
+      NOTIF_BASE_URL: "http://notification-service:8070"
+      APP_FERNET_KEYS: "${APP_FERNET_KEYS:-hPThbQLqXC3VrbwLDvKCFP1EGOTGAxEkhpsFZzFAne0=}"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+    ports:
+      - "8030:8030"
+    networks:
+      - backend
+
+  ehr-service:
+    image: backend-ehr-service:latest
+    build:
+      context: ./ehr-service
+      dockerfile: Dockerfile
+    container_name: smartsaude-ehr
+    environment:
+      DB_URL: "mysql+pymysql://smartuser:smartpass@mysql:3306/smartsaude"
+      AUTH_BASE_URL: "http://auth-service:8080"
+      APP_FERNET_KEYS: "${APP_FERNET_KEYS:-hPThbQLqXC3VrbwLDvKCFP1EGOTGAxEkhpsFZzFAne0=}"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+    ports:
+      - "8060:8060"
+    networks:
+      - backend
+
+  ai-service:
+    image: backend-ai-service:latest
+    build:
+      context: ./ai-service
+      dockerfile: Dockerfile
+    container_name: smartsaude-ai
+    environment:
+      AUTH_BASE_URL: "http://auth-service:8080"
+      OLLAMA_HOST: "http://host.docker.internal:11434"
+      OLLAMA_MODEL: "llama3"
+      OLLAMA_TIMEOUT_SEC: "30"
+      APP_FERNET_KEYS: "${APP_FERNET_KEYS:-hPThbQLqXC3VrbwLDvKCFP1EGOTGAxEkhpsFZzFAne0=}"
+    depends_on:
+      auth-service:
+        condition: service_started
+    ports:
+      - "8090:8090"
+    networks:
+      - backend
+
+volumes:
+  smartsaude_mysql_data:
+  smartsaude_uploads:
+
+networks:
+  backend:
+    name: backend_default

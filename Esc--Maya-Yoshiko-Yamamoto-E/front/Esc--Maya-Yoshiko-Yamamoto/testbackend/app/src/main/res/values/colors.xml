@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Paleta Principal - Tema Médico/Fisioterapêutico (Light) -->
+    <color name="primary">#67B7D1</color>
+    <color name="primary_variant">#2C9CC3</color>
+    <color name="secondary_light">#A9D9E8</color>
+    
+    <color name="app_background">#F7F7F7</color>
+    <color name="card_background">#FFFFFF</color>
+    <color name="input_background">#EDEDED</color>
+    
+    <color name="text_main">#2B2B2B</color>
+    <color name="text_secondary">#6E6E6E</color>
+    <color name="border_soft">#D9D9D9</color>
+    
+    <!-- Paleta Dark - Tema Profissional (Dark) -->
+    <color name="primary_dark">#4A90A4</color>
+    <color name="app_background_dark">#121212</color>
+    <color name="card_background_dark">#1E1E1E</color>
+    <color name="input_background_dark">#2C2C2C</color>
+    <color name="text_main_dark">#E0E0E0</color>
+    <color name="text_secondary_dark">#B0B0B0</color>
+    <color name="border_soft_dark">#383838</color>
+
+    <!-- Status -->
+    <color name="success_green">#68C27A</color>
+    <color name="error_red">#E57373</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+</resources>
