@@ -1,3 +1,8 @@
+"""
+Serviço de autenticação do SmartSaúde.
+Este módulo configura e inicia o serviço de autenticação usando FastAPI.
+"""
+
 import uvicorn
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
@@ -16,6 +21,12 @@ from app.routers.patient_evaluation_router import router as patient_evaluation_r
 
 
 def create_app() -> FastAPI:
+    """
+    Cria e configura a aplicação FastAPI para o serviço de autenticação.
+
+    Returns:
+        FastAPI: Instância configurada da aplicação.
+    """
     app = FastAPI(title="SmartSaúde Auth Service", version="0.0.1")
 
     register_error_handlers(app)
@@ -39,5 +50,6 @@ def create_app() -> FastAPI:
 app = create_app()
 
 if __name__ == "__main__":
+    # Executa o servidor se o arquivo for executado diretamente
     settings = get_settings()
     uvicorn.run("main:app", host="0.0.0.0", port=settings.auth_port, reload=False)

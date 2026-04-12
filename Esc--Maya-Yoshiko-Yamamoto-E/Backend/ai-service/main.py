@@ -1,3 +1,8 @@
+"""
+Serviço de IA do SmartSaúde.
+Este módulo configura e inicia o serviço de inteligência artificial usando FastAPI.
+"""
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.routers.translate_router import router as translate_router
@@ -9,11 +14,18 @@ from app.routers.chat_router import router as chat_router
 
 
 def create_app() -> FastAPI:
+    """
+    Cria e configura a aplicação FastAPI para o serviço de IA.
+
+    Returns:
+        FastAPI: Instância configurada da aplicação.
+    """
     app = FastAPI(title="smartsaude-ai", version="1.0.0")
     
     # Adicionar endpoint de teste WebSocket direto no app
     @app.websocket("/test-ws")
     async def test_websocket(websocket):
+        """Endpoint de teste para WebSocket."""
         await websocket.accept()
         await websocket.send_json({"hello": "direct_test"})
     

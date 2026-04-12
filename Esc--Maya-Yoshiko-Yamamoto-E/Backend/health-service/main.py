@@ -1,3 +1,9 @@
+"""
+Serviço de saúde do SmartSaúde.
+Este módulo fornece endpoints para cálculos de métricas de saúde,
+questionários médicos e gerenciamento de metas de saúde.
+"""
+
 from fastapi import FastAPI, Request, HTTPException, Depends
 from fastapi.responses import JSONResponse
 import os
@@ -12,6 +18,7 @@ app = FastAPI(title="SmartSaúde Health Service", version="1.0.0")
 # Initialize database tables
 @app.on_event("startup")
 async def startup_event():
+    """Inicializa as tabelas do banco de dados no startup da aplicação."""
     print("HEALTH: Initializing database...")
     init_db()
     print("HEALTH: Database initialized successfully")
@@ -19,6 +26,7 @@ async def startup_event():
 # Global exception handler para debug
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
+    """Manipulador global de exceções para logging de erros."""
     print(f"HEALTH ERROR: {str(exc)}")
     print(f"HEALTH TRACEBACK: {traceback.format_exc()}")
     print(f"HEALTH REQUEST: {request.method} {request.url}")
@@ -29,11 +37,13 @@ async def global_exception_handler(request: Request, exc: Exception):
 
 @app.get("/health")
 def health():
+    """Endpoint de verificação de saúde do serviço."""
     print("HEALTH: Health check requested")
     return {"status": "ok", "service": "health-service"}
 
 @app.post("/metrics/imc")
 def calculate_imc(weight: float, height: float, user_id: int, db: Session = Depends(get_db)):
+    """Calcula o Índice de Massa Corporal (IMC) e classifica o resultado."""
     print(f"HEALTH: IMC Request - User: {user_id}, Weight: {weight}, Height: {height}")
     
     try:
@@ -81,6 +91,7 @@ def calculate_imc(weight: float, height: float, user_id: int, db: Session = Depe
 
 @app.post("/metrics/body-fat")
 def calculate_body_fat(weight: float, height: float, age: int, gender: str, waist_circumference: float, user_id: int, db: Session = Depends(get_db)):
+    """Calcula a porcentagem de gordura corporal usando fórmula simplificada."""
     print(f"HEALTH: Body Fat Request - User: {user_id}, Weight: {weight}, Height: {height}, Age: {age}, Gender: {gender}")
     
     try:
@@ -147,6 +158,7 @@ def calculate_body_fat(weight: float, height: float, age: int, gender: str, wais
 
 @app.post("/questionnaire")
 def save_questionnaire(user_id: int, medical_history: dict = {}, medications: list = [], allergies: list = [], habits: dict = {}, db: Session = Depends(get_db)):
+    """Salva o questionário médico do usuário no banco de dados."""
     print(f"HEALTH: Questionnaire Save - User: {user_id}")
     print(f"HEALTH: Medical History: {medical_history}")
     print(f"HEALTH: Medications: {medications}")
@@ -189,6 +201,7 @@ def save_questionnaire(user_id: int, medical_history: dict = {}, medications: li
 
 @app.post("/goals")
 def create_goal(user_id: int, goal_type: str, target_value: float, notes: str = "", db: Session = Depends(get_db)):
+    """Cria uma nova meta de saúde para o usuário."""
     print(f"HEALTH: Goal Create - User: {user_id}, Type: {goal_type}, Target: {target_value}")
     
     try:
@@ -220,6 +233,7 @@ def create_goal(user_id: int, goal_type: str, target_value: float, notes: str = 
 
 @app.get("/metrics/history/{user_id}")
 def get_health_history(user_id: int, metric_type: str = None, period: str = "all", db: Session = Depends(get_db)):
+    """Retorna o histórico de métricas de saúde do usuário."""
     print(f"HEALTH: History Request - User: {user_id}, Type: {metric_type}, Period: {period}")
     
     try:
@@ -246,6 +260,7 @@ def get_health_history(user_id: int, metric_type: str = None, period: str = "all
         raise HTTPException(status_code=500, detail=f"History request failed: {str(e)}")
 
 if __name__ == "__main__":
+    # Executa o servidor se o arquivo for executado diretamente
     import uvicorn
     print("HEALTH: Starting SmartSaúde Health Service on port 8070")
     uvicorn.run("main:app", host="0.0.0.0", port=8070, reload=True)
