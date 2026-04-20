@@ -68,7 +68,7 @@ public class AssistantActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setTitle(R.string.assistant_title);
         }
-        toolbar.setNavigationOnClickListener(v -> onBackPressed());
+        toolbar.setNavigationOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
     }
 
     private void setupChat() {
@@ -112,7 +112,7 @@ public class AssistantActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<AssistantResponse> call, Response<AssistantResponse> response) {
                 btnSend.setEnabled(true);
-                messages.remove(thinkingPos);
+                removeMessage(thinkingPos);
                 
                 Log.d(TAG, "HTTP code: " + response.code());
                 
@@ -137,14 +137,12 @@ public class AssistantActivity extends AppCompatActivity {
                         showNavigationAction(localAction);
                     }
                 }
-                adapter.notifyDataSetChanged();
-                rvChat.scrollToPosition(messages.size() - 1);
             }
 
             @Override
             public void onFailure(Call<AssistantResponse> call, Throwable t) {
                 btnSend.setEnabled(true);
-                messages.remove(thinkingPos);
+                removeMessage(thinkingPos);
                 Log.e(TAG, "Falha de rede", t);
                 
                 addMessage(getString(R.string.assistant_network_error), ChatMessage.TYPE_ASSISTANT);
@@ -153,9 +151,6 @@ public class AssistantActivity extends AppCompatActivity {
                 if (localAction != null) {
                     showNavigationAction(localAction);
                 }
-                
-                adapter.notifyDataSetChanged();
-                rvChat.scrollToPosition(messages.size() - 1);
             }
         });
     }
@@ -164,6 +159,13 @@ public class AssistantActivity extends AppCompatActivity {
         messages.add(new ChatMessage(text, type));
         adapter.notifyItemInserted(messages.size() - 1);
         rvChat.scrollToPosition(messages.size() - 1);
+    }
+
+    private void removeMessage(int position) {
+        if (position >= 0 && position < messages.size()) {
+            messages.remove(position);
+            adapter.notifyItemRemoved(position);
+        }
     }
 
     private AssistantAction resolveLocalNavigation(String text) {

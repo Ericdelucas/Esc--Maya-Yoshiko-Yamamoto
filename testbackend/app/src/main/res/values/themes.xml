@@ -24,4 +24,8 @@
     </style>
 
     <style name="Theme.Testbackend" parent="Theme.SmartSaude" />
+
+    <!-- Overlays para Toolbar e AppBar -->
+    <style name="Theme.Testbackend.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="Theme.Testbackend.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

@@ -19,7 +19,6 @@
         android:usesCleartextTraffic="true"
         android:networkSecurityConfig="@xml/network_security_config">
         
-        <!-- 🔥 VOLTANDO A LOGINACTIVITY COMO PRINCIPAL -->
         <activity
             android:name=".LoginActivity"
             android:exported="true">
@@ -55,6 +54,27 @@
         <activity android:name=".GoalsActivity" android:exported="false" />
         <activity android:name=".LeaderboardActivity" android:exported="false" />
         <activity android:name=".ProfessionalsActivity" android:exported="false" />
+        
+        <!-- 🔥 NOVA ACTIVITY DE AVALIAÇÃO FISIOTERAPÊUTICA -->
+        <activity 
+            android:name=".PatientEvaluationActivity" 
+            android:exported="false"
+            android:label="Ficha de Avaliação"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- 🔥 NOVAS ACTIVITIES DE RELATÓRIOS -->
+        <activity
+            android:name=".PatientReportsActivity"
+            android:exported="false"
+            android:label="Relatórios de Pacientes"
+            android:parentActivityName=".ProfessionalMainActivity" />
+
+        <activity
+            android:name=".CreateReportActivity"
+            android:exported="false"
+            android:label="Criar Relatório"
+            android:parentActivityName=".PatientReportsActivity" />
+            
     </application>
 
 </manifest>

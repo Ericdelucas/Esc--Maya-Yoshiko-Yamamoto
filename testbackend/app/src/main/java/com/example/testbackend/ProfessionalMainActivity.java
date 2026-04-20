@@ -59,7 +59,6 @@ public class ProfessionalMainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        // 🔥 TAREFA 3: Sempre buscar dados atualizados ao voltar para a tela
         carregarDadosPainel();
     }
     
@@ -103,32 +102,20 @@ public class ProfessionalMainActivity extends AppCompatActivity {
     }
 
     private void carregarDadosPainel() {
-        // 🔥 TAREFA 2: Substituir dados ilusórios por chamada real à API
-        Log.d(TAG, "Carregando estatísticas reais da API...");
-        
-        AuthApi authApi = ApiClient.getAuthClient().create(AuthApi.class);
+        AuthApi authApi = ApiClient.getAuthClient(this).create(AuthApi.class);
         authApi.getDashboardStats(tokenManager.getAuthToken()).enqueue(new Callback<DashboardStats>() {
             @Override
             public void onResponse(Call<DashboardStats> call, Response<DashboardStats> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     DashboardStats stats = response.body();
-                    
-                    // ✅ Atualizando com dados reais do banco
                     if (tvTotalPacientes != null) tvTotalPacientes.setText(String.valueOf(stats.getTotalPatients()));
                     if (tvConsultasHoje != null) tvConsultasHoje.setText(String.valueOf(stats.getAppointmentsToday()));
                     if (tvExerciciosAtivos != null) tvExerciciosAtivos.setText(String.valueOf(stats.getActiveExercises()));
-                    
-                    Log.d(TAG, "Estatísticas atualizadas: " + stats.getTotalPatients() + " pacientes.");
-                } else {
-                    Log.e(TAG, "Erro ao buscar estatísticas: " + response.code());
-                    // Fallback para zero se der erro, nunca usar dados mock
-                    if (tvTotalPacientes != null) tvTotalPacientes.setText("0");
                 }
             }
 
             @Override
             public void onFailure(Call<DashboardStats> call, Throwable t) {
-                Log.e(TAG, "Falha na conexão ao buscar estatísticas", t);
                 if (tvTotalPacientes != null) tvTotalPacientes.setText("-");
             }
         });
@@ -147,14 +134,20 @@ public class ProfessionalMainActivity extends AppCompatActivity {
         if (cardExercises != null) {
             cardExercises.setOnClickListener(v -> startActivity(new Intent(this, ExerciseListActivity.class)));
         }
+        
+        // Alterado para abrir PatientReportsActivity
+        if (cardReports != null) {
+            cardReports.setOnClickListener(v -> {
+                Log.d(TAG, "Abrindo Relatórios de Pacientes...");
+                startActivity(new Intent(this, PatientReportsActivity.class));
+            });
+        }
+
         if (btnProfile != null) {
             btnProfile.setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
         }
         if (btnCalendar != null) {
-            btnCalendar.setOnClickListener(v -> {
-                Intent intent = new Intent(this, CalendarActivity.class);
-                startActivity(intent);
-            });
+            btnCalendar.setOnClickListener(v -> startActivity(new Intent(this, CalendarActivity.class)));
         }
         if (fabLogout != null) {
             fabLogout.setOnClickListener(v -> logout());
@@ -166,13 +159,8 @@ public class ProfessionalMainActivity extends AppCompatActivity {
         if (email != null && !email.isEmpty()) {
             String name = email.split("@")[0];
             name = name.substring(0, 1).toUpperCase() + name.substring(1);
-            
-            if (tvWelcome != null) {
-                tvWelcome.setText("Dr(a). " + name);
-            }
-            if (tvUserInitial != null) {
-                tvUserInitial.setText(name.substring(0, 1).toUpperCase());
-            }
+            if (tvWelcome != null) tvWelcome.setText("Dr(a). " + name);
+            if (tvUserInitial != null) tvUserInitial.setText(name.substring(0, 1).toUpperCase());
         }
     }
     

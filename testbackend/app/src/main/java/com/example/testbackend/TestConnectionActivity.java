@@ -4,9 +4,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.ScrollView;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.LinearLayoutCompat;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -22,53 +20,62 @@ public class TestConnectionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        ScrollView scrollView = new ScrollView(this);
-        LinearLayoutCompat layout = new LinearLayoutCompat(this);
-        layout.setOrientation(LinearLayoutCompat.VERTICAL);
-        layout.setPadding(32, 32, 32, 32);
-
+        // Layout simples via código
         tvResult = new TextView(this);
         tvResult.setText("Aguardando teste...");
-        tvResult.setTextSize(14);
+        tvResult.setTextSize(16);
+        tvResult.setPadding(20, 20, 20, 20);
         
         Button btnTest = new Button(this);
-        btnTest.setText("Testar Conexão (Tudo)");
+        btnTest.setText("Testar Conexão");
         btnTest.setOnClickListener(v -> testConnection());
         
-        layout.addView(btnTest);
+        // Adicionar ao layout
+        androidx.appcompat.widget.LinearLayoutCompat layout = new androidx.appcompat.widget.LinearLayoutCompat(this);
+        layout.setOrientation(androidx.appcompat.widget.LinearLayoutCompat.VERTICAL);
         layout.addView(tvResult);
-        scrollView.addView(layout);
-        setContentView(scrollView);
+        layout.addView(btnTest);
+        setContentView(layout);
     }
     
     private void testConnection() {
-        tvResult.setText("Iniciando testes...\n");
         new Thread(() -> {
-            // Testar diferentes URLs
-            String[] urls = {
-                "http://10.1.9.88:8080/health",
-                "http://10.0.2.2:8080/health",
-                "http://localhost:8080/health",
-                "http://127.0.0.1:8080/health"
-            };
-            
-            for (String url : urls) {
-                final String currentUrl = url;
-                Log.d(TAG, "🌐 Testando: " + currentUrl);
+            try {
+                Log.d(TAG, "🔍 Testando conexão...");
                 
-                try {
-                    String result = makeHttpRequest(currentUrl);
-                    Log.d(TAG, "✅ Sucesso: " + currentUrl + " → " + result);
-                    
-                    runOnUiThread(() -> {
-                        tvResult.append("\n✅ SUCESSO: " + currentUrl + "\n" + result + "\n");
-                    });
-                } catch (Exception e) {
-                    Log.e(TAG, "❌ Falha: " + currentUrl + " → " + e.getMessage());
-                    runOnUiThread(() -> {
-                        tvResult.append("\n❌ FALHA: " + currentUrl + "\nErro: " + e.getMessage() + "\n");
-                    });
+                // Testar diferentes URLs
+                String[] urls = {
+                    "http://10.1.9.88:8080/health",
+                    "http://localhost:8080/health",
+                    "http://127.0.0.1:8080/health",
+                    "http://10.0.2.2:8080/health"
+                };
+                
+                final StringBuilder fullResults = new StringBuilder();
+                
+                for (String url : urls) {
+                    try {
+                        Log.d(TAG, "🌐 Testando: " + url);
+                        String result = makeHttpRequest(url);
+                        Log.d(TAG, "✅ Sucesso: " + url + " → " + result);
+                        
+                        fullResults.append("✅ SUCESSO: ").append(url).append("\n").append(result).append("\n\n");
+                        
+                    } catch (Exception e) {
+                        Log.e(TAG, "❌ Falha: " + url + " → " + e.getMessage());
+                        fullResults.append("❌ FALHA: ").append(url).append("\n").append(e.getMessage()).append("\n\n");
+                    }
                 }
+                
+                runOnUiThread(() -> {
+                    tvResult.setText(fullResults.toString());
+                });
+                
+            } catch (Exception e) {
+                Log.e(TAG, "❌ Erro geral: " + e.getMessage(), e);
+                runOnUiThread(() -> {
+                    tvResult.setText("❌ ERRO GERAL: " + e.getMessage());
+                });
             }
         }).start();
     }
@@ -89,7 +96,7 @@ public class TestConnectionActivity extends AppCompatActivity {
                 response.append(line);
             }
             reader.close();
-            return response.toString();
+            return "Response: " + response.toString();
         } else {
             throw new Exception("HTTP " + responseCode);
         }
