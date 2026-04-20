@@ -14,16 +14,18 @@ public class ApiClient {
     private static Retrofit aiRetrofit = null;
     private static Retrofit exerciseRetrofit = null;
     private static Retrofit healthRetrofit = null;
+    private static Retrofit appointmentRetrofit = null;
 
     private static OkHttpClient getOkHttpClient() {
+        // 🔥 INTERCEPTOR DE LOG DETALHADO PARA DEBUG DE CONEXÃO
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         
         return new OkHttpClient.Builder()
                 .addInterceptor(interceptor)
-                .connectTimeout(30, TimeUnit.SECONDS)
-                .readTimeout(30, TimeUnit.SECONDS)
-                .writeTimeout(30, TimeUnit.SECONDS)
+                .connectTimeout(30, TimeUnit.SECONDS) // 🔥 Aumentado para 30s
+                .readTimeout(30, TimeUnit.SECONDS)    // 🔥 Aumentado para 30s
+                .writeTimeout(30, TimeUnit.SECONDS)   // 🔥 Aumentado para 30s
                 .retryOnConnectionFailure(true)
                 .build();
     }
@@ -37,6 +39,17 @@ public class ApiClient {
                     .build();
         }
         return authRetrofit;
+    }
+
+    public static Retrofit getAppointmentClient() {
+        if (appointmentRetrofit == null) {
+            appointmentRetrofit = new Retrofit.Builder()
+                    .baseUrl(Constants.PACIENTES_BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .client(getOkHttpClient())
+                    .build();
+        }
+        return appointmentRetrofit;
     }
 
     public static Retrofit getHealthClient() {

@@ -12,6 +12,7 @@ from app.routers.health_router import router as health_router
 from app.routers.ai_proxy_router import router as ai_proxy_router
 from app.routers.professional_router import router as professional_router
 from app.routers.appointment_router import router as appointment_router
+from app.routers.patient_evaluation_router import router as patient_evaluation_router
 
 
 def create_app() -> FastAPI:
@@ -31,6 +32,7 @@ def create_app() -> FastAPI:
     app.include_router(ai_proxy_router)
     app.include_router(professional_router, tags=["professional"])
     app.include_router(appointment_router, tags=["appointments"])
+    app.include_router(patient_evaluation_router, tags=["patient_evaluations"])
     return app
 
 
