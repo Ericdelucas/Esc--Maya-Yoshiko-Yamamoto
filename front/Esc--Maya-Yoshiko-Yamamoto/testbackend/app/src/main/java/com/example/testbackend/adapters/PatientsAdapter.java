@@ -1,12 +1,16 @@
 package com.example.testbackend.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import com.example.testbackend.PatientReportsActivity;
+import com.example.testbackend.R;
 import com.example.testbackend.models.Patient;
 import java.util.List;
 
@@ -30,19 +34,31 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.Patien
     @NonNull
     @Override
     public PatientViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Usando layout padrão do Android para teste rápido; pode ser personalizado depois.
-        View view = LayoutInflater.from(context).inflate(android.R.layout.simple_list_item_2, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_patient, parent, false);
         return new PatientViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull PatientViewHolder holder, int position) {
         Patient patient = patients.get(position);
-        holder.tvName.setText(patient.getDisplayName());
+        
+        String name = patient.getDisplayName();
+        holder.tvName.setText(name);
         holder.tvEmail.setText(patient.getEmail());
+        
+        if (name != null && !name.isEmpty()) {
+            holder.tvInitial.setText(name.substring(0, 1).toUpperCase());
+        }
 
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) listener.onPatientClick(patient);
+        });
+
+        holder.btnReports.setOnClickListener(v -> {
+            Intent intent = new Intent(context, PatientReportsActivity.class);
+            intent.putExtra("patient_id", patient.getId());
+            intent.putExtra("patient_name", patient.getDisplayName());
+            context.startActivity(intent);
         });
     }
 
@@ -52,12 +68,15 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.Patien
     }
 
     static class PatientViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvEmail;
+        TextView tvName, tvEmail, tvInitial;
+        ImageButton btnReports;
 
         public PatientViewHolder(@NonNull View itemView) {
             super(itemView);
-            tvName = itemView.findViewById(android.R.id.text1);
-            tvEmail = itemView.findViewById(android.R.id.text2);
+            tvName = itemView.findViewById(R.id.tvPatientName);
+            tvEmail = itemView.findViewById(R.id.tvPatientEmail);
+            tvInitial = itemView.findViewById(R.id.tvPatientInitial);
+            btnReports = itemView.findViewById(R.id.btnReports);
         }
     }
 }

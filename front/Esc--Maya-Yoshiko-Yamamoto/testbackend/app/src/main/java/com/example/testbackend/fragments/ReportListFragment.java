@@ -1,0 +1,109 @@
+package com.example.testbackend.fragments;
+
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import com.example.testbackend.R;
+import com.example.testbackend.adapters.ReportAdapter;
+import com.example.testbackend.models.PatientReport;
+import com.example.testbackend.network.ApiClient;
+import com.example.testbackend.network.PatientReportApi;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class ReportListFragment extends Fragment {
+    private RecyclerView recyclerView;
+    private ReportAdapter adapter;
+    private List<PatientReport> reports = new ArrayList<>();
+    private ProgressBar progressBar;
+    private TextView tvEmptyState;
+    private SwipeRefreshLayout swipeRefresh;
+    private PatientReportApi api;
+    private int professionalId = 37; // Default for testing
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_report_list, container, false);
+        
+        api = ApiClient.getAuthClient().create(PatientReportApi.class);
+        
+        setupViews(view);
+        loadReports();
+        
+        return view;
+    }
+
+    private void setupViews(View view) {
+        recyclerView = view.findViewById(R.id.recyclerViewReports);
+        progressBar = view.findViewById(R.id.progressBar);
+        tvEmptyState = view.findViewById(R.id.tvEmptyState);
+        swipeRefresh = view.findViewById(R.id.swipeRefresh);
+
+        adapter = new ReportAdapter(reports, this::onReportClick, this::onReportLongClick);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setAdapter(adapter);
+
+        swipeRefresh.setOnRefreshListener(this::loadReports);
+    }
+
+    private void loadReports() {
+        if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
+        
+        api.getProfessionalReports(professionalId).enqueue(new Callback<List<PatientReport>>() {
+            @Override
+            public void onResponse(Call<List<PatientReport>> call, Response<List<PatientReport>> response) {
+                if (progressBar != null) progressBar.setVisibility(View.GONE);
+                if (swipeRefresh != null) swipeRefresh.setRefreshing(false);
+
+                if (response.isSuccessful() && response.body() != null) {
+                    reports.clear();
+                    reports.addAll(response.body());
+                    adapter.notifyDataSetChanged();
+                    
+                    if (tvEmptyState != null) {
+                        tvEmptyState.setVisibility(reports.isEmpty() ? View.VISIBLE : View.GONE);
+                    }
+                } else {
+                    if (getContext() != null) {
+                        Toast.makeText(getContext(), "Erro ao carregar relatórios", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<PatientReport>> call, Throwable t) {
+                if (progressBar != null) progressBar.setVisibility(View.GONE);
+                if (swipeRefresh != null) swipeRefresh.setRefreshing(false);
+                if (getContext() != null) {
+                    Toast.makeText(getContext(), "Erro de conexão", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    private void onReportClick(PatientReport report) {
+        // Detalhes do relatório
+    }
+
+    private void onReportLongClick(PatientReport report) {
+        // Opções extras
+    }
+}

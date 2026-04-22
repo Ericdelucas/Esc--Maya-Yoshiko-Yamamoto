@@ -135,11 +135,11 @@ public class ProfessionalMainActivity extends AppCompatActivity {
             cardExercises.setOnClickListener(v -> startActivity(new Intent(this, ExerciseListActivity.class)));
         }
         
-        // ✅ CORREÇÃO: Ativando o botão de Relatórios para abrir a nova Ficha de Avaliação
+        // Alterado para abrir PatientReportsActivity
         if (cardReports != null) {
             cardReports.setOnClickListener(v -> {
-                Log.d(TAG, "Abrindo Ficha de Avaliação Fisioterapêutica...");
-                startActivity(new Intent(this, PatientEvaluationActivity.class));
+                Log.d(TAG, "Abrindo Relatórios de Pacientes...");
+                startActivity(new Intent(this, PatientReportsActivity.class));
             });
         }
 

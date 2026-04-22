@@ -40,7 +40,6 @@ async def create_report(
         functional_status=report.functional_status,
         achievements=report.achievements,
         limitations=report.limitations,
-        metadata=report.metadata,
         created_by="professional"  # Temporário
     )
     
@@ -104,6 +103,21 @@ async def get_professional_reports(
     reports = repo.findByProfessionalId(professional_id, limit)
     return [PatientReportResponse.model_validate(r) for r in reports]
 
+@router.get("/statistics", response_model=ReportStatistics)
+async def get_report_statistics(
+    professional_id: Optional[int] = Query(None),
+    repo: PatientReportRepository = Depends(get_repository)
+):
+    """Estatísticas dos relatórios do profissional"""
+    stats = repo.getReportStatistics(professional_id)
+    recent_reports = repo.getRecentReports(professional_id) if professional_id else []
+    
+    return ReportStatistics(
+        report_types=stats,
+        total_reports=sum(s['count'] for s in stats.values()),
+        recent_reports=[PatientReportResponse.model_validate(r) for r in recent_reports]
+    )
+
 @router.get("/{report_id}", response_model=PatientReportResponse)
 async def get_report(
     report_id: int,
@@ -162,18 +176,3 @@ async def search_reports_by_patient(
     """Buscar relatórios por nome do paciente"""
     reports = repo.searchReports(name, professional_id)
     return [PatientReportResponse.model_validate(r) for r in reports]
-
-@router.get("/statistics", response_model=ReportStatistics)
-async def get_report_statistics(
-    professional_id: Optional[int] = Query(None),
-    repo: PatientReportRepository = Depends(get_repository)
-):
-    """Estatísticas dos relatórios do profissional"""
-    stats = repo.getReportStatistics(professional_id)
-    recent_reports = repo.getRecentReports(professional_id) if professional_id else []
-    
-    return ReportStatistics(
-        report_types=stats,
-        total_reports=sum(s['count'] for s in stats.values()),
-        recent_reports=[PatientReportResponse.model_validate(r) for r in recent_reports]
-    )
