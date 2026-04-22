@@ -1,6 +1,7 @@
 package com.example.testbackend;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,6 +24,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class CreateReportActivity extends AppCompatActivity {
+    private static final String TAG = "CreateReportActivity";
     private Spinner spinnerReportType;
     private EditText editTitle;
     private EditText editContent;
@@ -42,7 +44,7 @@ public class CreateReportActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_report);
 
         patientId = getIntent().getIntExtra("patient_id", -1);
-        api = ApiClient.getAuthClient(this).create(PatientReportApi.class);
+        api = ApiClient.getAuthClient().create(PatientReportApi.class);
 
         setupViews();
         setupSpinners();
@@ -64,8 +66,8 @@ public class CreateReportActivity extends AppCompatActivity {
     }
 
     private void setupSpinners() {
-        String[] types = {"EVOLUTION", "ASSESSMENT", "DISCHARGE", "PROGRESS"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, types);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                this, R.array.tipos_relatorio_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerReportType.setAdapter(adapter);
     }
@@ -83,7 +85,29 @@ public class CreateReportActivity extends AppCompatActivity {
         });
     }
 
+    private String getBackendType(String localizedType) {
+        switch (localizedType) {
+            case "Evolução": return "EVOLUTION";
+            case "Avaliação": return "ASSESSMENT";
+            case "Alta": return "DISCHARGE";
+            case "Progresso": return "PROGRESS";
+            case "Anamnese": return "ANAMNESIS";
+            case "Reavaliação": return "REASSESSMENT";
+            default: return localizedType;
+        }
+    }
+
     private void saveReport() {
+        if (patientId == -1) {
+            Toast.makeText(this, "ID do paciente não informado", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (spinnerReportType.getSelectedItemPosition() == 0) {
+            Toast.makeText(this, "Selecione o tipo de relatório", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if (editTitle.getText().toString().trim().isEmpty()) {
             editTitle.setError("Título obrigatório");
             return;
@@ -93,12 +117,17 @@ public class CreateReportActivity extends AppCompatActivity {
         report.setPatientId(patientId);
         report.setProfessionalId(professionalId);
         report.setReportDate(new Date());
-        report.setReportType(spinnerReportType.getSelectedItem().toString());
+        
+        String selectedType = spinnerReportType.getSelectedItem().toString();
+        report.setReportType(getBackendType(selectedType));
+        
         report.setTitle(editTitle.getText().toString());
         report.setContent(editContent.getText().toString());
         report.setClinicalEvolution(editClinicalEvolution.getText().toString());
         report.setPainScale(seekBarPainScale.getProgress());
         report.setCreatedBy("professional");
+
+        Log.d(TAG, "Enviando relatório para o paciente ID: " + patientId);
 
         api.createReport(report).enqueue(new Callback<PatientReport>() {
             @Override
@@ -107,7 +136,13 @@ public class CreateReportActivity extends AppCompatActivity {
                     Toast.makeText(CreateReportActivity.this, "Relatório criado com sucesso", Toast.LENGTH_SHORT).show();
                     finish();
                 } else {
-                    Toast.makeText(CreateReportActivity.this, "Erro ao criar relatório", Toast.LENGTH_SHORT).show();
+                    String errorMessage = "Erro ao criar relatório";
+                    try {
+                        if (response.errorBody() != null) {
+                            errorMessage = response.errorBody().string();
+                        }
+                    } catch (Exception e) {}
+                    Toast.makeText(CreateReportActivity.this, errorMessage, Toast.LENGTH_LONG).show();
                 }
             }
 

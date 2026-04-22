@@ -62,7 +62,7 @@ public class ReportStatisticsFragment extends Fragment {
     }
 
     private void loadStatistics() {
-        PatientReportApi api = ApiClient.getAuthClient(getContext()).create(PatientReportApi.class);
+        PatientReportApi api = ApiClient.getAuthClient().create(PatientReportApi.class);
         
         api.getStatistics(professionalId).enqueue(new Callback<ReportStatistics>() {
             @Override

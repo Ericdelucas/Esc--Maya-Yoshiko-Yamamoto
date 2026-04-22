@@ -1,6 +1,8 @@
 package com.example.testbackend.network;
 
 import com.example.testbackend.utils.Constants;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -15,6 +17,12 @@ public class ApiClient {
     private static Retrofit exerciseRetrofit = null;
     private static Retrofit healthRetrofit = null;
     private static Retrofit appointmentRetrofit = null;
+
+    private static Gson getGson() {
+        return new GsonBuilder()
+                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                .create();
+    }
 
     private static OkHttpClient getOkHttpClient() {
         // 🔥 INTERCEPTOR DE LOG DETALHADO PARA DEBUG DE CONEXÃO
@@ -34,7 +42,7 @@ public class ApiClient {
         if (authRetrofit == null) {
             authRetrofit = new Retrofit.Builder()
                     .baseUrl(Constants.AUTH_BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
+                    .addConverterFactory(GsonConverterFactory.create(getGson()))
                     .client(getOkHttpClient())
                     .build();
         }
@@ -45,7 +53,7 @@ public class ApiClient {
         if (appointmentRetrofit == null) {
             appointmentRetrofit = new Retrofit.Builder()
                     .baseUrl(Constants.PACIENTES_BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
+                    .addConverterFactory(GsonConverterFactory.create(getGson()))
                     .client(getOkHttpClient())
                     .build();
         }
@@ -56,7 +64,7 @@ public class ApiClient {
         if (healthRetrofit == null) {
             healthRetrofit = new Retrofit.Builder()
                     .baseUrl(Constants.HEALTH_BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
+                    .addConverterFactory(GsonConverterFactory.create(getGson()))
                     .client(getOkHttpClient())
                     .build();
         }
@@ -67,7 +75,7 @@ public class ApiClient {
         if (aiRetrofit == null) {
             aiRetrofit = new Retrofit.Builder()
                     .baseUrl(Constants.AUTH_BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
+                    .addConverterFactory(GsonConverterFactory.create(getGson()))
                     .client(getOkHttpClient())
                     .build();
         }
@@ -78,7 +86,7 @@ public class ApiClient {
         if (exerciseRetrofit == null) {
             exerciseRetrofit = new Retrofit.Builder()
                     .baseUrl(Constants.EXERCISE_BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
+                    .addConverterFactory(GsonConverterFactory.create(getGson()))
                     .client(getOkHttpClient())
                     .build();
         }

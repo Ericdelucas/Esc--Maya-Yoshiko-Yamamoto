@@ -152,7 +152,7 @@
                 android:layout_weight="1"
                 android:layout_marginStart="8dp"
                 android:text="Salvar"
-                style="@style/Widget.Material3.Button.FilledButton"/>
+                style="@style/Widget.Material3.Button"/>
 
         </LinearLayout>
 

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.testbackend">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -73,6 +72,12 @@
             android:name=".CreateReportActivity"
             android:exported="false"
             android:label="Criar Relatório"
+            android:parentActivityName=".PatientReportsActivity" />
+
+        <activity
+            android:name=".ReportDetailActivity"
+            android:exported="false"
+            android:label="Detalhes do Relatório"
             android:parentActivityName=".PatientReportsActivity" />
             
     </application>

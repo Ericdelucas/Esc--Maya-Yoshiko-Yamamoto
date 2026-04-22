@@ -102,7 +102,7 @@ public class ProfessionalMainActivity extends AppCompatActivity {
     }
 
     private void carregarDadosPainel() {
-        AuthApi authApi = ApiClient.getAuthClient(this).create(AuthApi.class);
+        AuthApi authApi = ApiClient.getAuthClient().create(AuthApi.class);
         authApi.getDashboardStats(tokenManager.getAuthToken()).enqueue(new Callback<DashboardStats>() {
             @Override
             public void onResponse(Call<DashboardStats> call, Response<DashboardStats> response) {

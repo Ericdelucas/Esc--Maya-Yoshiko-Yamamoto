@@ -34,7 +34,7 @@ public class PatientsListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_patients_list);
         
         setupViews();
-        api = ApiClient.getAuthClient(this).create(PatientApi.class);
+        api = ApiClient.getAuthClient().create(PatientApi.class);
         loadPatients();
     }
 
