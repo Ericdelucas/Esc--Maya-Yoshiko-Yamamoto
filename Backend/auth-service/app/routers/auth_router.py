@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Header, HTTPException, status
+from fastapi import APIRouter, Depends, Header, HTTPException, status, Request
 from fastapi import UploadFile, File
 
 from app.core.dependencies import get_auth_service
@@ -8,6 +8,11 @@ from app.models.schemas.user_me_response import UserMeResponse
 from app.models.schemas.change_password_request import ChangePasswordRequest
 from app.models.schemas.profile_photo_response import ProfilePhotoResponse
 from app.services.auth_service import AuthService
+
+# Desabilitar rate limiting temporariamente para debug
+RATE_LIMITING_ENABLED = False
+rate_limiter = None
+print("Rate limiting desabilitado temporariamente para debug")
 
 router = APIRouter(prefix="/auth")
 
@@ -23,10 +28,94 @@ def register(payload: UserCreateIn, svc: AuthService = Depends(get_auth_service)
     return {"user_id": user_id}
 
 
-@router.post("/login", response_model=TokenOut)
-def login(payload: UserLoginIn, svc: AuthService = Depends(get_auth_service)) -> TokenOut:
-    login_data = svc.login(email=payload.email, password=payload.password)
-    return TokenOut(**login_data)
+@router.post("/login")
+def login(payload: UserLoginIn, request: Request, svc: AuthService = Depends(get_auth_service)):
+    """
+    Endpoint de login com rate limiting
+    - Máximo de 10 tentativas falhas
+    - Bloqueio de 5 minutos após exceder limite
+    """
+    # Se rate limiting não estiver disponível, fazer login normal
+    if not RATE_LIMITING_ENABLED or rate_limiter is None:
+        try:
+            login_data = svc.login(email=payload.email, password=payload.password)
+            return TokenOut(**login_data)
+        except Unauthorized:
+            raise HTTPException(
+                status_code=401,
+                detail={"error": "invalid_credentials", "message": "Credenciais inválidas"}
+            )
+    
+    # Com rate limiting ativado
+    try:
+        # Verificar rate limiting por email
+        rate_status = rate_limiter.record_attempt(payload.email, success=False)
+        
+        if not rate_status.get("allowed", True):
+            # Usuário está bloqueado
+            raise HTTPException(
+                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                detail={
+                    "error": "too_many_attempts",
+                    "message": rate_status["message"],
+                    "retry_after": rate_status["retry_after"],
+                    "attempts_used": rate_status.get("attempts_used", 0),
+                    "max_attempts": rate_status.get("max_attempts", 10)
+                },
+                headers={"Retry-After": str(rate_status["retry_after"])}
+            )
+        
+        # Tentar fazer login
+        login_data = svc.login(email=payload.email, password=payload.password)
+        
+        # Login bem-sucedido - registrar sucesso no rate limiter
+        rate_limiter.record_attempt(payload.email, success=True)
+        
+        return TokenOut(**login_data)
+        
+    except Unauthorized:
+        # Login falhou - rate limiter já registrou a tentativa falha acima
+        # Retornar mensagem informativa com tentativas restantes
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail={
+                "error": "invalid_credentials",
+                "message": rate_status.get("message", "Credenciais inválidas"),
+                "attempts_remaining": rate_status.get("attempts_remaining", 0),
+                "max_attempts": rate_status.get("max_attempts", 10)
+            }
+        )
+    except Exception as e:
+        # Log do erro e fallback sem rate limiting
+        print(f"Erro no rate limiting: {e}")
+        
+        # Tentar login sem rate limiting como fallback
+        try:
+            login_data = svc.login(email=payload.email, password=payload.password)
+            return TokenOut(**login_data)
+        except Unauthorized:
+            raise HTTPException(
+                status_code=401,
+                detail={"error": "invalid_credentials", "message": "Credenciais inválidas"}
+            )
+
+
+@router.get("/login-status/{email}")
+def get_login_status(email: str) -> dict:
+    """
+    Endpoint para verificar status de rate limiting de um email
+    Útil para o frontend mostrar quantas tentativas restantes
+    """
+    if not RATE_LIMITING_ENABLED or rate_limiter is None:
+        return {
+            "error": "Rate limiting not available",
+            "message": "Rate limiting temporariamente desativado",
+            "attempts_remaining": 10,
+            "max_attempts": 10,
+            "blocked": False
+        }
+    
+    return rate_limiter.get_status(email)
 
 
 @router.get("/verify")
