@@ -60,3 +60,30 @@ class ReportStatistics(BaseModel):
     report_types: Dict[str, Dict[str, Any]]
     total_reports: int
     recent_reports: List[PatientReportResponse]
+
+# # Schemas para anexos
+class ReportAttachmentBase(BaseModel):
+    attachment_type: str = Field(..., description="Tipo do anexo (image, document, etc)")
+    file_name: str = Field(..., description="Nome do arquivo")
+    description: Optional[str] = Field(None, description="Descrição do anexo")
+
+class ReportAttachmentCreate(ReportAttachmentBase):
+    pass
+
+class ReportAttachmentResponse(ReportAttachmentBase):
+    id: int
+    report_id: int
+    file_path: Optional[str] = None
+    file_size: Optional[int] = None
+    uploaded_at: Optional[datetime] = None
+    
+    class Config:
+        from_attributes = True
+
+class ReportAttachmentList(BaseModel):
+    attachments: List[ReportAttachmentResponse]
+    total: int
+
+# # Atualizar response do relatório para incluir anexos
+class PatientReportWithAttachments(PatientReportResponse):
+    attachments: List[ReportAttachmentResponse] = Field(default_factory=list)

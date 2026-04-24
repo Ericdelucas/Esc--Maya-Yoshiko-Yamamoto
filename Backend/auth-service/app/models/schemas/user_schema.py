@@ -18,6 +18,17 @@ class UserOut(BaseModel):
     role: str
 
 
+class PatientOut(BaseModel):
+    """Schema para dados do paciente (para lista de pacientes)"""
+    id: int
+    full_name: str  # Agora obrigatório (com fallback)
+    email: EmailStr
+    cpf: str | None = None  # Campos não existem na tabela
+    phone: str | None = None
+    birth_date: str | None = None
+    role: str
+
+
 class TokenOut(BaseModel):
     token: str
     user_role: str = None

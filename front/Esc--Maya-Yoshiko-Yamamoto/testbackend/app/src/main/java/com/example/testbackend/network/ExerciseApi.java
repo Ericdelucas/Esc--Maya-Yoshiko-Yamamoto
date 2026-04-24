@@ -2,6 +2,8 @@ package com.example.testbackend.network;
 
 import com.example.testbackend.models.Exercise;
 import com.example.testbackend.models.FileUploadResponse;
+import com.example.testbackend.models.Task;
+import com.example.testbackend.models.LeaderboardEntry;
 
 import java.util.List;
 
@@ -33,4 +35,17 @@ public interface ExerciseApi {
     @Multipart
     @POST("exercises/upload/video")
     Call<FileUploadResponse> uploadVideo(@Header("Authorization") String token, @Part MultipartBody.Part file);
+
+    // Task related methods
+    @GET("tasks")
+    Call<List<Task>> getTasks(@Header("Authorization") String token);
+
+    @POST("tasks")
+    Call<Task> createTask(@Header("Authorization") String token, @Body Task task);
+
+    @POST("tasks/{id}/complete")
+    Call<Void> completeTask(@Header("Authorization") String token, @Path("id") int id);
+
+    @GET("leaderboard")
+    Call<List<LeaderboardEntry>> getLeaderboard(@Header("Authorization") String token);
 }

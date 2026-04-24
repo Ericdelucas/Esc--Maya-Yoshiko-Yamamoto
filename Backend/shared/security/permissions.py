@@ -26,3 +26,17 @@ SYSTEM_CONFIG = "system:config"
 AI_CHAT = "ai:chat"
 
 NOTIFICATION_SEND = "notification:send"
+
+# Task/Points System Permissions
+TASK_CREATE = "task:create"
+TASK_UPDATE = "task:update"
+TASK_DELETE = "task:delete"
+TASK_READ = "task:read"
+TASK_COMPLETE = "task:complete"
+
+PROFESSIONAL_MANAGE = "professional:manage"
+PATIENT_MANAGE = "patient:manage"
+
+POINTS_VIEW = "points:view"
+POINTS_MANAGE = "points:manage"
+CHALLENGE_JOIN = "challenge:join"

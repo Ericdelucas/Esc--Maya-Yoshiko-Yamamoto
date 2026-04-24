@@ -9,10 +9,10 @@ from app.models.schemas.change_password_request import ChangePasswordRequest
 from app.models.schemas.profile_photo_response import ProfilePhotoResponse
 from app.services.auth_service import AuthService
 
-# Desabilitar rate limiting temporariamente para debug
-RATE_LIMITING_ENABLED = False
-rate_limiter = None
-print("Rate limiting desabilitado temporariamente para debug")
+# Forçar ativação do rate limiting
+from app.services.rate_limiter import rate_limiter
+RATE_LIMITING_ENABLED = True
+print("Rate limiting FORÇADO habilitado!")
 
 router = APIRouter(prefix="/auth")
 
@@ -85,19 +85,15 @@ def login(payload: UserLoginIn, request: Request, svc: AuthService = Depends(get
                 "max_attempts": rate_status.get("max_attempts", 10)
             }
         )
-    except Exception as e:
-        # Log do erro e fallback sem rate limiting
-        print(f"Erro no rate limiting: {e}")
-        
-        # Tentar login sem rate limiting como fallback
-        try:
-            login_data = svc.login(email=payload.email, password=payload.password)
-            return TokenOut(**login_data)
-        except Unauthorized:
-            raise HTTPException(
-                status_code=401,
-                detail={"error": "invalid_credentials", "message": "Credenciais inválidas"}
-            )
+    except HTTPException as he:
+        # Se já for HTTPException (429), propagar
+        if he.status_code == 429:
+            raise he
+        # Se for outro erro, tratar como Unauthorized
+        raise HTTPException(
+            status_code=401,
+            detail={"error": "invalid_credentials", "message": "Credenciais inválidas"}
+        )
 
 
 @router.get("/login-status/{email}")

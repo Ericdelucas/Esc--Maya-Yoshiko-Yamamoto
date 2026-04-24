@@ -73,6 +73,12 @@
             android:exported="false"
             android:label="Criar Relatório"
             android:parentActivityName=".PatientReportsActivity" />
+
+        <activity
+            android:name=".ReportDetailActivity"
+            android:exported="false"
+            android:label="Detalhes do Relatório"
+            android:parentActivityName=".PatientReportsActivity" />
             
     </application>
 

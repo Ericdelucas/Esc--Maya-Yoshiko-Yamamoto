@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+import os
+from fastapi import APIRouter, Depends, HTTPException, Query, status, UploadFile, File
+from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from datetime import datetime, timedelta
@@ -6,10 +8,12 @@ from datetime import datetime, timedelta
 from app.storage.database.patient_report_repository import PatientReportRepository
 from app.models.schemas.patient_report_schema import (
     PatientReportCreate, PatientReportUpdate, PatientReportResponse,
-    PatientReportList, ReportStatistics
+    PatientReportList, ReportStatistics, ReportAttachmentResponse,
+    ReportAttachmentList, PatientReportWithAttachments
 )
 from app.storage.database.db import get_session
-from app.models.orm.patient_report_orm import PatientReportORM
+from app.models.orm.patient_report_orm import PatientReportORM, ReportAttachmentORM
+from app.services.file_upload_service import FileUploadService
 
 router = APIRouter(prefix="/reports", tags=["patient-reports"])
 
@@ -176,3 +180,152 @@ async def search_reports_by_patient(
     """Buscar relatórios por nome do paciente"""
     reports = repo.searchReports(name, professional_id)
     return [PatientReportResponse.model_validate(r) for r in reports]
+
+# # Endpoints para anexos
+@router.post("/{report_id}/attachments", response_model=List[ReportAttachmentResponse])
+async def upload_attachments(
+    report_id: int,
+    files: List[UploadFile] = File(...),
+    description: Optional[str] = None,
+    repo: PatientReportRepository = Depends(get_repository)
+):
+    """Upload de múltiplas imagens/documentos para um relatório"""
+    
+    # Verificar se o relatório existe
+    report = repo.findById(report_id)
+    if not report:
+        raise HTTPException(status_code=404, detail="Relatório não encontrado")
+    
+    # Serviço de upload
+    upload_service = FileUploadService()
+    
+    # Salvar arquivos
+    try:
+        saved_files = await upload_service.save_multiple_files(
+            files, report_id, file_type="image"
+        )
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro no upload: {str(e)}")
+    
+    # Salvar anexos no banco
+    attachments = []
+    for file_data in saved_files:
+        attachment = ReportAttachmentORM(
+            report_id=report_id,
+            attachment_type=file_data["attachment_type"],
+            file_name=file_data["original_filename"],
+            file_path=file_data["file_path"],
+            description=description,
+            file_size=file_data["file_size"],
+            uploaded_at=datetime.now()
+        )
+        
+        saved_attachment = repo.save_attachment(attachment)
+        attachments.append(saved_attachment)
+    
+    return [ReportAttachmentResponse.model_validate(a) for a in attachments]
+
+@router.get("/{report_id}/attachments", response_model=ReportAttachmentList)
+async def get_report_attachments(
+    report_id: int,
+    repo: PatientReportRepository = Depends(get_repository)
+):
+    """Listar todos os anexos de um relatório"""
+    
+    # Verificar se o relatório existe
+    report = repo.findById(report_id)
+    if not report:
+        raise HTTPException(status_code=404, detail="Relatório não encontrado")
+    
+    # Buscar anexos
+    attachments = repo.find_attachments_by_report(report_id)
+    
+    return ReportAttachmentList(
+        attachments=[ReportAttachmentResponse.model_validate(a) for a in attachments],
+        total=len(attachments)
+    )
+
+@router.get("/{report_id}/attachments/{attachment_id}/download")
+async def download_attachment(
+    report_id: int,
+    attachment_id: int,
+    repo: PatientReportRepository = Depends(get_repository)
+):
+    """Download de um anexo específico"""
+    
+    # Verificar se o relatório existe
+    report = repo.findById(report_id)
+    if not report:
+        raise HTTPException(status_code=404, detail="Relatório não encontrado")
+    
+    # Buscar anexo
+    attachment = repo.find_attachment_by_id(attachment_id)
+    if not attachment or attachment.report_id != report_id:
+        raise HTTPException(status_code=404, detail="Anexo não encontrado")
+    
+    # Verificar se o arquivo existe
+    if not attachment.file_path or not os.path.exists(attachment.file_path):
+        raise HTTPException(status_code=404, detail="Arquivo não encontrado no servidor")
+    
+    # Retornar arquivo para download
+    return FileResponse(
+        path=attachment.file_path,
+        filename=attachment.file_name,
+        media_type="application/octet-stream"
+    )
+
+@router.delete("/{report_id}/attachments/{attachment_id}")
+async def delete_attachment(
+    report_id: int,
+    attachment_id: int,
+    repo: PatientReportRepository = Depends(get_repository)
+):
+    """Excluir um anexo específico"""
+    
+    # Verificar se o relatório existe
+    report = repo.findById(report_id)
+    if not report:
+        raise HTTPException(status_code=404, detail="Relatório não encontrado")
+    
+    # Buscar anexo
+    attachment = repo.find_attachment_by_id(attachment_id)
+    if not attachment or attachment.report_id != report_id:
+        raise HTTPException(status_code=404, detail="Anexo não encontrado")
+    
+    # Excluir arquivo do disco
+    upload_service = FileUploadService()
+    if attachment.file_path:
+        upload_service.delete_file(attachment.file_path)
+    
+    # Excluir do banco
+    success = repo.delete_attachment(attachment_id)
+    if not success:
+        raise HTTPException(status_code=500, detail="Erro ao excluir anexo")
+    
+    return {"message": "Anexo excluído com sucesso"}
+
+@router.get("/{report_id}/with-attachments", response_model=PatientReportWithAttachments)
+async def get_report_with_attachments(
+    report_id: int,
+    repo: PatientReportRepository = Depends(get_repository)
+):
+    """Buscar relatório com todos os seus anexos"""
+    
+    # Buscar relatório
+    report = repo.findById(report_id)
+    if not report:
+        raise HTTPException(status_code=404, detail="Relatório não encontrado")
+    
+    # Buscar anexos
+    attachments = repo.find_attachments_by_report(report_id)
+    
+    # Montar response completo
+    report_data = PatientReportResponse.model_validate(report)
+    attachments_data = [ReportAttachmentResponse.model_validate(a) for a in attachments]
+    
+    return PatientReportWithAttachments(
+        **report_data.model_dump(),
+        attachments=attachments_data
+    )

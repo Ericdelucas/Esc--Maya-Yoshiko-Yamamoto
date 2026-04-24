@@ -3,7 +3,7 @@ from .permissions import *
 
 # Role-based permission mapping
 ROLE_PERMISSIONS = {
-    "Admin": {
+    "admin": {
         # Admin tem todas as permissões
         EXERCISE_CREATE,
         EXERCISE_UPDATE,
@@ -35,7 +35,7 @@ ROLE_PERMISSIONS = {
         NOTIFICATION_SEND,
     },
     
-    "Professional": {
+    "professional": {
         # Exercise permissions
         EXERCISE_CREATE,
         EXERCISE_UPDATE,
@@ -62,7 +62,7 @@ ROLE_PERMISSIONS = {
         AI_CHAT,
     },
     
-    "Patient": {
+    "patient": {
         # Exercise permissions
         EXERCISE_READ,
         

@@ -108,3 +108,40 @@ class PatientReportRepository:
                 PatientReportORM.report_date >= start_date
             )
         ).order_by(desc(PatientReportORM.report_date)).all()
+    
+    # # Métodos para gerenciar anexos
+    def save_attachment(self, attachment: ReportAttachmentORM) -> ReportAttachmentORM:
+        """Salvar anexo de relatório"""
+        self.db.add(attachment)
+        self.db.commit()
+        self.db.refresh(attachment)
+        return attachment
+    
+    def find_attachments_by_report(self, report_id: int) -> List[ReportAttachmentORM]:
+        """Buscar todos os anexos de um relatório"""
+        return self.db.query(ReportAttachmentORM).filter(
+            ReportAttachmentORM.report_id == report_id
+        ).order_by(desc(ReportAttachmentORM.uploaded_at)).all()
+    
+    def find_attachment_by_id(self, attachment_id: int) -> Optional[ReportAttachmentORM]:
+        """Buscar anexo por ID"""
+        return self.db.query(ReportAttachmentORM).filter(
+            ReportAttachmentORM.id == attachment_id
+        ).first()
+    
+    def delete_attachment(self, attachment_id: int) -> bool:
+        """Excluir anexo"""
+        attachment = self.find_attachment_by_id(attachment_id)
+        if attachment:
+            self.db.delete(attachment)
+            self.db.commit()
+            return True
+        return False
+    
+    def delete_attachments_by_report(self, report_id: int) -> bool:
+        """Excluir todos os anexos de um relatório"""
+        attachments = self.find_attachments_by_report(report_id)
+        for attachment in attachments:
+            self.db.delete(attachment)
+        self.db.commit()
+        return True

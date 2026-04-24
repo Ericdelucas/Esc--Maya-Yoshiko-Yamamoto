@@ -2,6 +2,7 @@ package com.example.testbackend;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
@@ -18,6 +19,8 @@ import com.example.testbackend.network.ApiClient;
 import com.example.testbackend.network.AuthApi;
 import com.example.testbackend.utils.Constants;
 import com.example.testbackend.utils.TokenManager;
+
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -126,74 +129,78 @@ public class LoginActivity extends AppCompatActivity {
                         Toast.makeText(LoginActivity.this, "Erro: Token vazio", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    // 🔥 ERRO HTTP DETALHADO
-                    String errorBody = "";
+                    // 🔥 TRATAMENTO DE ERROS COM RATE LIMITING
                     try {
                         if (response.errorBody() != null) {
-                            errorBody = response.errorBody().string();
+                            String errorBody = response.errorBody().string();
+                            Log.e(TAG, "❌ Erro Body: " + errorBody);
+                            
+                            JSONObject errorJson = new JSONObject(errorBody);
+                            String detail = errorJson.optString("detail", "");
+                            
+                            if (response.code() == 429) {
+                                // Usuário bloqueado (Muitas tentativas)
+                                JSONObject detailJson = errorJson.optJSONObject("detail");
+                                String message = detailJson != null ? detailJson.optString("message", "Muitas tentativas") : "Muitas tentativas";
+                                int retryAfter = detailJson != null ? detailJson.optInt("retry_after", 300) : 300;
+                                
+                                Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
+                                startCountdownTimer(retryAfter);
+                            } else if (response.code() == 401) {
+                                // Credenciais inválidas ou tentativas restantes
+                                JSONObject detailJson = errorJson.optJSONObject("detail");
+                                String message = detailJson != null ? detailJson.optString("message", "E-mail ou senha incorretos") : "E-mail ou senha incorretos";
+                                Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(LoginActivity.this, "Erro " + response.code(), Toast.LENGTH_SHORT).show();
+                            }
                         }
-                    } catch (IOException e) {
-                        Log.e(TAG, "Erro ao ler corpo do erro", e);
+                    } catch (Exception e) {
+                        Log.e(TAG, "Erro ao processar erro do servidor", e);
+                        Toast.makeText(LoginActivity.this, "Erro ao processar resposta (" + response.code() + ")", Toast.LENGTH_SHORT).show();
                     }
-                    
-                    Log.e(TAG, "❌ Login falhou - Code: " + response.code());
-                    Log.e(TAG, "❌ Login falhou - Body: " + errorBody);
-                    
-                    String message = "Credenciais inválidas (" + response.code() + ")";
-                    if (response.code() == 401) message = "E-mail ou senha incorretos";
-                    else if (response.code() == 404) message = "Serviço de autenticação não encontrado";
-                    else if (response.code() == 500) message = "Erro interno no servidor";
-                    
-                    Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onFailure(Call<LoginResponse> call, Throwable t) {
                 setLoading(false);
-                
-                // 🔥 ERRO DE CONEXÃO DETALHADO
-                String errorType = t.getClass().getSimpleName();
-                String errorMessage = t.getMessage();
-                String requestUrl = call.request().url().toString();
-                
-                Log.e(TAG, "❌ FALHA DE REDE DETALHADA:");
-                Log.e(TAG, "   Tipo: " + errorType);
-                Log.e(TAG, "   Mensagem: " + errorMessage);
-                Log.e(TAG, "   URL tentada: " + requestUrl);
-                
-                String userMessage = "Erro de conexão";
-                if (t instanceof SocketTimeoutException) {
-                    userMessage = "O servidor demorou muito para responder (Timeout)";
-                } else if (t instanceof ConnectException) {
-                    userMessage = "Não foi possível conectar ao servidor. Verifique se o Docker está rodando.";
-                } else if (t instanceof UnknownHostException) {
-                    userMessage = "Endereço do servidor não encontrado. Verifique o Constants.HOST.";
-                }
-                
-                Toast.makeText(LoginActivity.this, userMessage + "\n(" + errorType + ")", Toast.LENGTH_LONG).show();
+                Log.e(TAG, "❌ FALHA DE REDE: " + t.getMessage());
+                Toast.makeText(LoginActivity.this, "Erro de conexão com o servidor", Toast.LENGTH_LONG).show();
             }
         });
     }
 
+    private void startCountdownTimer(int seconds) {
+        if (btnLogin != null) btnLogin.setEnabled(false);
+        new CountDownTimer(seconds * 1000, 1000) {
+            public void onTick(long millisUntilFinished) {
+                int minutes = (int) (millisUntilFinished / 60000);
+                int secs = (int) (millisUntilFinished % 60000) / 1000;
+                if (btnLogin != null) {
+                    btnLogin.setText(String.format("Bloqueado (%d:%02d)", minutes, secs));
+                }
+            }
+            
+            public void onFinish() {
+                if (btnLogin != null) {
+                    btnLogin.setEnabled(true);
+                    btnLogin.setText("Entrar");
+                }
+            }
+        }.start();
+    }
+
     private void navigateToCorrectActivity() {
         if (loginResponse == null) {
-            Log.e(TAG, "loginResponse nulo. Usando fallback.");
             startActivity(new Intent(this, MainActivity.class));
             finish();
             return;
         }
 
         String targetActivity = loginResponse.getTargetActivity();
-        Class<?> activityClass;
-        
-        if ("ProfessionalMainActivity".equals(targetActivity)) {
-            activityClass = ProfessionalMainActivity.class;
-        } else {
-            activityClass = MainActivity.class;
-        }
-        
-        Log.d(TAG, "➡️ Navegando para: " + activityClass.getSimpleName());
+        Class<?> activityClass = "ProfessionalMainActivity".equals(targetActivity) ? 
+                                ProfessionalMainActivity.class : MainActivity.class;
         
         Intent intent = new Intent(this, activityClass);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

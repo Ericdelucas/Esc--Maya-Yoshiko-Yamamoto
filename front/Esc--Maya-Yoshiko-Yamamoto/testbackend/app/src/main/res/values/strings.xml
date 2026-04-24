@@ -1,117 +1,218 @@
 <resources>
-    <string name="app_name">SMARTSAUDE - LOCALHOST</string>
-    <string name="title_activity_login">Login</string>
-    <string name="welcome">Bem-vindo!</string>
+    <string name="app_name">SmartSaúde</string>
+    <string name="app_title">SmartSaúde</string>
+    
+    <!-- Geral -->
+    <string name="save">Salvar</string>
+    <string name="save_btn">Salvar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="back">Voltar</string>
+    <string name="logout">Sair</string>
     <string name="settings">Configurações</string>
-    <string name="user_initial_default">U</string>
-    <string name="next_session">Próxima Sessão</string>
-    <string name="knee_strengthening">Fortalecimento de Joelho</string>
-    
-    <!-- Professional Section -->
-    <string name="patient_exams">Exames dos Pacientes</string>
-    <string name="manage_reports">Gerencie laudos e exames de imagem</string>
-    
-    <!-- Menu Grid -->
-    <string name="challenges">Desafios</string>
-    <string name="ranking">Ranking</string>
-    <string name="goals">Metas</string>
-    <string name="professionals">Profissionais</string>
-    
-    <!-- Health Section -->
-    <string name="health_score">Pontuação de Saúde</string>
-    <string name="health_score_value">75%</string>
-
-    <!-- Content Descriptions -->
-    <string name="desc_user_avatar">Avatar do usuário</string>
-    <string name="desc_icon_exams">Ícone de exames</string>
-    <string name="desc_play_icon">Ícone de iniciar</string>
-    <string name="desc_icon_challenges">Ícone de desafios</string>
-    <string name="desc_icon_ranking">Ícone de ranking</string>
-    <string name="desc_icon_goals">Ícone de metas</string>
-    <string name="desc_icon_professionals">Ícone de profissionais</string>
-    
-    <!-- GERAL -->
+    <string name="welcome">Bem-vindo</string>
+    <string name="open">Abrir</string>
     <string name="yes">Sim</string>
     <string name="no">Não</string>
     <string name="sometimes">Às vezes</string>
-    <string name="save">Salvar</string>
-    <string name="save_btn">Salvar Alterações</string>
-    <string name="cancel">Cancelar</string>
-    <string name="open">Abrir</string>
-    <string name="logout">Sair</string>
+    <string name="login">Entrar</string>
+    <string name="register">Cadastrar</string>
+    <string name="email">E-mail</string>
+    <string name="password">Senha</string>
+    <string name="version_label">Versão 1.0.0</string>
+    <string name="editar">Editar</string>
+    <string name="excluir">Excluir</string>
+    <string name="confirmar">Confirmar</string>
+    <string name="continuar">Continuar</string>
+    <string name="sim">Sim</string>
+    <string name="nao">Não</string>
+    <string name="carregando">Carregando...</string>
+    <string name="aguarde">Aguarde...</string>
 
-    <!-- EXERCISES -->
-    <string name="my_exercises">Meus Exercícios</string>
-    
-    <!-- HEALTH HUB -->
-    <string name="health_tools">Ferramentas de Saúde</string>
-    <string name="health_tools_subtitle">Acesse calculadoras e avaliações</string>
-    <string name="bmi_calculator">Calculadora de IMC</string>
-    <string name="body_fat">Gordura Corporal</string>
-    <string name="questionnaire">Questionário</string>
-    <string name="health_history">Histórico de Saúde</string>
-
-    <!-- HEALTH HISTORY -->
-    <string name="history_title">Histórico de Saúde</string>
-    <string name="personal_info_section">Informações Pessoais</string>
-    <string name="medications_section">Medicamentos em Uso</string>
-    <string name="medications_hint">Liste seus medicamentos atuais...</string>
-    <string name="allergies_section">Alergias</string>
-    <string name="allergies_hint">Liste suas alergias...</string>
-    <string name="observations_section">Observações</string>
-    <string name="observations_hint">Informações adicionais importantes...</string>
-    <string name="save_history_btn">Salvar Histórico</string>
-
-    <!-- HEALTH QUESTIONNAIRE -->
-    <string name="questionnaire_title">Avaliação de Saúde</string>
-    <string name="q1_text">Você possui algum histórico de doenças cardíacas?</string>
-    <string name="q2_text">Você sente dores no peito durante atividades físicas?</string>
-    <string name="q3_text">Você costuma sentir tonturas ou desmaios?</string>
-    <string name="q4_text">Possui algum problema 骨骼 ou articular?</string>
-    <string name="q5_text">Está em uso de medicação para pressão arterial?</string>
-    <string name="q6_text">Possui alguma outra condição médica impeditiva?</string>
-
-    <!-- IMC (BMI) Calculator Strings -->
+    <!-- Body Fat Calculator -->
+    <string name="body_fat_title">Calculadora de Gordura Corporal</string>
     <string name="bmi_weight_hint">Peso (kg)</string>
     <string name="bmi_height_hint">Altura (cm)</string>
-    <string name="bmi_calculate_btn">Calcular IMC</string>
-    <string name="bmi_result_label">Seu IMC é:</string>
-    <string name="bmi_reference_title">Referência IMC:</string>
-    <string name="bmi_reference_table">Abaixo de 18.5: Abaixo do peso\n18.5 - 24.9: Peso normal\n25.0 - 29.9: Sobrepeso\nAcima de 30.0: Obesidade</string>
-    <string name="bmi_underweight">Abaixo do Peso</string>
-    <string name="bmi_normal">Peso Normal</string>
-    <string name="bmi_overweight">Sobrepeso</string>
-    <string name="bmi_obese">Obesidade</string>
-
-    <!-- Body Fat Calculator Strings -->
-    <string name="body_fat_title">Calculadora de Gordura Corporal</string>
     <string name="age_hint">Idade</string>
     <string name="gender_label">Gênero</string>
     <string name="male">Masculino</string>
     <string name="female">Feminino</string>
     <string name="calculate_bf_btn">Calcular % de Gordura</string>
-    <string name="bf_result_label">Sua Gordura Corporal Estimada</string>
-    <string name="bf_note_title">Nota Importante:</string>
-    <string name="bf_note_text">Este cálculo utiliza a fórmula da Marinha dos EUA e serve apenas como uma estimativa. Para resultados precisos, consulte um profissional de saúde ou utilize métodos como Bioimpedância.</string>
+    <string name="bf_result_label">Seu percentual de gordura estimado é:</string>
+    <string name="bf_note_title">Nota:</string>
+    <string name="bf_note_text">Este cálculo é baseado na fórmula da Marinha dos EUA (US Navy) e fornece apenas uma estimativa. Para resultados precisos, consulte um profissional de saúde e use métodos como bioimpedância ou dobras cutâneas.</string>
 
-    <!-- Progress & Assistant -->
+    <!-- BMI Calculator -->
+    <string name="bmi_calculator">Calculadora de IMC</string>
+    <string name="bmi_calculate_btn">Calcular IMC</string>
+    <string name="bmi_result_label">Seu IMC é:</string>
+    <string name="bmi_reference_title">Tabela de Referência</string>
+    <string name="bmi_reference_table">Tabela de Classificação do IMC</string>
+    <string name="bmi_underweight">Abaixo do peso</string>
+    <string name="bmi_normal">Peso normal</string>
+    <string name="bmi_overweight">Sobrepeso</string>
+    <string name="bmi_obese">Obesidade</string>
+
+    <!-- Exercise -->
+    <string name="my_exercises">Meus Exercícios</string>
+    <string name="knee_strengthening">Fortalecimento de Joelho</string>
+    
+    <!-- Progress -->
     <string name="see_detailed_progress">Ver progresso detalhado</string>
-    <string name="assistant_title">Assistente IA</string>
-    <string name="assistant_welcome_message">Olá! Sou seu assistente de saúde IA. Como posso ajudar você hoje? Você pode me perguntar sobre IMC, gordura corporal, exercícios ou seu progresso.</string>
+    <string name="next_session">Próxima Sessão</string>
+
+    <!-- Health History -->
+    <string name="history_title">Histórico de Saúde</string>
+    <string name="personal_info_section">Informações Pessoais</string>
+    <string name="medications_section">Medicamentos</string>
+    <string name="medications_hint">Liste seus medicamentos atuais</string>
+    <string name="allergies_section">Alergias</string>
+    <string name="allergies_hint">Liste suas alergias (medicamentos, alimentos, etc.)</string>
+    <string name="observations_section">Observações Médicas</string>
+    <string name="observations_hint">Outras informações relevantes sobre sua saúde</string>
+    <string name="save_history_btn">Salvar Histórico</string>
+
+    <!-- Health Hub -->
+    <string name="health_tools">Ferramentas de Saúde</string>
+    <string name="health_tools_subtitle">Monitore sua saúde</string>
+    <string name="body_fat">Gordura Corporal</string>
+    <string name="questionnaire">Questionário de Saúde</string>
+    <string name="health_history">Meu Histórico</string>
+
+    <!-- Health Questionnaire -->
+    <string name="questionnaire_title">Questionário de Saúde</string>
+    <string name="q1_text">Você pratica atividades físicas regularmente?</string>
+    <string name="q2_text">Você possui alguma doença crônica diagnosticada?</string>
+    <string name="q3_text">Você sente dores nas articulações durante o exercício?</string>
+
+    <!-- Assistant -->
+    <string name="assistant_title">Assistente Virtual</string>
+    <string name="assistant_welcome_message">Olá! Sou seu assistente virtual de saúde. Como posso ajudar hoje?</string>
     <string name="assistant_thinking">Pensando...</string>
-    <string name="assistant_error">Desculpe, ocorreu um erro ao processar sua mensagem.</string>
-    <string name="assistant_network_error">Não consegui me conectar ao servidor. Verifique sua internet.</string>
-    <string name="assistant_dialog_title">Sugestão da IA</string>
-    <string name="assistant_dialog_message">Identifiquei que você quer acessar uma ferramenta específica. Deseja que eu abra para você?</string>
+    <string name="assistant_error">Desculpe, ocorreu um erro ao processar sua solicitação.</string>
+    <string name="assistant_network_error">Erro de conexão. Verifique sua internet.</string>
+    <string name="assistant_input_hint">Digite sua mensagem...</string>
+    <string name="assistant_dialog_title">Navegação</string>
+    <string name="assistant_dialog_message">Deseja abrir esta tela?</string>
     <string name="assistant_dialog_positive">Sim, abrir</string>
     <string name="assistant_dialog_negative">Agora não</string>
+    <string name="ai_chat">Conversa com IA</string>
 
-    <!-- Settings Activity -->
-    <string name="app_title">SmartSaúde</string>
+    <!-- Settings -->
     <string name="appearance">Aparência</string>
     <string name="theme_light">Claro</string>
     <string name="theme_dark">Escuro</string>
-    <string name="theme_system">Padrão do sistema</string>
+    <string name="theme_system">Sistema</string>
     <string name="language">Idioma</string>
     <string name="about">Sobre</string>
+
+    <!-- Relatórios de Pacientes -->
+    <string name="relatorios_pacientes">Relatórios de Pacientes</string>
+    <string name="criar_relatorio">Novo Relatório</string>
+    <string name="detalhes_relatorio">Detalhes do Relatório</string>
+    <string name="editar_relatorio">Editar Relatório</string>
+    <string name="lista_relatorios">Meus Relatórios</string>
+    <string name="estatisticas">Estatísticas</string>
+    <string name="titulo_relatorio">Título do Relatório</string>
+    <string name="tipo_relatorio">Tipo de Relatório</string>
+    <string name="data_relatorio">Data do Relatório</string>
+    <string name="conteudo_principal">Conteúdo Principal</string>
+    <string name="evolucao_clinica">Evolução Clínica</string>
+    <string name="dados_objetivos">Dados Objetivos</string>
+    <string name="dados_subjetivos">Dados Subjetivos</string>
+    <string name="plano_tratamento">Plano de Tratamento</string>
+    <string name="recomendacoes">Recomendações</string>
+    <string name="proximos_passos">Próximos Passos</string>
+    <string name="escala_dor">Escala de Dor</string>
+    <string name="status_funcional">Status Funcional</string>
+    <string name="evolucao">Evolução</string>
+    <string name="avaliacao">Avaliação</string>
+    <string name="alta">Alta</string>
+    <string name="progresso">Progresso</string>
+    <string name="anamnese">Anamnese</string>
+    <string name="reavaliacao">Reavaliação</string>
+    <string name="excelente">Excelente</string>
+    <string name="bom">Bom</string>
+    <string name="regular">Regular</string>
+    <string name="ruim">Ruim</string>
+    <string name="critico">Crítico</string>
+    <string name="relatorio_criado_sucesso">Relatório criado com sucesso!</string>
+    <string name="relatorio_atualizado_sucesso">Relatório atualizado com sucesso!</string>
+    <string name="relatorio_excluido_sucesso">Relatório excluído com sucesso!</string>
+    <string name="erro_criar_relatorio">Erro ao criar relatório</string>
+    <string name="erro_atualizar_relatorio">Erro ao atualizar relatório</string>
+    <string name="erro_excluir_relatorio">Erro ao excluir relatório</string>
+    <string name="erro_conexao">Erro de conexão</string>
+    <string name="erro_carregar">Erro ao carregar dados</string>
+    <string name="confirmar_excluir_titulo">Excluir Relatório</string>
+    <string name="confirmar_excluir_mensagem">Esta ação não poderá ser desfeita. Deseja continuar?</string>
+    <string name="campo_obrigatorio">Campo obrigatório</string>
+    <string name="titulo_obrigatorio">Título é obrigatório</string>
+    <string name="paciente_obrigatorio">Selecione um paciente</string>
+    <string name="tipo_obrigatorio">Selecione o tipo de relatório</string>
+    <string name="data_obrigatoria">Data é obrigatória</string>
+    <string name="paciente">Paciente</string>
+    <string name="profissional">Profissional</string>
+    <string name="criado_em">Criado em</string>
+    <string name="atualizado_em">Atualizado em</string>
+    <string name="relatorio_numero">Relatório #%1$d</string>
+    <string name="total_relatorios">Total de Relatórios</string>
+    <string name="relatorios_mes">Relatórios este mês</string>
+    <string name="media_dor">Média de Dor</string>
+    <string name="relatorios_recentes">Relatórios Recentes</string>
+    <string name="nenhum_relatorio">Nenhum relatório encontrado</string>
+    <string name="sem_relatorios">Você ainda não tem relatórios</string>
+    <string name="avaliacao_dor">Avaliação da Dor</string>
+    <string name="intensidade_dor">Intensidade da Dor</string>
+    <string name="escala_eva">Escala EVA (0-10)</string>
+    <string name="limitacoes">Limitações</string>
+    <string name="conquistas">Conquistas</string>
+    <string name="evolucao_paciente">Evolução do Paciente</string>
+    <string name="ver_detalhes">Ver detalhes</string>
+    <string name="erro_validacao">Erro de validação: %1$s</string>
+    <string name="erro_servidor">Erro no servidor. Tente novamente.</string>
+    <string name="erro_rede">Sem conexão com a internet</string>
+    <string name="erro_timeout">Tempo esgotado. Verifique sua conexão.</string>
+    <string name="erro_desconhecido">Ocorreu um erro inesperado</string>
+    <string name="avaliacao_dor_formatada">Dor: %1$d/10</string>
+
+    <string-array name="frequency_options">
+        <item>1 vez por semana</item>
+        <item>2 vezes por semana</item>
+        <item>3 vezes por semana</item>
+        <item>4 vezes por semana</item>
+        <item>5 vezes por semana</item>
+        <item>6 vezes por semana</item>
+        <item>Todos os dias</item>
+    </string-array>
+
+    <string-array name="functional_status_array">
+        <item>Selecione...</item>
+        <item>Excelente</item>
+        <item>Bom</item>
+        <item>Regular</item>
+        <item>Ruim</item>
+        <item>Crítico</item>
+    </string-array>
+    <string-array name="tipos_relatorio_array">
+        <item>Selecione o tipo...</item>
+        <item>Evolução</item>
+        <item>Avaliação</item>
+        <item>Alta</item>
+        <item>Progresso</item>
+        <item>Anamnese</item>
+        <item>Reavaliação</item>
+    </string-array>
+    <string-array name="escala_dor_array">
+        <item>0 - Sem dor</item>
+        <item>1 - Dor mínima</item>
+        <item>2 - Dor leve</item>
+        <item>3 - Dor moderada</item>
+        <item>4 - Dor moderada</item>
+        <item>5 - Dor moderada</item>
+        <item>6 - Dor forte</item>
+        <item>7 - Dor forte</item>
+        <item>8 - Dor muito forte</item>
+        <item>9 - Dor muito forte</item>
+        <item>10 - Dor insuportável</item>
+    </string-array>
 </resources>

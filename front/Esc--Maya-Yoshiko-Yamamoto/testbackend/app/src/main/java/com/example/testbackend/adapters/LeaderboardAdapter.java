@@ -1,5 +1,6 @@
 package com.example.testbackend.adapters;
 
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,9 +32,47 @@ public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         LeaderboardEntry entry = entries.get(position);
-        holder.position.setText("#" + entry.getPosition());
-        holder.name.setText(entry.getName());
+        
+        // Posição pura (1, 2, 3...)
+        holder.position.setText(String.valueOf(entry.getPosition()));
+        
+        // Nome com destaque para o usuário real
+        if (entry.isRealUser()) {
+            holder.name.setText(entry.getName() + " (Você)");
+            holder.name.setTypeface(null, Typeface.BOLD);
+            holder.name.setTextColor(holder.itemView.getContext().getResources().getColor(R.color.primary));
+            holder.itemView.setBackgroundColor(holder.itemView.getContext().getResources().getColor(R.color.primary_light));
+        } else {
+            holder.name.setText(entry.getName());
+            holder.name.setTypeface(null, Typeface.NORMAL);
+            holder.name.setTextColor(holder.itemView.getContext().getResources().getColor(R.color.text_main));
+            holder.itemView.setBackgroundColor(android.graphics.Color.TRANSPARENT);
+        }
+        
         holder.points.setText(String.valueOf(entry.getPoints()));
+        
+        // Medalhas Top 3
+        switch (entry.getPosition()) {
+            case 1:
+                if (entry.isRealUser()) {
+                    holder.position.setText("👑");
+                } else {
+                    holder.position.setText("🥇");
+                }
+                holder.position.setTextColor(holder.itemView.getContext().getResources().getColor(android.R.color.holo_orange_dark));
+                break;
+            case 2:
+                holder.position.setText("🥈");
+                holder.position.setTextColor(holder.itemView.getContext().getResources().getColor(android.R.color.darker_gray));
+                break;
+            case 3:
+                holder.position.setText("🥉");
+                holder.position.setTextColor(holder.itemView.getContext().getResources().getColor(android.R.color.holo_orange_light));
+                break;
+            default:
+                holder.position.setText(String.valueOf(entry.getPosition()));
+                holder.position.setTextColor(holder.itemView.getContext().getResources().getColor(R.color.text_secondary));
+        }
     }
 
     @Override

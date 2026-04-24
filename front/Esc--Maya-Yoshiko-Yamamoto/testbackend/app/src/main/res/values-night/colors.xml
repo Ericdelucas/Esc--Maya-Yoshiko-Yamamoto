@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary">#D0BCFF</color>
-    <color name="background">#121212</color>
-    <color name="text_color">#FFFFFF</color>
+    <!-- Mapeando os nomes de cores para seus valores Dark quando o sistema estiver em modo noturno -->
+    <color name="primary">#4A90A4</color>
+    <color name="primary_variant">#2C9CC3</color>
+    <color name="secondary_light">#305D6B</color>
+    
+    <color name="app_background">#121212</color>
+    <color name="card_background">#1E1E1E</color>
+    <color name="input_background">#2C2C2C</color>
+    
+    <color name="text_main">#E0E0E0</color>
+    <color name="text_secondary">#B0B0B0</color>
+    <color name="border_soft">#383838</color>
 </resources>
