@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:background="@android:color/white">
+    android:background="?android:attr/windowBackground">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,13 +20,13 @@
             android:textSize="24sp"
             android:textStyle="bold"
             android:layout_marginBottom="32dp"
-            android:textColor="@android:color/black"/>
+            android:textColor="?android:attr/textColorPrimary"/>
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etRegName"
                 android:layout_width="match_parent"
@@ -39,7 +39,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etRegCpf"
                 android:layout_width="match_parent"
@@ -52,7 +52,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etRegEmail"
                 android:layout_width="match_parent"
@@ -66,7 +66,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             app:passwordToggleEnabled="true"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etRegPassword"
                 android:layout_width="match_parent"
@@ -80,7 +80,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             app:passwordToggleEnabled="true"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etRegConfirmPassword"
                 android:layout_width="match_parent"
@@ -93,6 +93,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Tipo de Usuário"
+            android:textColor="?android:attr/textColorSecondary"
             android:layout_marginBottom="8dp"/>
 
         <Spinner
@@ -100,13 +101,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
-            android:minHeight="48dp"/>
+            android:minHeight="48dp"
+            android:backgroundTint="?attr/colorPrimary"/>
 
         <CheckBox
             android:id="@+id/cbLgpd"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Li e aceito os termos da LGPD"
+            android:textColor="?android:attr/textColorPrimary"
             android:layout_marginBottom="24dp"/>
 
         <Button
@@ -114,14 +117,14 @@
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:text="Criar conta"
-            style="@style/Widget.MaterialComponents.Button"/>
+            style="@style/Widget.Material3.Button"/>
 
         <Button
             android:id="@+id/btnBackToLogin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Já tenho conta? Entrar"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
+            style="@style/Widget.Material3.Button.TextButton"
             android:layout_marginTop="16dp"/>
 
     </LinearLayout>

@@ -1,29 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="10dp"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="2dp"
-    app:cardBackgroundColor="?attr/colorSurface"
-    app:strokeWidth="1dp"
-    app:strokeColor="@color/border_soft">
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:padding="16dp">
+        android:paddingHorizontal="24dp"
+        android:paddingVertical="16dp"
+        android:background="?attr/selectableItemBackground">
 
         <TextView
             android:id="@+id/text_position"
             android:layout_width="40dp"
             android:layout_height="wrap_content"
-            android:text="#1"
-            android:textColor="@color/primary"
-            android:textSize="16sp"
+            android:text="1"
+            android:textColor="@color/text_main"
+            android:textSize="14sp"
             android:textStyle="bold" />
 
         <TextView
@@ -31,17 +27,24 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Nome"
+            android:text="Nome do Paciente"
             android:textColor="@color/text_main"
-            android:textSize="16sp" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/text_points"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="1000"
+            android:text="134"
             android:textColor="@color/primary"
             android:textSize="14sp"
             android:textStyle="bold" />
     </LinearLayout>
-</com.google.android.material.card.MaterialCardView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginHorizontal="24dp"
+        android:background="@color/border_soft" />
+
+</LinearLayout>

@@ -22,6 +22,7 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
@@ -81,6 +82,22 @@
                 android:text="Imagem (Thumbnail)"
                 android:textStyle="bold"
                 android:layout_marginBottom="8dp" />
+            
+            <FrameLayout
+                android:id="@+id/containerImagePreview"
+                android:layout_width="match_parent"
+                android:layout_height="220dp"
+                android:layout_marginBottom="8dp"
+                android:visibility="gone">
+                
+                <ImageView
+                    android:id="@+id/ivImagePreview"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:background="@drawable/bg_preview" />
+            </FrameLayout>
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnPickImage"
                 style="@style/Widget.Material3.Button.TonalButton"
@@ -97,6 +114,22 @@
                 android:text="Vídeo Explicativo"
                 android:textStyle="bold"
                 android:layout_marginBottom="8dp" />
+
+            <FrameLayout
+                android:id="@+id/containerVideoPreview"
+                android:layout_width="match_parent"
+                android:layout_height="220dp"
+                android:layout_marginBottom="8dp"
+                android:visibility="gone">
+                
+                <ImageView
+                    android:id="@+id/ivVideoPreview"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:background="@drawable/bg_preview" />
+            </FrameLayout>
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnPickVideo"
                 style="@style/Widget.Material3.Button.TonalButton"

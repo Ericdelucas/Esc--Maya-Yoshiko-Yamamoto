@@ -1,8 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme - FORÇANDO MODO CLARO E DESATIVANDO DARK AUTOMÁTICO -->
-    <style name="Theme.SmartSaude" parent="Theme.Material3.Light.NoActionBar">
-        <item name="android:forceDarkAllowed">false</item>
-        
+    <!-- Base application theme -->
+    <style name="Theme.SmartSaude" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Paleta de Cores Médica -->
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryVariant">@color/primary_variant</item>

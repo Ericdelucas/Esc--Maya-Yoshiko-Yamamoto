@@ -59,7 +59,10 @@ public class ChangePasswordActivity extends AppCompatActivity {
         etNewPassword = findViewById(R.id.etNewPassword);
         etConfirmPassword = findViewById(R.id.etConfirmPassword);
         btnSavePassword = findViewById(R.id.btnSavePassword);
-        pbLoading = new ProgressBar(this); // Simples para controle de estado
+        pbLoading = findViewById(R.id.pbLoading); // Assumindo que existe no XML agora
+        if (pbLoading == null) {
+            pbLoading = new ProgressBar(this);
+        }
     }
 
     private void savePassword() {
@@ -77,14 +80,24 @@ public class ChangePasswordActivity extends AppCompatActivity {
             return;
         }
 
-        if (newPass.length() < 6) {
-            Toast.makeText(this, "A nova senha deve ter pelo menos 6 caracteres", Toast.LENGTH_SHORT).show();
+        // CORREÇÃO: Backend exige no mínimo 8 caracteres
+        if (newPass.length() < 8) {
+            etNewPassword.setError("A nova senha deve ter pelo menos 8 caracteres");
+            Toast.makeText(this, "A nova senha deve ter pelo menos 8 caracteres", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (current.equals(newPass)) {
+            etNewPassword.setError("A nova senha deve ser diferente da atual");
+            Toast.makeText(this, "A nova senha deve ser diferente da atual", Toast.LENGTH_SHORT).show();
             return;
         }
 
         setLoading(true);
         ChangePasswordRequest request = new ChangePasswordRequest(current, newPass, confirm);
         AuthApi api = ApiClient.getAuthClient().create(AuthApi.class);
+
+        Log.d(TAG, "Alterando senha para usuário com token: " + (token.isEmpty() ? "Vazio" : "Presente"));
 
         api.changePassword("Bearer " + token, request).enqueue(new Callback<ResponseBody>() {
             @Override
@@ -96,11 +109,23 @@ public class ChangePasswordActivity extends AppCompatActivity {
                     finish();
                 } else {
                     Log.e(TAG, "Erro ao alterar senha. Code: " + response.code());
-                    if (response.code() == 401) {
-                        Toast.makeText(ChangePasswordActivity.this, "Senha atual incorreta", Toast.LENGTH_LONG).show();
-                    } else {
-                        Toast.makeText(ChangePasswordActivity.this, "Falha ao alterar senha. Verifique os dados.", Toast.LENGTH_LONG).show();
+                    String errorMessage = "Falha ao alterar senha";
+                    try {
+                        if (response.errorBody() != null) {
+                            String errorBody = response.errorBody().string();
+                            Log.e(TAG, "Error body: " + errorBody);
+                            if (errorBody.contains("at least 8 characters")) {
+                                errorMessage = "A nova senha deve ter pelo menos 8 caracteres";
+                            } else if (errorBody.contains("not match")) {
+                                errorMessage = "As senhas não coincidem";
+                            } else if (response.code() == 401) {
+                                errorMessage = "Senha atual incorreta";
+                            }
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "Erro ao processar resposta de erro", e);
                     }
+                    Toast.makeText(ChangePasswordActivity.this, errorMessage, Toast.LENGTH_LONG).show();
                 }
             }
 
@@ -116,6 +141,9 @@ public class ChangePasswordActivity extends AppCompatActivity {
     private void setLoading(boolean loading) {
         btnSavePassword.setEnabled(!loading);
         btnSavePassword.setText(loading ? "Salvando..." : "Salvar Nova Senha");
+        if (pbLoading != null) {
+            pbLoading.setVisibility(loading ? View.VISIBLE : View.GONE);
+        }
     }
 
     @Override

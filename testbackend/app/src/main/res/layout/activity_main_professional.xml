@@ -453,4 +453,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:contentDescription="Sair" />
 
+    <!-- NOVO: FAB Adicionar Tarefa -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAddTask"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="16dp"
+        android:src="@android:drawable/ic_input_add"
+        app:tint="@color/white"
+        app:backgroundTint="?attr/colorPrimary"
+        app:layout_constraintBottom_toTopOf="@+id/fabLogout"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:contentDescription="Adicionar Tarefa" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

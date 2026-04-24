@@ -175,6 +175,16 @@
     <string name="erro_desconhecido">Ocorreu um erro inesperado</string>
     <string name="avaliacao_dor_formatada">Dor: %1$d/10</string>
 
+    <string-array name="frequency_options">
+        <item>1 vez por semana</item>
+        <item>2 vezes por semana</item>
+        <item>3 vezes por semana</item>
+        <item>4 vezes por semana</item>
+        <item>5 vezes por semana</item>
+        <item>6 vezes por semana</item>
+        <item>Todos os dias</item>
+    </string-array>
+
     <string-array name="functional_status_array">
         <item>Selecione...</item>
         <item>Excelente</item>

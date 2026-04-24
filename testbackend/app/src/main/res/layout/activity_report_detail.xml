@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     android:fillViewport="true">
 
     <LinearLayout
@@ -11,7 +9,7 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- # Header com informações básicas -->
+        <!-- Header com informações básicas -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -31,7 +29,7 @@
                     android:layout_height="wrap_content"
                     android:text="Relatório #0"
                     android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/tvPatientId"
@@ -39,7 +37,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text="Paciente ID: 0"
-                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"/>
+                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
 
                 <TextView
                     android:id="@+id/tvCreatedAt"
@@ -48,7 +46,7 @@
                     android:layout_marginTop="4dp"
                     android:text="Criado em: --/--/----"
                     android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-                    android:textColor="?android:attr/textColorSecondary"/>
+                    android:textColor="?android:attr/textColorSecondary" />
 
                 <TextView
                     android:id="@+id/tvUpdatedAt"
@@ -57,22 +55,22 @@
                     android:layout_marginTop="4dp"
                     android:text="Atualizado em: --/--/----"
                     android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-                    android:textColor="?android:attr/textColorSecondary"/>
+                    android:textColor="?android:attr/textColorSecondary" />
 
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- # ProgressBar -->
+        <!-- ProgressBar -->
         <ProgressBar
             android:id="@+id/progressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginBottom="16dp"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
-        <!-- # Campos editáveis -->
+        <!-- Campos editáveis -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -82,7 +80,7 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/editTitle"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -96,7 +94,7 @@
                 android:id="@+id/editContent"
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
-                android:gravity="top"/>
+                android:gravity="top" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -110,7 +108,7 @@
                 android:id="@+id/editClinicalEvolution"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
-                android:gravity="top"/>
+                android:gravity="top" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -124,7 +122,7 @@
                 android:id="@+id/editObjectiveData"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
-                android:gravity="top"/>
+                android:gravity="top" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -138,7 +136,7 @@
                 android:id="@+id/editSubjectiveData"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
-                android:gravity="top"/>
+                android:gravity="top" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -152,7 +150,7 @@
                 android:id="@+id/editTreatmentPlan"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
-                android:gravity="top"/>
+                android:gravity="top" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -166,7 +164,7 @@
                 android:id="@+id/editRecommendations"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
-                android:gravity="top"/>
+                android:gravity="top" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -180,11 +178,11 @@
                 android:id="@+id/editNextSteps"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
-                android:gravity="top"/>
+                android:gravity="top" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- # Escala de Dor -->
+        <!-- Escala de Dor -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -196,7 +194,7 @@
                 android:layout_height="wrap_content"
                 android:text="Escala de Dor"
                 android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -210,7 +208,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:max="10"/>
+                    android:max="10" />
 
                 <TextView
                     android:id="@+id/tvPainScaleValue"
@@ -220,28 +218,86 @@
                     android:text="0"
                     android:textAlignment="center"
                     android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold" />
 
             </LinearLayout>
 
         </LinearLayout>
 
-        <!-- # Status Funcional -->
+        <!-- Status Funcional -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:text="Status Funcional"
             android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <Spinner
             android:id="@+id/spinnerFunctionalStatus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"/>
+            android:layout_marginBottom="24dp" />
 
-        <!-- # Botões -->
+        <!-- SEÇÃO DE ANEXOS -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Anexos"
+                        android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+                        android:textStyle="bold" />
+
+                    <Button
+                        android:id="@+id/btnAddAttachment"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Adicionar Imagens" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvNoAttachments"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Nenhum anexo adicionado"
+                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                    android:textColor="?android:attr/textColorSecondary"
+                    android:visibility="gone" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerAttachments"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:nestedScrollingEnabled="false" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Botões -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -249,12 +305,12 @@
 
             <Button
                 android:id="@+id/btnCancel"
+                style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:layout_weight="1"
-                android:text="Cancelar"
-                style="@style/Widget.Material3.Button.OutlinedButton"/>
+                android:text="Cancelar" />
 
             <Button
                 android:id="@+id/btnSave"
@@ -262,7 +318,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_weight="1"
-                android:text="Salvar"/>
+                android:text="Salvar" />
 
         </LinearLayout>
 

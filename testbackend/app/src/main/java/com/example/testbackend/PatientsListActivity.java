@@ -1,6 +1,7 @@
 package com.example.testbackend;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,6 +15,7 @@ import com.example.testbackend.adapters.PatientsAdapter;
 import com.example.testbackend.models.Patient;
 import com.example.testbackend.network.ApiClient;
 import com.example.testbackend.network.PatientApi;
+import com.example.testbackend.utils.TokenManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,14 +29,16 @@ public class PatientsListActivity extends AppCompatActivity {
     private PatientsAdapter adapter;
     private List<Patient> patientList = new ArrayList<>();
     private PatientApi api;
+    private TokenManager tokenManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_patients_list);
         
+        tokenManager = new TokenManager(this);
         setupViews();
-        api = ApiClient.getAuthClient().create(PatientApi.class);
+        api = ApiClient.getPatientClient().create(PatientApi.class);
         loadPatients();
     }
 
@@ -64,22 +68,29 @@ public class PatientsListActivity extends AppCompatActivity {
     }
 
     private void loadPatients() {
-        api.getPacientes().enqueue(new Callback<PatientApi.PacientesResponse>() {
+        String token = tokenManager.getAuthToken();
+        if (token == null) {
+            Toast.makeText(this, "Usuário não autenticado", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        api.getPatients(token).enqueue(new Callback<List<Patient>>() {
             @Override
-            public void onResponse(@NonNull Call<PatientApi.PacientesResponse> call, @NonNull Response<PatientApi.PacientesResponse> response) {
+            public void onResponse(@NonNull Call<List<Patient>> call, @NonNull Response<List<Patient>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     patientList.clear();
-                    if (response.body().pacientes != null) {
-                        patientList.addAll(response.body().pacientes);
-                    }
+                    patientList.addAll(response.body());
                     adapter.notifyDataSetChanged();
+                    Log.d("PATIENTS_LIST", "Carregados " + patientList.size() + " pacientes");
                 } else {
+                    Log.e("PATIENTS_LIST", "Erro: " + response.code());
                     Toast.makeText(PatientsListActivity.this, "Erro ao carregar pacientes", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<PatientApi.PacientesResponse> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<List<Patient>> call, @NonNull Throwable t) {
+                Log.e("PATIENTS_LIST", "Falha na rede", t);
                 Toast.makeText(PatientsListActivity.this, "Erro de conexão: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });

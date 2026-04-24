@@ -9,6 +9,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import java.util.concurrent.TimeUnit;
+import android.util.Log;
 
 public class ApiClient {
 
@@ -17,24 +18,39 @@ public class ApiClient {
     private static Retrofit exerciseRetrofit = null;
     private static Retrofit healthRetrofit = null;
     private static Retrofit appointmentRetrofit = null;
+    private static Retrofit taskRetrofit = null;
+    private static Retrofit patientRetrofit = null;
 
     private static Gson getGson() {
         return new GsonBuilder()
                 .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                .setLenient()
                 .create();
     }
 
     private static OkHttpClient getOkHttpClient() {
-        // 🔥 INTERCEPTOR DE LOG DETALHADO PARA DEBUG DE CONEXÃO
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         
         return new OkHttpClient.Builder()
                 .addInterceptor(interceptor)
-                .connectTimeout(30, TimeUnit.SECONDS) // 🔥 Aumentado para 30s
-                .readTimeout(30, TimeUnit.SECONDS)    // 🔥 Aumentado para 30s
-                .writeTimeout(30, TimeUnit.SECONDS)   // 🔥 Aumentado para 30s
+                .connectTimeout(60, TimeUnit.SECONDS)
+                .readTimeout(60, TimeUnit.SECONDS)
+                .writeTimeout(60, TimeUnit.SECONDS)
                 .retryOnConnectionFailure(true)
+                .addInterceptor(chain -> {
+                    okhttp3.Request request = chain.request();
+                    long startTime = System.currentTimeMillis();
+                    try {
+                        okhttp3.Response response = chain.proceed(request);
+                        long endTime = System.currentTimeMillis();
+                        Log.d("NETWORK_DEBUG", "URL: " + request.url() + " | Time: " + (endTime - startTime) + "ms | Code: " + response.code());
+                        return response;
+                    } catch (Exception e) {
+                        Log.e("NETWORK_DEBUG", "URL: " + request.url() + " | Error: " + e.getMessage());
+                        throw e;
+                    }
+                })
                 .build();
     }
 
@@ -91,5 +107,27 @@ public class ApiClient {
                     .build();
         }
         return exerciseRetrofit;
+    }
+
+    public static Retrofit getTaskClient() {
+        if (taskRetrofit == null) {
+            taskRetrofit = new Retrofit.Builder()
+                    .baseUrl(Constants.AUTH_BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create(getGson()))
+                    .client(getOkHttpClient())
+                    .build();
+        }
+        return taskRetrofit;
+    }
+
+    public static Retrofit getPatientClient() {
+        if (patientRetrofit == null) {
+            patientRetrofit = new Retrofit.Builder()
+                    .baseUrl(Constants.AUTH_BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create(getGson()))
+                    .client(getOkHttpClient())
+                    .build();
+        }
+        return patientRetrofit;
     }
 }
