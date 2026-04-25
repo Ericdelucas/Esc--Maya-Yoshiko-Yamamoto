@@ -17,9 +17,17 @@ import java.util.List;
 public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.ViewHolder> {
 
     private final List<LeaderboardEntry> entries;
+    private String realUserName = "";
+    private int currentUserId = -1;
 
     public LeaderboardAdapter(List<LeaderboardEntry> entries) {
         this.entries = entries;
+    }
+
+    // Agora o método volta a salvar as informações para uso no onBind
+    public void setCurrentUserInfo(int userId, String userName) {
+        this.currentUserId = userId;
+        this.realUserName = userName;
     }
 
     @NonNull
@@ -33,12 +41,17 @@ public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         LeaderboardEntry entry = entries.get(position);
         
-        // Posição pura (1, 2, 3...)
+        // Identifica se é o usuário logado pela flag do backend ou pelo ID salvo
+        boolean isMe = entry.getIsRealUser() || 
+                      (currentUserId != -1 && entry.getUserId() != null && entry.getUserId().equals(currentUserId));
+
         holder.position.setText(String.valueOf(entry.getPosition()));
         
-        // Nome com destaque para o usuário real
-        if (entry.isRealUser()) {
-            holder.name.setText(entry.getName() + " (Você)");
+        if (isMe) {
+            // PRIORIDADE: Usa o nome do login salvo localmente se disponível
+            String displayName = (realUserName != null && !realUserName.isEmpty()) ? realUserName : entry.getName();
+            
+            holder.name.setText(displayName + " (Você)");
             holder.name.setTypeface(null, Typeface.BOLD);
             holder.name.setTextColor(holder.itemView.getContext().getResources().getColor(R.color.primary));
             holder.itemView.setBackgroundColor(holder.itemView.getContext().getResources().getColor(R.color.primary_light));
@@ -54,11 +67,7 @@ public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.
         // Medalhas Top 3
         switch (entry.getPosition()) {
             case 1:
-                if (entry.isRealUser()) {
-                    holder.position.setText("👑");
-                } else {
-                    holder.position.setText("🥇");
-                }
+                holder.position.setText(isMe ? "👑" : "🥇");
                 holder.position.setTextColor(holder.itemView.getContext().getResources().getColor(android.R.color.holo_orange_dark));
                 break;
             case 2:

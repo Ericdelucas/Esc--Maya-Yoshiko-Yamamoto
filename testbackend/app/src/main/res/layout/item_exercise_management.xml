@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <!-- Título -->
+        <TextView
+            android:id="@+id/tvExerciseTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Título do Exercício"
+            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+            android:textStyle="bold"
+            android:maxLines="2"
+            android:ellipsize="end"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btnDeleteExercise" />
+
+        <!-- Descrição -->
+        <TextView
+            android:id="@+id/tvExerciseDescription"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Descrição do exercício"
+            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+            android:maxLines="3"
+            android:ellipsize="end"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvExerciseTitle"
+            app:layout_constraintEnd_toStartOf="@id/btnDeleteExercise" />
+
+        <!-- Informações -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvExerciseDescription"
+            app:layout_constraintEnd_toStartOf="@id/btnDeleteExercise">
+
+            <TextView
+                android:id="@+id/tvExercisePoints"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="15 pontos"
+                android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                android:textColor="?android:attr/colorPrimary" />
+
+            <TextView
+                android:id="@+id/tvExerciseFrequency"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="3x/semana"
+                android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                android:textColor="?android:attr/colorSecondary" />
+
+        </LinearLayout>
+
+        <!-- Informações adicionais -->
+        <TextView
+            android:id="@+id/tvPatientId"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Paciente ID: 1"
+            android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+            android:textColor="?android:attr/textColorSecondary"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvExercisePoints"
+            app:layout_constraintEnd_toStartOf="@id/btnDeleteExercise" />
+
+        <TextView
+            android:id="@+id/tvAssignedBy"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Criado por: Sistema"
+            android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+            android:textColor="?android:attr/textColorSecondary"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvPatientId"
+            app:layout_constraintEnd_toStartOf="@id/btnDeleteExercise" />
+
+        <!-- Botão deletar -->
+        <ImageButton
+            android:id="@+id/btnDeleteExercise"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@android:drawable/ic_delete"
+            android:background="?attr/selectableItemBackground"
+            android:contentDescription="Deletar exercício"
+            android:tint="?android:attr/colorError"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

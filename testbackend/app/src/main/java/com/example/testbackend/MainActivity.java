@@ -14,13 +14,17 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
+import com.example.testbackend.models.DailyProgressData;
+import com.example.testbackend.models.DailyProgressResponse;
 import com.example.testbackend.models.UserProfileResponse;
 import com.example.testbackend.network.ApiClient;
 import com.example.testbackend.network.AuthApi;
+import com.example.testbackend.network.TaskApi;
 import com.example.testbackend.utils.Constants;
 import com.example.testbackend.utils.LocaleHelper;
 import com.example.testbackend.utils.TokenManager;
 import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.squareup.picasso.Picasso;
 
 import retrofit2.Call;
@@ -30,11 +34,13 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "PATIENT_DEBUG";
-    private TextView tvUserInitial, tvGreeting;
+    private TextView tvUserInitial, tvGreeting, tvProgressValue;
     private ImageView ivUserPhoto;
     private MaterialCardView cardAccountAvatar, cardProfessionalExams;
     private ImageButton btnSettings;
+    private CircularProgressIndicator progressWeekly;
     private TokenManager tokenManager;
+    private TaskApi taskApi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         
         tokenManager = new TokenManager(this);
+        taskApi = ApiClient.getTaskClient().create(TaskApi.class);
         
         if (!tokenManager.isLoggedIn()) {
             startActivity(new Intent(this, LoginActivity.class));
@@ -53,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        // 🔥 ADICIONAR: Verificar se usuário é paciente
+        // 🔥 Verificar se usuário é paciente
         if (!isPatientUser()) {
             redirectToCorrectActivity();
             return;
@@ -63,12 +70,12 @@ public class MainActivity extends AppCompatActivity {
         
         initViews();
         loadUserProfile();
+        loadDailyProgress();
         setupNavigation();
     }
 
     private boolean isPatientUser() {
         String role = tokenManager.getUserRole();
-        // Se não for profissional, doctor ou admin, consideramos paciente
         boolean isPatient = role == null || !(role.equalsIgnoreCase("professional") || role.equalsIgnoreCase("doctor") || role.equalsIgnoreCase("admin"));
         Log.d(TAG, "Verificando perfil: " + role + " -> isPatient: " + isPatient);
         return isPatient;
@@ -89,6 +96,10 @@ public class MainActivity extends AppCompatActivity {
         cardAccountAvatar = findViewById(R.id.cardAccountAvatar);
         btnSettings = findViewById(R.id.btnSettings);
         cardProfessionalExams = findViewById(R.id.cardProfessionalExams);
+        
+        // Inicializar componentes de progresso
+        progressWeekly = findViewById(R.id.progressWeekly);
+        tvProgressValue = findViewById(R.id.tvProgressValue);
 
         cardAccountAvatar.setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
         if (btnSettings != null) {
@@ -115,6 +126,40 @@ public class MainActivity extends AppCompatActivity {
                 loadUserDataLocally();
             }
         });
+    }
+
+    private void loadDailyProgress() {
+        String token = tokenManager.getAuthToken();
+        if (token == null) return;
+        
+        taskApi.getDailyProgress(token).enqueue(new Callback<DailyProgressResponse>() {
+            @Override
+            public void onResponse(Call<DailyProgressResponse> call, Response<DailyProgressResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    DailyProgressResponse progressResponse = response.body();
+                    if (progressResponse.isSuccess()) {
+                        updateProgressUI(progressResponse.getData());
+                    }
+                } else {
+                    Log.e(TAG, "Erro ao carregar progresso: " + response.code());
+                }
+            }
+            
+            @Override
+            public void onFailure(Call<DailyProgressResponse> call, Throwable t) {
+                Log.e(TAG, "Falha ao carregar progresso", t);
+            }
+        });
+    }
+
+    private void updateProgressUI(DailyProgressData progressData) {
+        if (progressData == null || progressWeekly == null || tvProgressValue == null) return;
+        
+        int progressInt = progressData.getProgressPercentage().intValue();
+        progressWeekly.setProgress(progressInt);
+        tvProgressValue.setText(progressInt + "%");
+        
+        Log.d(TAG, "Progresso atualizado: " + progressData.getProgressFraction() + " (" + progressInt + "%)");
     }
 
     private void loadUserDataLocally() {
@@ -172,17 +217,17 @@ public class MainActivity extends AppCompatActivity {
         // Botão Meus Exercícios
         findViewById(R.id.btnExercises).setOnClickListener(v -> startActivity(new Intent(this, ExerciseListActivity.class)));
 
-        // Seção Gamificação
-        findViewById(R.id.cardChallenges).setOnClickListener(v -> startActivity(new Intent(this, ChallengesActivity.class)));
+        // Seção Gamificação (Apenas Ranking e Profissionais agora)
         findViewById(R.id.cardLeaderboard).setOnClickListener(v -> startActivity(new Intent(this, LeaderboardActivity.class)));
-        findViewById(R.id.cardGoals).setOnClickListener(v -> startActivity(new Intent(this, GoalsActivity.class)));
         findViewById(R.id.cardProfessionals).setOnClickListener(v -> startActivity(new Intent(this, ProfessionalsActivity.class)));
 
         // Seção Saúde
         findViewById(R.id.btnHealth).setOnClickListener(v -> startActivity(new Intent(this, HealthHubActivity.class)));
 
         // Card de Progresso
-        findViewById(R.id.cardProgress).setOnClickListener(v -> startActivity(new Intent(this, ProgressActivity.class)));
+        findViewById(R.id.cardProgress).setOnClickListener(v -> {
+            Toast.makeText(this, "Seu progresso diário", Toast.LENGTH_SHORT).show();
+        });
 
         // Botão de Logout
         findViewById(R.id.btnLogout).setOnClickListener(v -> logout());
@@ -205,6 +250,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         if (tokenManager.isLoggedIn()) {
             loadUserProfile();
+            loadDailyProgress();
         }
     }
 

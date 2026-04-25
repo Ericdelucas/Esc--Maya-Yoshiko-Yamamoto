@@ -16,6 +16,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.testbackend.adapters.TaskWithRadioAdapter;
 import com.example.testbackend.models.Task;
+import com.example.testbackend.models.TaskCompletionRequest;
 import com.example.testbackend.models.TaskCompletionResponse;
 import com.example.testbackend.models.TestTasksResponse;
 import com.example.testbackend.models.UserPointsResponse;
@@ -82,7 +83,7 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
     private void initViews() {
         swipeRefresh = findViewById(R.id.swipeRefresh);
         rvExercises = findViewById(R.id.rvExercises);
-        tvUserPoints = findViewById(R.id.tvUserPoints); // Pode ser nulo se não houver no XML ainda
+        tvUserPoints = findViewById(R.id.tvUserPoints);
         
         if (rvExercises != null) {
             rvExercises.setLayoutManager(new LinearLayoutManager(this));
@@ -116,10 +117,9 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
         String token = tokenManager.getAuthToken();
         if (token == null || taskApi == null) {
             if (swipeRefresh != null) swipeRefresh.setRefreshing(false);
+            if (token == null) handleAuthError();
             return;
         }
-        
-        Log.d(TAG, "Chamando /tasks/test com token: " + token);
         
         taskApi.getTestTasks(token).enqueue(new Callback<TestTasksResponse>() {
             @Override
@@ -140,17 +140,14 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
                         adapter = new TaskWithRadioAdapter(taskList, ExerciseListActivity.this);
                         rvExercises.setAdapter(adapter);
                     }
-                    
-                    Log.d(TAG, "Tarefas atualizadas: " + (tasks != null ? tasks.size() : 0));
-                } else {
-                    Log.e(TAG, "Erro API: " + response.code());
+                } else if (response.code() == 401 || response.code() == 403) {
+                    handleAuthError();
                 }
             }
 
             @Override
             public void onFailure(Call<TestTasksResponse> call, Throwable t) {
                 if (swipeRefresh != null) swipeRefresh.setRefreshing(false);
-                if (isFinishing()) return;
                 Log.e(TAG, "Falha de conexão: " + t.getMessage());
             }
         });
@@ -159,42 +156,52 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
     @Override
     public void onTaskComplete(Task task) {
         if (task == null) return;
-        
-        Toast.makeText(this, "Concluindo: " + task.getTitle(), Toast.LENGTH_SHORT).show();
         completeTaskOnBackend(task);
     }
 
     private void completeTaskOnBackend(Task task) {
         String token = tokenManager.getAuthToken();
         if (token == null || taskApi == null) {
-            Toast.makeText(this, "Erro de autenticação", Toast.LENGTH_SHORT).show();
+            handleAuthError();
             return;
         }
         
-        Log.d(TAG, "Concluindo tarefa: " + task.getId());
+        // 🔥 Cria request com ID REAL da tarefa para controle individual
+        TaskCompletionRequest request = new TaskCompletionRequest(task.getId());
         
-        taskApi.completeTask(token).enqueue(new Callback<TaskCompletionResponse>() {
+        taskApi.completeTask(token, request).enqueue(new Callback<TaskCompletionResponse>() {
             @Override
             public void onResponse(Call<TaskCompletionResponse> call, Response<TaskCompletionResponse> response) {
                 if (isFinishing()) return;
                 
                 if (response.isSuccessful() && response.body() != null) {
-                    Toast.makeText(ExerciseListActivity.this, 
-                        "Tarefa concluída! +" + (task.getPointsValue() != null ? task.getPointsValue() : 0) + " pontos", 
-                        Toast.LENGTH_LONG).show();
+                    TaskCompletionResponse result = response.body();
                     
-                    updateTaskAsCompleted(task);
-                    updateUserPoints(); // Atualiza ranking/pontos imediatamente
-                } else {
-                    Log.e(TAG, "Erro ao concluir tarefa (422 ou outro): " + response.code());
-                    Toast.makeText(ExerciseListActivity.this, "Erro ao registrar conclusão", Toast.LENGTH_SHORT).show();
+                    if (result.isSuccess()) {
+                        Toast.makeText(ExerciseListActivity.this, "Tarefa concluída! +" + result.getPointsAwarded() + " pontos", Toast.LENGTH_SHORT).show();
+                        updateTaskAsCompleted(task);
+                        updateUserPoints();
+                        
+                        // Mostra progressão diária
+                        if (result.getTasksCompletedToday() != null) {
+                            String progressMsg = "Progresso: " + result.getTasksCompletedToday() + "/5 tarefas hoje";
+                            Toast.makeText(ExerciseListActivity.this, progressMsg, Toast.LENGTH_LONG).show();
+                        }
+                    } else {
+                        // Trata bloqueio de repetição
+                        String message = result.getMessage();
+                        if (result.getCanRepeatTomorrow() != null && result.getCanRepeatTomorrow()) {
+                            message += "\n\n📅 Você poderá repetir este exercício amanhã!";
+                        }
+                        Toast.makeText(ExerciseListActivity.this, message, Toast.LENGTH_LONG).show();
+                    }
+                } else if (response.code() == 401 || response.code() == 403) {
+                    handleAuthError();
                 }
             }
             
             @Override
             public void onFailure(Call<TaskCompletionResponse> call, Throwable t) {
-                if (isFinishing()) return;
-                Log.e(TAG, "Falha na API: " + t.getMessage());
                 Toast.makeText(ExerciseListActivity.this, "Erro de conexão", Toast.LENGTH_SHORT).show();
             }
         });
@@ -212,17 +219,20 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
 
     private void updateUserPoints() {
         String token = tokenManager.getAuthToken();
-        if (token == null || taskApi == null) return;
+        if (token == null || taskApi == null) {
+            handleAuthError();
+            return;
+        }
         
         taskApi.getUserPoints(token).enqueue(new Callback<UserPointsResponse>() {
             @Override
             public void onResponse(Call<UserPointsResponse> call, Response<UserPointsResponse> response) {
                 if (isFinishing()) return;
-                
                 if (response.isSuccessful() && response.body() != null) {
                     currentUserPoints = response.body();
                     updatePointsUI();
-                    Log.d(TAG, "Pontos carregados: " + currentUserPoints.getTotalPoints());
+                } else if (response.code() == 401 || response.code() == 403) {
+                    handleAuthError();
                 }
             }
             
@@ -235,11 +245,27 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
 
     private void updatePointsUI() {
         if (tvUserPoints != null && currentUserPoints != null) {
-            String userName = currentUserPoints.getUsername() != null ? currentUserPoints.getUsername() : "";
+            String userName = currentUserPoints.getUsername();
+            if (userName == null || userName.isEmpty()) {
+                userName = tokenManager.getUserName();
+            }
+            
+            if (userName == null || userName.isEmpty()) userName = "Usuário";
+
             tvUserPoints.setText("🏆 " + userName + " | Pontos: " + currentUserPoints.getTotalPoints() + 
                                " | Nível: " + currentUserPoints.getLevel());
             tvUserPoints.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void handleAuthError() {
+        if (tokenManager != null) {
+            tokenManager.clearToken();
+        }
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 
     @Override

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F8F9FA"
+    android:background="?android:attr/windowBackground"
     android:padding="16dp">
 
     <!-- Header do Calendário -->
@@ -21,7 +21,7 @@
             android:layout_height="48dp"
             android:src="@android:drawable/ic_media_previous"
             android:background="?attr/selectableItemBackgroundBorderless"
-            app:tint="#2196F3" />
+            app:tint="?attr/colorPrimary" />
 
         <TextView
             android:id="@+id/tvMonthYear"
@@ -31,7 +31,7 @@
             android:text="Janeiro 2024"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:textColor="#333333"
+            android:textColor="?android:attr/textColorPrimary"
             android:gravity="center" />
 
         <ImageButton
@@ -40,7 +40,7 @@
             android:layout_height="48dp"
             android:src="@android:drawable/ic_media_next"
             android:background="?attr/selectableItemBackgroundBorderless"
-            app:tint="#2196F3" />
+            app:tint="?attr/colorPrimary" />
 
     </LinearLayout>
 
@@ -50,13 +50,13 @@
         android:layout_height="wrap_content"
         android:columnCount="7"
         android:layout_marginBottom="8dp">
-        <TextView android:text="Dom" android:layout_columnWeight="1" android:gravity="center" android:textStyle="bold" />
-        <TextView android:text="Seg" android:layout_columnWeight="1" android:gravity="center" android:textStyle="bold" />
-        <TextView android:text="Ter" android:layout_columnWeight="1" android:gravity="center" android:textStyle="bold" />
-        <TextView android:text="Qua" android:layout_columnWeight="1" android:gravity="center" android:textStyle="bold" />
-        <TextView android:text="Qui" android:layout_columnWeight="1" android:gravity="center" android:textStyle="bold" />
-        <TextView android:text="Sex" android:layout_columnWeight="1" android:gravity="center" android:textStyle="bold" />
-        <TextView android:text="Sáb" android:layout_columnWeight="1" android:gravity="center" android:textStyle="bold" />
+        <TextView android:text="Dom" android:layout_columnWeight="1" android:gravity="center" android:textStyle="bold" android:textColor="?android:attr/textColorSecondary" />
+        <TextView android:text="Seg" android:layout_columnWeight="1" android:gravity="center" android:textStyle="bold" android:textColor="?android:attr/textColorSecondary" />
+        <TextView android:text="Ter" android:layout_columnWeight="1" android:gravity="center" android:textStyle="bold" android:textColor="?android:attr/textColorSecondary" />
+        <TextView android:text="Qua" android:layout_columnWeight="1" android:gravity="center" android:textStyle="bold" android:textColor="?android:attr/textColorSecondary" />
+        <TextView android:text="Qui" android:layout_columnWeight="1" android:gravity="center" android:textStyle="bold" android:textColor="?android:attr/textColorSecondary" />
+        <TextView android:text="Sex" android:layout_columnWeight="1" android:gravity="center" android:textStyle="bold" android:textColor="?android:attr/textColorSecondary" />
+        <TextView android:text="Sáb" android:layout_columnWeight="1" android:gravity="center" android:textStyle="bold" android:textColor="?android:attr/textColorSecondary" />
     </GridLayout>
 
     <!-- Grid do Calendário -->
@@ -74,7 +74,7 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:src="@android:drawable/ic_input_add"
-        app:backgroundTint="#2196F3"
+        app:backgroundTint="?attr/colorPrimary"
         app:tint="#FFFFFF"
         android:contentDescription="Adicionar Agendamento" />
 

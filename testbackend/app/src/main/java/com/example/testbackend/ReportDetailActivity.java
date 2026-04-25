@@ -3,6 +3,7 @@ package com.example.testbackend;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -44,6 +45,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ReportDetailActivity extends AppCompatActivity {
+    private static final String TAG = "REPORT_DETAIL";
     private TextView tvReportId;
     private TextView tvPatientId;
     private TextView tvCreatedAt;
@@ -80,11 +82,15 @@ public class ReportDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report_detail);
 
+        Log.d(TAG, "onCreate chamado");
+
         reportId = getIntent().getIntExtra("report_id", -1);
+        Log.d(TAG, "reportId recebido: " + reportId);
+
         if (reportId == -1) {
-            Toast.makeText(this, R.string.erro_carregar, Toast.LENGTH_SHORT).show();
-            finish();
-            return;
+            Log.w(TAG, "reportId inválido, usando padrão 1 para teste");
+            Toast.makeText(this, "Usando relatório padrão para teste", Toast.LENGTH_SHORT).show();
+            reportId = 1; // ✅ ID padrão para teste conforme o guia
         }
 
         api = ApiClient.getAuthClient().create(PatientReportApi.class);
@@ -184,29 +190,28 @@ public class ReportDetailActivity extends AppCompatActivity {
     }
 
     private void loadReport() {
-        progressBar.setVisibility(View.VISIBLE);
+        if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
         
         api.getReportWithAttachments(reportId).enqueue(new Callback<PatientReport>() {
             @Override
             public void onResponse(Call<PatientReport> call, Response<PatientReport> response) {
-                progressBar.setVisibility(View.GONE);
+                if (progressBar != null) progressBar.setVisibility(View.GONE);
                 
                 if (response.isSuccessful() && response.body() != null) {
                     currentReport = response.body();
                     populateFields();
                     loadAttachments();
                 } else {
-                    String errorMessage = getString(R.string.erro_carregar);
-                    Toast.makeText(ReportDetailActivity.this, errorMessage, Toast.LENGTH_LONG).show();
-                    finish();
+                    Log.e(TAG, "Erro ao carregar relatório: " + response.code());
+                    Toast.makeText(ReportDetailActivity.this, "Erro ao carregar relatório", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<PatientReport> call, Throwable t) {
-                progressBar.setVisibility(View.GONE);
-                Toast.makeText(ReportDetailActivity.this, getString(R.string.erro_conexao), Toast.LENGTH_LONG).show();
-                finish();
+                if (progressBar != null) progressBar.setVisibility(View.GONE);
+                Log.e(TAG, "Falha na conexão", t);
+                Toast.makeText(ReportDetailActivity.this, "Erro de conexão", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -243,7 +248,7 @@ public class ReportDetailActivity extends AppCompatActivity {
 
     private void uploadImages(List<Uri> imageUris) {
         if (imageUris.isEmpty()) return;
-        progressBar.setVisibility(View.VISIBLE);
+        if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
         List<MultipartBody.Part> fileParts = new ArrayList<>();
         
         for (int i = 0; i < imageUris.size(); i++) {
@@ -268,7 +273,7 @@ public class ReportDetailActivity extends AppCompatActivity {
         api.uploadAttachments(reportId, fileParts, description).enqueue(new Callback<List<ReportAttachment>>() {
             @Override
             public void onResponse(Call<List<ReportAttachment>> call, Response<List<ReportAttachment>> response) {
-                progressBar.setVisibility(View.GONE);
+                if (progressBar != null) progressBar.setVisibility(View.GONE);
                 if (response.isSuccessful()) {
                     Toast.makeText(ReportDetailActivity.this, "Enviado com sucesso!", Toast.LENGTH_SHORT).show();
                     loadAttachments();
@@ -276,7 +281,7 @@ public class ReportDetailActivity extends AppCompatActivity {
             }
             @Override
             public void onFailure(Call<List<ReportAttachment>> call, Throwable t) {
-                progressBar.setVisibility(View.GONE);
+                if (progressBar != null) progressBar.setVisibility(View.GONE);
             }
         });
     }
@@ -311,27 +316,27 @@ public class ReportDetailActivity extends AppCompatActivity {
     }
 
     private void populateFields() {
-        tvReportId.setText(getString(R.string.relatorio_numero, currentReport.getId()));
-        tvPatientId.setText(getString(R.string.paciente) + ": " + currentReport.getPatientId());
+        if (tvReportId != null) tvReportId.setText("Relatório #" + currentReport.getId());
+        if (tvPatientId != null) tvPatientId.setText("Paciente ID: " + currentReport.getPatientId());
         
-        tvCreatedAt.setText(getString(R.string.criado_em) + ": " + formatDateTimeBrazilian(currentReport.getCreatedAt()));
-        tvUpdatedAt.setText(getString(R.string.atualizado_em) + ": " + formatDateTimeBrazilian(currentReport.getUpdatedAt()));
+        if (tvCreatedAt != null) tvCreatedAt.setText("Criado em: " + formatDateTimeBrazilian(currentReport.getCreatedAt()));
+        if (tvUpdatedAt != null) tvUpdatedAt.setText("Atualizado em: " + formatDateTimeBrazilian(currentReport.getUpdatedAt()));
 
-        editTitle.setText(currentReport.getTitle());
-        editContent.setText(currentReport.getContent());
-        editClinicalEvolution.setText(currentReport.getClinicalEvolution());
-        editObjectiveData.setText(currentReport.getObjectiveData());
-        editSubjectiveData.setText(currentReport.getSubjectiveData());
-        editTreatmentPlan.setText(currentReport.getTreatmentPlan());
-        editRecommendations.setText(currentReport.getRecommendations());
-        editNextSteps.setText(currentReport.getNextSteps());
+        if (editTitle != null) editTitle.setText(currentReport.getTitle());
+        if (editContent != null) editContent.setText(currentReport.getContent());
+        if (editClinicalEvolution != null) editClinicalEvolution.setText(currentReport.getClinicalEvolution());
+        if (editObjectiveData != null) editObjectiveData.setText(currentReport.getObjectiveData());
+        if (editSubjectiveData != null) editSubjectiveData.setText(currentReport.getSubjectiveData());
+        if (editTreatmentPlan != null) editTreatmentPlan.setText(currentReport.getTreatmentPlan());
+        if (editRecommendations != null) editRecommendations.setText(currentReport.getRecommendations());
+        if (editNextSteps != null) editNextSteps.setText(currentReport.getNextSteps());
 
         if (currentReport.getPainScale() != null) {
-            seekBarPainScale.setProgress(currentReport.getPainScale());
-            tvPainScaleValue.setText(String.valueOf(currentReport.getPainScale()));
+            if (seekBarPainScale != null) seekBarPainScale.setProgress(currentReport.getPainScale());
+            if (tvPainScaleValue != null) tvPainScaleValue.setText(String.valueOf(currentReport.getPainScale()));
         }
 
-        if (currentReport.getFunctionalStatus() != null) {
+        if (currentReport.getFunctionalStatus() != null && spinnerFunctionalStatus != null) {
             ArrayAdapter adapter = (ArrayAdapter) spinnerFunctionalStatus.getAdapter();
             int position = adapter.getPosition(currentReport.getFunctionalStatus());
             if (position >= 0) {
@@ -341,44 +346,43 @@ public class ReportDetailActivity extends AppCompatActivity {
     }
 
     private void saveReport() {
-        if (editTitle.getText().toString().trim().isEmpty()) {
-            editTitle.setError(getString(R.string.titulo_obrigatorio));
+        if (editTitle != null && editTitle.getText().toString().trim().isEmpty()) {
+            editTitle.setError("Título obrigatório");
             return;
         }
 
-        progressBar.setVisibility(View.VISIBLE);
+        if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
 
         ReportUpdate update = new ReportUpdate();
-        update.setTitle(editTitle.getText().toString());
-        update.setContent(editContent.getText().toString());
-        update.setClinicalEvolution(editClinicalEvolution.getText().toString());
-        update.setObjectiveData(editObjectiveData.getText().toString());
-        update.setSubjectiveData(editSubjectiveData.getText().toString());
-        update.setTreatmentPlan(editTreatmentPlan.getText().toString());
-        update.setRecommendations(editRecommendations.getText().toString());
-        update.setNextSteps(editNextSteps.getText().toString());
-        update.setPainScale(seekBarPainScale.getProgress());
-        update.setFunctionalStatus(spinnerFunctionalStatus.getSelectedItem().toString());
+        if (editTitle != null) update.setTitle(editTitle.getText().toString());
+        if (editContent != null) update.setContent(editContent.getText().toString());
+        if (editClinicalEvolution != null) update.setClinicalEvolution(editClinicalEvolution.getText().toString());
+        if (editObjectiveData != null) update.setObjectiveData(editObjectiveData.getText().toString());
+        if (editSubjectiveData != null) update.setSubjectiveData(editSubjectiveData.getText().toString());
+        if (editTreatmentPlan != null) update.setTreatmentPlan(editTreatmentPlan.getText().toString());
+        if (editRecommendations != null) update.setRecommendations(editRecommendations.getText().toString());
+        if (editNextSteps != null) update.setNextSteps(editNextSteps.getText().toString());
+        if (seekBarPainScale != null) update.setPainScale(seekBarPainScale.getProgress());
+        if (spinnerFunctionalStatus != null) update.setFunctionalStatus(spinnerFunctionalStatus.getSelectedItem().toString());
 
         api.updateReport(reportId, update).enqueue(new Callback<PatientReport>() {
             @Override
             public void onResponse(Call<PatientReport> call, Response<PatientReport> response) {
-                progressBar.setVisibility(View.GONE);
+                if (progressBar != null) progressBar.setVisibility(View.GONE);
                 
                 if (response.isSuccessful() && response.body() != null) {
                     currentReport = response.body();
                     populateFields();
-                    Toast.makeText(ReportDetailActivity.this, getString(R.string.relatorio_atualizado_sucesso), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ReportDetailActivity.this, "Relatório atualizado com sucesso", Toast.LENGTH_SHORT).show();
                 } else {
-                    String errorMessage = getString(R.string.erro_atualizar_relatorio);
-                    Toast.makeText(ReportDetailActivity.this, errorMessage, Toast.LENGTH_LONG).show();
+                    Toast.makeText(ReportDetailActivity.this, "Erro ao atualizar relatório", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<PatientReport> call, Throwable t) {
-                progressBar.setVisibility(View.GONE);
-                Toast.makeText(ReportDetailActivity.this, getString(R.string.erro_conexao), Toast.LENGTH_LONG).show();
+                if (progressBar != null) progressBar.setVisibility(View.GONE);
+                Toast.makeText(ReportDetailActivity.this, "Erro de conexão", Toast.LENGTH_SHORT).show();
             }
         });
     }

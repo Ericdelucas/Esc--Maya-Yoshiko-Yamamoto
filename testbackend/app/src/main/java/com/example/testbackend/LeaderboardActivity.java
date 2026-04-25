@@ -1,6 +1,6 @@
 package com.example.testbackend;
 
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -16,6 +16,7 @@ import com.example.testbackend.adapters.LeaderboardAdapter;
 import com.example.testbackend.models.LeaderboardEntry;
 import com.example.testbackend.network.ApiClient;
 import com.example.testbackend.network.TaskApi;
+import com.example.testbackend.utils.TokenManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,16 +32,16 @@ public class LeaderboardActivity extends AppCompatActivity {
     private LeaderboardAdapter adapter;
     private List<LeaderboardEntry> entries = new ArrayList<>();
     private ProgressBar progressBar;
-    private String token;
+    private TokenManager tokenManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_leaderboard);
 
+        tokenManager = new TokenManager(this);
         setupToolbar();
         initViews();
-        loadToken();
         fetchLeaderboard();
     }
 
@@ -61,23 +62,25 @@ public class LeaderboardActivity extends AppCompatActivity {
         if (recyclerView != null) {
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
             adapter = new LeaderboardAdapter(entries);
+            if (tokenManager != null) {
+                adapter.setCurrentUserInfo(tokenManager.getUserId(), tokenManager.getUserName());
+            }
             recyclerView.setAdapter(adapter);
         }
         
         progressBar = findViewById(R.id.progressBar);
     }
 
-    private void loadToken() {
-        SharedPreferences prefs = getSharedPreferences("SmartSaudePrefs", MODE_PRIVATE);
-        token = prefs.getString("jwt_token", "");
-    }
-
     private void fetchLeaderboard() {
-        if (token == null || token.isEmpty()) return;
+        String token = tokenManager.getAuthToken();
+        if (token == null || token.isEmpty()) {
+            handleAuthError();
+            return;
+        }
         if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
         
         TaskApi api = ApiClient.getTaskClient().create(TaskApi.class);
-        api.getLeaderboard("Bearer " + token).enqueue(new Callback<List<LeaderboardEntry>>() {
+        api.getLeaderboard(token).enqueue(new Callback<List<LeaderboardEntry>>() {
             @Override
             public void onResponse(Call<List<LeaderboardEntry>> call, Response<List<LeaderboardEntry>> response) {
                 if (progressBar != null) progressBar.setVisibility(View.GONE);
@@ -86,10 +89,10 @@ public class LeaderboardActivity extends AppCompatActivity {
                     entries.clear();
                     entries.addAll(response.body());
                     adapter.notifyDataSetChanged();
-                    Log.d(TAG, "Ranking carregado: " + entries.size() + " entradas");
+                } else if (response.code() == 401 || response.code() == 403) {
+                    handleAuthError();
                 } else {
                     Toast.makeText(LeaderboardActivity.this, "Erro ao carregar ranking", Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, "Erro: " + response.code());
                 }
             }
 
@@ -97,8 +100,17 @@ public class LeaderboardActivity extends AppCompatActivity {
             public void onFailure(Call<List<LeaderboardEntry>> call, Throwable t) {
                 if (progressBar != null) progressBar.setVisibility(View.GONE);
                 Toast.makeText(LeaderboardActivity.this, "Falha na conexão", Toast.LENGTH_SHORT).show();
-                Log.e(TAG, "Falha", t);
             }
         });
+    }
+
+    private void handleAuthError() {
+        if (tokenManager != null) {
+            tokenManager.clearToken();
+        }
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 }

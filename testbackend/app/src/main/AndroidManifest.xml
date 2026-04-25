@@ -48,11 +48,12 @@
         <activity android:name=".IAWorkoutActivity" android:exported="false" />
         <activity android:name=".ProfileActivity" android:exported="false" />
         <activity android:name=".ChangePasswordActivity" android:exported="false" />
-        <activity android:name=".ProgressActivity" android:exported="false" />
         <activity android:name=".ChallengesActivity" android:exported="false" />
         <activity android:name=".GoalsActivity" android:exported="false" />
         <activity android:name=".LeaderboardActivity" android:exported="false" />
         <activity android:name=".ProfessionalsActivity" android:exported="false" />
+        <activity android:name=".ExerciseManagementActivity" android:exported="false" />
+        <activity android:name=".CreateTaskActivity" android:exported="false" />
         
         <!-- 🔥 NOVA ACTIVITY DE AVALIAÇÃO FISIOTERAPÊUTICA -->
         <activity 
@@ -77,8 +78,7 @@
         <activity
             android:name=".ReportDetailActivity"
             android:exported="false"
-            android:label="Detalhes do Relatório"
-            android:parentActivityName=".PatientReportsActivity" />
+            android:label="Detalhes do Relatório" />
             
     </application>
 
