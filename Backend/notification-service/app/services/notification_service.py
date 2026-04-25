@@ -21,3 +21,19 @@ class NotificationService:
             schedule_at=schedule_at,
         )
         return NotificationOut(status=row.status, notification_id=str(row.id))
+    
+    def get_pending_by_user(self, user_id: int, db: Session):
+        """Buscar notificações pendentes de um usuário"""
+        notifications = NotificationRepository(db).get_pending_by_user(user_id)
+        
+        result = []
+        for notif in notifications:
+            result.append({
+                "id": notif.id,
+                "title": notif.title,
+                "message": notif.message,
+                "created_at": notif.created_at.isoformat(),
+                "status": notif.status
+            })
+        
+        return result

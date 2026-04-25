@@ -15,6 +15,7 @@ from app.routers.appointment_router import router as appointment_router
 from app.routers.patient_evaluation_router import router as patient_evaluation_router
 from app.routers.patient_report_router import router as patient_report_router
 from app.routers.task_router import router as task_router
+from app.routers.notification_router import router as notification_router
 
 
 def create_app() -> FastAPI:
@@ -37,6 +38,7 @@ def create_app() -> FastAPI:
     app.include_router(patient_evaluation_router, tags=["patient_evaluations"])
     app.include_router(patient_report_router, tags=["patient_reports"])
     app.include_router(task_router, tags=["tasks"])
+    app.include_router(notification_router, tags=["notifications"])
     return app
 
 

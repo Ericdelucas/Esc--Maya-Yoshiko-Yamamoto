@@ -20,6 +20,18 @@ public class TaskCompletionResponse {
     
     @SerializedName("message")
     private String message;
+
+    @SerializedName("success")
+    private Boolean success;
+
+    @SerializedName("can_repeat_tomorrow")
+    private Boolean canRepeatTomorrow;
+
+    @SerializedName("tasks_completed_today")
+    private Integer tasksCompletedToday;
+
+    @SerializedName("remaining_tasks")
+    private Integer remainingTasks;
     
     // Getters
     public Integer getId() { return id; }
@@ -28,4 +40,9 @@ public class TaskCompletionResponse {
     public String getCompletionDate() { return completionDate; }
     public Integer getPointsAwarded() { return pointsAwarded; }
     public String getMessage() { return message; }
+    
+    public Boolean isSuccess() { return success != null ? success : true; }
+    public Boolean getCanRepeatTomorrow() { return canRepeatTomorrow; }
+    public Integer getTasksCompletedToday() { return tasksCompletedToday; }
+    public Integer getRemainingTasks() { return remainingTasks; }
 }

@@ -17,6 +17,7 @@ import com.example.testbackend.ExerciseDetailActivity;
 import com.example.testbackend.R;
 import com.example.testbackend.models.Exercise;
 import com.example.testbackend.models.Task;
+import com.example.testbackend.models.TaskCompletionRequest;
 import com.example.testbackend.models.TaskCompletionResponse;
 import com.example.testbackend.network.ApiClient;
 import com.example.testbackend.network.TaskApi;
@@ -132,14 +133,29 @@ public class ExerciseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         // Garantir o prefixo Bearer se necessário
         String authHeader = (token != null && !token.startsWith("Bearer ")) ? "Bearer " + token : token;
         
-        api.completeTask(authHeader).enqueue(new Callback<TaskCompletionResponse>() {
+        // 🔥 Cria request com ID REAL da tarefa para controle individual
+        TaskCompletionRequest request = new TaskCompletionRequest(task.getId());
+        
+        api.completeTask(authHeader, request).enqueue(new Callback<TaskCompletionResponse>() {
             @Override
             public void onResponse(Call<TaskCompletionResponse> call, Response<TaskCompletionResponse> response) {
-                if (response.isSuccessful()) {
-                    task.setCompletedToday(true);
-                    holder.radioButton.setChecked(true);
-                    holder.radioButton.setEnabled(false);
-                    Toast.makeText(holder.itemView.getContext(), "Tarefa concluída! +" + (task.getPointsValue() != null ? task.getPointsValue() : 0) + " pontos", Toast.LENGTH_SHORT).show();
+                if (response.isSuccessful() && response.body() != null) {
+                    TaskCompletionResponse result = response.body();
+                    
+                    if (result.isSuccess()) {
+                        task.setCompletedToday(true);
+                        holder.radioButton.setChecked(true);
+                        holder.radioButton.setEnabled(false);
+                        Toast.makeText(holder.itemView.getContext(), "Tarefa concluída! +" + (task.getPointsValue() != null ? task.getPointsValue() : 0) + " pontos", Toast.LENGTH_SHORT).show();
+                    } else {
+                        // Trata bloqueio de repetição diária
+                        holder.radioButton.setChecked(false);
+                        String message = result.getMessage();
+                        if (result.getCanRepeatTomorrow() != null && result.getCanRepeatTomorrow()) {
+                            message += "\n\n📅 Você poderá repetir este exercício amanhã!";
+                        }
+                        Toast.makeText(holder.itemView.getContext(), message, Toast.LENGTH_LONG).show();
+                    }
                 } else {
                     holder.radioButton.setChecked(false);
                     Toast.makeText(holder.itemView.getContext(), "Erro ao completar tarefa", Toast.LENGTH_SHORT).show();

@@ -22,10 +22,7 @@ import com.example.testbackend.utils.TokenManager;
 
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.net.ConnectException;
-import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -117,11 +114,12 @@ public class LoginActivity extends AppCompatActivity {
                     LoginResponse responseBody = response.body();
                     String token = responseBody.getToken();
                     String role = responseBody.getUserRole();
+                    String fullName = responseBody.getFullName();
                     
-                    Log.d(TAG, "✅ Sucesso! Token recebido, Role: '" + role + "'");
+                    Log.d(TAG, "✅ Sucesso! Token recebido, Role: '" + role + "', Nome: " + fullName);
 
                     if (token != null && !token.isEmpty()) {
-                        tokenManager.saveSession(token, role, email);
+                        tokenManager.saveSession(token, role, email, -1, fullName != null ? fullName : "");
                         loginResponse = responseBody;
                         navigateToCorrectActivity();
                     } else {
@@ -129,17 +127,14 @@ public class LoginActivity extends AppCompatActivity {
                         Toast.makeText(LoginActivity.this, "Erro: Token vazio", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    // 🔥 TRATAMENTO DE ERROS COM RATE LIMITING
                     try {
                         if (response.errorBody() != null) {
                             String errorBody = response.errorBody().string();
                             Log.e(TAG, "❌ Erro Body: " + errorBody);
                             
                             JSONObject errorJson = new JSONObject(errorBody);
-                            String detail = errorJson.optString("detail", "");
                             
                             if (response.code() == 429) {
-                                // Usuário bloqueado (Muitas tentativas)
                                 JSONObject detailJson = errorJson.optJSONObject("detail");
                                 String message = detailJson != null ? detailJson.optString("message", "Muitas tentativas") : "Muitas tentativas";
                                 int retryAfter = detailJson != null ? detailJson.optInt("retry_after", 300) : 300;
@@ -147,7 +142,6 @@ public class LoginActivity extends AppCompatActivity {
                                 Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
                                 startCountdownTimer(retryAfter);
                             } else if (response.code() == 401) {
-                                // Credenciais inválidas ou tentativas restantes
                                 JSONObject detailJson = errorJson.optJSONObject("detail");
                                 String message = detailJson != null ? detailJson.optString("message", "E-mail ou senha incorretos") : "E-mail ou senha incorretos";
                                 Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
@@ -199,7 +193,7 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         String targetActivity = loginResponse.getTargetActivity();
-        Class<?> activityClass = "ProfessionalMainActivity".equals(targetActivity) ? 
+        Class<?> activityClass = Objects.equals(targetActivity, "ProfessionalMainActivity") ? 
                                 ProfessionalMainActivity.class : MainActivity.class;
         
         Intent intent = new Intent(this, activityClass);

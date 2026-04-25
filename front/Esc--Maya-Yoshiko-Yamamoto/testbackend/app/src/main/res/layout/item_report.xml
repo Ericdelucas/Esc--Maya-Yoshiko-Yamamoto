@@ -91,12 +91,17 @@
                 android:textStyle="bold"/>
 
             <TextView
+                android:id="@+id/tvSeeDetails"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Ver detalhes"
                 android:textAppearance="@style/TextAppearance.Material3.BodySmall"
                 android:textColor="?attr/colorPrimary"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackground"
+                android:padding="8dp"/>
 
         </LinearLayout>
 

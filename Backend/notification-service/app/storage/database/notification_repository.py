@@ -50,3 +50,17 @@ class NotificationRepository:
             return
         row.status = "failed"
         self._db.commit()
+    
+    def get_pending_by_user(self, user_id: int) -> list[NotificationORM]:
+        """Buscar notificações pendentes de um usuário"""
+        return (
+            self._db.query(NotificationORM)
+            .filter(
+                and_(
+                    NotificationORM.user_id == user_id,
+                    NotificationORM.status == "queued"
+                )
+            )
+            .order_by(asc(NotificationORM.created_at))
+            .all()
+        )

@@ -6,6 +6,7 @@ from pydantic import BaseModel
 from app.core.dependencies import get_current_user, get_session
 from app.storage.database.appointment_repository import AppointmentRepository
 from app.models.schemas.user_schema import UserOut
+from app.services.appointment_notification_service import AppointmentNotificationService
 
 router = APIRouter(prefix="/appointments")
 
@@ -54,6 +55,21 @@ def create_appointment(
         professional_id=current_user.id,
         patient_id=appointment.patient_id
     )
+    
+    # 🔥 AGENDAR NOTIFICAÇÕES DA CONSULTA
+    notification_service = AppointmentNotificationService()
+    notification_success = notification_service.schedule_appointment_reminders(
+        appointment_id=result["id"],
+        professional_id=current_user.id,
+        patient_id=appointment.patient_id,
+        title=appointment.title,
+        appointment_date=appointment_date
+    )
+    
+    if notification_success:
+        print(f"✅ Notificações agendadas para consulta {result['id']}")
+    else:
+        print(f"❌ Erro ao agendar notificações para consulta {result['id']}")
     
     return {"message": "Agendamento criado com sucesso", "appointment": result}
 
@@ -126,6 +142,48 @@ def update_appointment_status(
         return {"message": "Status atualizado com sucesso"}
     else:
         raise HTTPException(status_code=404, detail="Agendamento não encontrado")
+
+@router.post("/send-daily-notifications")
+def send_daily_notifications(
+    current_user: UserOut = Depends(get_current_user),
+    db: Session = Depends(get_session)
+):
+    """Enviar resumo diário de consultas (admin only)"""
+    
+    if current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Apenas administradores podem enviar notificações diárias")
+    
+    notification_service = AppointmentNotificationService()
+    sent_count = notification_service.send_daily_appointment_summary(db)
+    
+    return {
+        "message": f"Resumo diário enviado com sucesso",
+        "notifications_sent": sent_count,
+        "date": datetime.now().date().isoformat()
+    }
+
+@router.get("/notifications/pending")
+def get_pending_notifications(
+    current_user: UserOut = Depends(get_current_user),
+    db: Session = Depends(get_session)
+):
+    """Buscar notificações pendentes para o usuário atual"""
+    
+    try:
+        # Buscar notificações do notification-service
+        import requests
+        
+        response = requests.get(f"http://notification-service:8070/notifications/user/{current_user.id}", timeout=5)
+        
+        if response.status_code == 200:
+            notifications = response.json()
+            return {"notifications": notifications}
+        else:
+            return {"notifications": []}
+            
+    except Exception as e:
+        print(f"❌ Erro ao buscar notificações: {e}")
+        return {"notifications": []}
 
 @router.delete("/{appointment_id}")
 def delete_appointment(

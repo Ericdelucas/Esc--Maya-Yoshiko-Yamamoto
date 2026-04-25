@@ -123,9 +123,12 @@ public class ReportListFragment extends Fragment {
     }
 
     private void onReportClick(PatientReport report) {
+        Log.d("REPORT_LIST", "Abrindo detalhes do relatório ID: " + report.getId());
         Intent intent = new Intent(getContext(), ReportDetailActivity.class);
         intent.putExtra("report_id", report.getId());
+        Log.d("REPORT_LIST", "Intent criado para ReportDetailActivity");
         startActivity(intent);
+        Log.d("REPORT_LIST", "startActivity chamado");
     }
 
     private void onReportLongClick(PatientReport report) {

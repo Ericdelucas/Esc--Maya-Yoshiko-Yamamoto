@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -58,7 +59,20 @@ public class ReportAdapter extends RecyclerView.Adapter<ReportAdapter.ViewHolder
             holder.tvPainScale.setVisibility(View.GONE);
         }
 
-        holder.itemView.setOnClickListener(v -> clickListener.onClick(report));
+        // Clique no card inteiro
+        holder.itemView.setOnClickListener(v -> {
+            Log.d("REPORT_ADAPTER", "Clique no card - report ID: " + report.getId());
+            clickListener.onClick(report);
+        });
+        
+        // 🔥 CORREÇÃO: Clique específico no texto "Ver detalhes"
+        if (holder.tvSeeDetails != null) {
+            holder.tvSeeDetails.setOnClickListener(v -> {
+                Log.d("REPORT_ADAPTER", "Clique em 'Ver detalhes' - report ID: " + report.getId());
+                clickListener.onClick(report);
+            });
+        }
+
         holder.itemView.setOnLongClickListener(v -> {
             longClickListener.onLongClick(report);
             return true;
@@ -77,7 +91,7 @@ public class ReportAdapter extends RecyclerView.Adapter<ReportAdapter.ViewHolder
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTitle, tvDate, tvType, tvPatient, tvPainScale;
+        TextView tvTitle, tvDate, tvType, tvPatient, tvPainScale, tvSeeDetails;
 
         public ViewHolder(View view) {
             super(view);
@@ -86,6 +100,8 @@ public class ReportAdapter extends RecyclerView.Adapter<ReportAdapter.ViewHolder
             tvType = view.findViewById(R.id.tvType);
             tvPatient = view.findViewById(R.id.tvPatient);
             tvPainScale = view.findViewById(R.id.tvPainScale);
+            // 🔥 NOVO ID sincronizado com item_report.xml
+            tvSeeDetails = view.findViewById(R.id.tvSeeDetails);
         }
     }
 }
