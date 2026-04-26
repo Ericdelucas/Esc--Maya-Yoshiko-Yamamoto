@@ -37,6 +37,24 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+    <!-- 🔥 NOVO: Campo para selecionar paciente -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etPatient"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Selecionar Paciente"
+            android:inputType="none"
+            android:focusable="false"
+            android:clickable="true" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

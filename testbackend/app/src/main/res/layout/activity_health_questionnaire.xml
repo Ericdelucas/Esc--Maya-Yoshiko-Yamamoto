@@ -26,12 +26,22 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Pergunta 1 -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Triagem e Histórico de Saúde"
+                android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+                android:layout_marginBottom="16dp"
+                android:textStyle="bold"
+                android:textColor="?attr/colorPrimary"/>
+
+            <!-- Pergunta 1: Febre ou Sintomas -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="12dp">
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="12dp"
+                app:strokeWidth="0dp">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -40,24 +50,28 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/q1_text"
+                        android:text="Apresentou febre, tosse ou falta de ar nas últimas 24 horas?"
                         android:textStyle="bold"
-                        android:layout_marginBottom="8dp"/>
+                        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"/>
                     <RadioGroup
+                        android:id="@+id/rgSymptoms"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-                        <RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/yes"/>
-                        <RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/no"/>
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:orientation="horizontal">
+                        <RadioButton android:id="@+id/rbSymptomsYes" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Sim"/>
+                        <RadioButton android:id="@+id/rbSymptomsNo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="24dp" android:text="Não" android:checked="true"/>
                     </RadioGroup>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Pergunta 2 -->
+            <!-- Pergunta 2: Alergias -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="12dp">
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="12dp"
+                app:strokeWidth="0dp">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -66,24 +80,128 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/q2_text"
+                        android:text="Possui algum tipo de alergia a medicamentos ou alimentos?"
                         android:textStyle="bold"
-                        android:layout_marginBottom="8dp"/>
+                        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"/>
                     <RadioGroup
+                        android:id="@+id/rgAllergies"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-                        <RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/yes"/>
-                        <RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/no"/>
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:orientation="horizontal">
+                        <RadioButton android:id="@+id/rbAllergiesYes" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Sim"/>
+                        <RadioButton android:id="@+id/rbAllergiesNo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="24dp" android:text="Não" android:checked="true"/>
+                    </RadioGroup>
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:hint="Se sim, quais?">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etAllergyDetails"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Pergunta 3: Medicamentos -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="12dp"
+                app:strokeWidth="0dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Faz uso de algum medicamento de uso contínuo?"
+                        android:textStyle="bold"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"/>
+                    <RadioGroup
+                        android:id="@+id/rgMeds"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:orientation="horizontal">
+                        <RadioButton android:id="@+id/rbMedsYes" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Sim"/>
+                        <RadioButton android:id="@+id/rbMedsNo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="24dp" android:text="Não" android:checked="true"/>
                     </RadioGroup>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Pergunta 3 -->
+            <!-- Pergunta 4: Doenças Crônicas -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="12dp"
+                app:strokeWidth="0dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Possui histórico de hipertensão, diabetes ou doenças cardíacas?"
+                        android:textStyle="bold"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"/>
+                    <RadioGroup
+                        android:id="@+id/rgChronic"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:orientation="horizontal">
+                        <RadioButton android:id="@+id/rbChronicYes" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Sim"/>
+                        <RadioButton android:id="@+id/rbChronicNo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="24dp" android:text="Não" android:checked="true"/>
+                    </RadioGroup>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Pergunta 5: Cirurgias -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="12dp"
+                app:strokeWidth="0dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Realizou algum procedimento cirúrgico nos últimos 12 meses?"
+                        android:textStyle="bold"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"/>
+                    <RadioGroup
+                        android:id="@+id/rgSurgery"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:orientation="horizontal">
+                        <RadioButton android:id="@+id/rbSurgeryYes" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Sim"/>
+                        <RadioButton android:id="@+id/rbSurgeryNo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="24dp" android:text="Não" android:checked="true"/>
+                    </RadioGroup>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Pergunta 6: Hábitos -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
-                app:cardCornerRadius="12dp">
+                app:cardCornerRadius="12dp"
+                app:strokeWidth="0dp">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -92,24 +210,35 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/q3_text"
+                        android:text="Como avalia a qualidade do seu sono e alimentação atual?"
                         android:textStyle="bold"
-                        android:layout_marginBottom="8dp"/>
+                        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"/>
                     <RadioGroup
+                        android:id="@+id/rgHabits"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-                        <RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/yes"/>
-                        <RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/no"/>
-                        <RadioButton android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/sometimes"/>
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp">
+                        <RadioButton android:id="@+id/rbHabitsExcellent" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Excelente / Saudável" android:checked="true"/>
+                        <RadioButton android:id="@+id/rbHabitsRegular" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Regular"/>
+                        <RadioButton android:id="@+id/rbHabitsPoor" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Precisa de Melhorias"/>
                     </RadioGroup>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSaveQuestionnaire"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:text="@string/save_btn"
-                app:cornerRadius="12dp" />
+                android:text="Salvar Respostas"
+                app:cornerRadius="12dp"
+                android:layout_marginBottom="32dp"/>
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone" />
 
         </LinearLayout>
     </ScrollView>

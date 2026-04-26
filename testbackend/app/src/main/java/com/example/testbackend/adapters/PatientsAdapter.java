@@ -9,7 +9,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import com.example.testbackend.ReportDetailActivity;
+import com.example.testbackend.PatientHealthDetailsActivity;
 import com.example.testbackend.R;
 import com.example.testbackend.models.Patient;
 import java.util.List;
@@ -50,26 +50,40 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.Patien
             holder.tvInitial.setText(name.substring(0, 1).toUpperCase());
         }
 
-        // 🔥 CORREÇÃO DEFINITIVA: Clique no paciente leva direto para os Detalhes do Relatório
+        // 🔥 CLIQUE SIMPLES E SEGURO
         holder.itemView.setOnClickListener(v -> {
-            openPatientDetail(patient);
-            if (listener != null) listener.onPatientClick(patient);
+            try {
+                Intent intent = new Intent(context, PatientHealthDetailsActivity.class);
+                intent.putExtra("patient_id", patient.getId()); 
+                intent.putExtra("patient_name", patient.getDisplayName());
+                intent.putExtra("patient_email", patient.getEmail());
+                
+                context.startActivity(intent);
+            } catch (Exception e) {
+                android.util.Log.e("PATIENT_ADAPTER", "Erro ao abrir detalhes: " + e.getMessage());
+                // Mostrar Toast de erro
+                android.widget.Toast.makeText(context, "Erro ao abrir detalhes do paciente", android.widget.Toast.LENGTH_SHORT).show();
+            }
+            
+            if (listener != null) {
+                listener.onPatientClick(patient);
+            }
         });
 
-        // O botão de ícone agora também leva para a página de detalhes (activity_report_detail)
-        holder.btnReports.setOnClickListener(v -> openPatientDetail(patient));
-    }
-
-    private void openPatientDetail(Patient patient) {
-        // Direcionando para ReportDetailActivity (que usa activity_report_detail.xml)
-        Intent intent = new Intent(context, ReportDetailActivity.class);
-        
-        // Passamos o ID do paciente. Na tela de detalhes, ele carregará o relatório 
-        // ou ficha de avaliação deste paciente específico.
-        intent.putExtra("report_id", patient.getId()); 
-        intent.putExtra("patient_name", patient.getDisplayName());
-        
-        context.startActivity(intent);
+        // O botão de ícone faz a mesma coisa
+        holder.btnReports.setOnClickListener(v -> {
+            try {
+                Intent intent = new Intent(context, PatientHealthDetailsActivity.class);
+                intent.putExtra("patient_id", patient.getId()); 
+                intent.putExtra("patient_name", patient.getDisplayName());
+                intent.putExtra("patient_email", patient.getEmail());
+                
+                context.startActivity(intent);
+            } catch (Exception e) {
+                android.util.Log.e("PATIENT_ADAPTER", "Erro ao abrir detalhes (botão): " + e.getMessage());
+                android.widget.Toast.makeText(context, "Erro ao abrir detalhes", android.widget.Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override

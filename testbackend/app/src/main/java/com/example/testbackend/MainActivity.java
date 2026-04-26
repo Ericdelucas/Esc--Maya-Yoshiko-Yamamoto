@@ -1,8 +1,11 @@
 package com.example.testbackend;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,6 +16,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.example.testbackend.models.DailyProgressData;
 import com.example.testbackend.models.DailyProgressResponse;
@@ -20,6 +25,7 @@ import com.example.testbackend.models.UserProfileResponse;
 import com.example.testbackend.network.ApiClient;
 import com.example.testbackend.network.AuthApi;
 import com.example.testbackend.network.TaskApi;
+import com.example.testbackend.services.NotificationService;
 import com.example.testbackend.utils.Constants;
 import com.example.testbackend.utils.LocaleHelper;
 import com.example.testbackend.utils.TokenManager;
@@ -36,11 +42,12 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "PATIENT_DEBUG";
     private TextView tvUserInitial, tvGreeting, tvProgressValue;
     private ImageView ivUserPhoto;
-    private MaterialCardView cardAccountAvatar, cardProfessionalExams;
+    private MaterialCardView cardAccountAvatar;
     private ImageButton btnSettings;
     private CircularProgressIndicator progressWeekly;
     private TokenManager tokenManager;
     private TaskApi taskApi;
+    private NotificationService notificationService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +79,37 @@ public class MainActivity extends AppCompatActivity {
         loadUserProfile();
         loadDailyProgress();
         setupNavigation();
+
+        // 🔥 INICIAR SERVIÇO DE NOTIFICAÇÕES PARA PACIENTE
+        requestNotificationPermission();
+        notificationService = new NotificationService(this);
+        notificationService.startPolling();
+    }
+
+    private void requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) 
+                != PackageManager.PERMISSION_GRANTED) {
+                
+                ActivityCompat.requestPermissions(
+                    this, 
+                    new String[]{Manifest.permission.POST_NOTIFICATIONS}, 
+                    100
+                );
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 100) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Log.d(TAG, "Permissão de notificação concedida ao paciente");
+            } else {
+                Log.w(TAG, "Permissão de notificação negada pelo paciente");
+            }
+        }
     }
 
     private boolean isPatientUser() {
@@ -95,7 +133,6 @@ public class MainActivity extends AppCompatActivity {
         ivUserPhoto = findViewById(R.id.ivUserPhoto);
         cardAccountAvatar = findViewById(R.id.cardAccountAvatar);
         btnSettings = findViewById(R.id.btnSettings);
-        cardProfessionalExams = findViewById(R.id.cardProfessionalExams);
         
         // Inicializar componentes de progresso
         progressWeekly = findViewById(R.id.progressWeekly);
@@ -217,9 +254,8 @@ public class MainActivity extends AppCompatActivity {
         // Botão Meus Exercícios
         findViewById(R.id.btnExercises).setOnClickListener(v -> startActivity(new Intent(this, ExerciseListActivity.class)));
 
-        // Seção Gamificação (Apenas Ranking e Profissionais agora)
+        // Seção Gamificação (Apenas Ranking agora)
         findViewById(R.id.cardLeaderboard).setOnClickListener(v -> startActivity(new Intent(this, LeaderboardActivity.class)));
-        findViewById(R.id.cardProfessionals).setOnClickListener(v -> startActivity(new Intent(this, ProfessionalsActivity.class)));
 
         // Seção Saúde
         findViewById(R.id.btnHealth).setOnClickListener(v -> startActivity(new Intent(this, HealthHubActivity.class)));
@@ -237,6 +273,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void logout() {
+        if (notificationService != null) notificationService.stopPolling();
         tokenManager.clearToken();
         Toast.makeText(this, "Sessão encerrada", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(this, LoginActivity.class);
@@ -251,6 +288,14 @@ public class MainActivity extends AppCompatActivity {
         if (tokenManager.isLoggedIn()) {
             loadUserProfile();
             loadDailyProgress();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (notificationService != null) {
+            notificationService.stopPolling();
         }
     }
 

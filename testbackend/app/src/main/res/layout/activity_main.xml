@@ -139,140 +139,40 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- NOVO: Seção Exclusiva para Profissionais -->
+            <!-- Seção de Gamificação (Apenas Ranking agora) -->
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardProfessionalExams"
+                android:id="@+id/cardLeaderboard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="24dp"
                 android:layout_marginTop="24dp"
-                android:visibility="gone"
                 app:cardCornerRadius="16dp"
-                app:cardElevation="4dp"
+                app:cardElevation="2dp"
                 app:cardBackgroundColor="?attr/colorSurface"
-                app:strokeWidth="0dp">
-
+                app:strokeWidth="0dp"
+                android:clickable="true"
+                android:focusable="true">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="20dp">
-
+                    android:gravity="center"
+                    android:padding="20dp"
+                    android:orientation="vertical">
                     <ImageView
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:src="@android:drawable/ic_menu_agenda"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@android:drawable/ic_menu_myplaces"
                         app:tint="?attr/colorPrimary" />
-
-                    <LinearLayout
-                        android:layout_width="0dp"
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginStart="16dp"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Exames dos Pacientes"
-                            android:textColor="?android:attr/textColorPrimary"
-                            android:textStyle="bold"
-                            android:textSize="16sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Gerencie laudos e exames de imagem"
-                            android:textColor="?android:attr/textColorSecondary"
-                            android:textSize="12sp" />
-                    </LinearLayout>
-
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@android:drawable/ic_media_play"
-                        app:tint="?attr/colorPrimary" />
+                        android:layout_marginTop="8dp"
+                        android:text="Ranking"
+                        android:textColor="?android:attr/textColorPrimary"
+                        android:textStyle="bold"
+                        android:textSize="16sp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
-
-            <!-- Seção de Gamificação e Social (Ranking e Profissionais) -->
-            <GridLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="24dp"
-                android:layout_marginTop="24dp"
-                android:columnCount="2"
-                android:rowCount="1">
-
-                <!-- Ranking -->
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardLeaderboard"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="4dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="2dp"
-                    app:cardBackgroundColor="?attr/colorSurface"
-                    app:strokeWidth="0dp"
-                    android:clickable="true"
-                    android:focusable="true">
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:padding="16dp"
-                        android:orientation="vertical">
-                        <ImageView
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:src="@android:drawable/ic_menu_myplaces"
-                            app:tint="?attr/colorPrimary" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text="Ranking"
-                            android:textColor="?android:attr/textColorPrimary"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- Profissionais -->
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardProfessionals"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_columnWeight="1"
-                    android:layout_margin="4dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="2dp"
-                    app:strokeWidth="0dp"
-                    app:cardBackgroundColor="?attr/colorSurface"
-                    android:clickable="true"
-                    android:focusable="true">
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:padding="16dp"
-                        android:orientation="vertical">
-                        <ImageView
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:src="@android:drawable/ic_menu_agenda"
-                            app:tint="?attr/colorPrimary" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text="Profissionais"
-                            android:textColor="?android:attr/textColorPrimary"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-            </GridLayout>
 
             <!-- Seção Saúde -->
             <com.google.android.material.card.MaterialCardView

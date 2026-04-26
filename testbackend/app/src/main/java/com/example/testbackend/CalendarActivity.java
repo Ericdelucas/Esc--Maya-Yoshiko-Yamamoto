@@ -197,6 +197,11 @@ public class CalendarActivity extends AppCompatActivity {
         SimpleDateFormat timeSdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
         request.setTime(timeSdf.format(appointment.getDate()));
         
+        // 🔥 NOVO: Enviar ID do paciente
+        if (appointment.getPatientId() != null) {
+            request.setPatientId(appointment.getPatientId());
+        }
+        
         api.createAppointment(token, request).enqueue(new Callback<Map<String, Object>>() {
             @Override
             public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {

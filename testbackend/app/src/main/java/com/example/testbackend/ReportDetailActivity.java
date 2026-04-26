@@ -192,7 +192,8 @@ public class ReportDetailActivity extends AppCompatActivity {
     private void loadReport() {
         if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
         
-        api.getReportWithAttachments(reportId).enqueue(new Callback<PatientReport>() {
+        // Tentar usar endpoint básico primeiro
+        api.getReport(reportId).enqueue(new Callback<PatientReport>() {
             @Override
             public void onResponse(Call<PatientReport> call, Response<PatientReport> response) {
                 if (progressBar != null) progressBar.setVisibility(View.GONE);
@@ -203,12 +204,59 @@ public class ReportDetailActivity extends AppCompatActivity {
                     loadAttachments();
                 } else {
                     Log.e(TAG, "Erro ao carregar relatório: " + response.code());
-                    Toast.makeText(ReportDetailActivity.this, "Erro ao carregar relatório", Toast.LENGTH_SHORT).show();
+                    // Se falhar, tentar buscar da lista de relatórios do profissional
+                    loadReportFromProfessionalList();
                 }
             }
 
             @Override
             public void onFailure(Call<PatientReport> call, Throwable t) {
+                if (progressBar != null) progressBar.setVisibility(View.GONE);
+                Log.e(TAG, "Falha na conexão", t);
+                // Se falhar, tentar buscar da lista
+                loadReportFromProfessionalList();
+            }
+        });
+    }
+    
+    private void loadReportFromProfessionalList() {
+        if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
+        
+        // Buscar todos os relatórios do profissional e encontrar o específico
+        api.getProfessionalReports(37).enqueue(new Callback<List<PatientReport>>() {
+            @Override
+            public void onResponse(Call<List<PatientReport>> call, Response<List<PatientReport>> response) {
+                if (progressBar != null) progressBar.setVisibility(View.GONE);
+                
+                if (response.isSuccessful() && response.body() != null) {
+                    List<PatientReport> reports = response.body();
+                    PatientReport foundReport = null;
+                    
+                    // Procurar o relatório com o ID específico
+                    for (PatientReport report : reports) {
+                        if (report.getId() == reportId) {
+                            foundReport = report;
+                            break;
+                        }
+                    }
+                    
+                    if (foundReport != null) {
+                        currentReport = foundReport;
+                        populateFields();
+                        loadAttachments();
+                    } else {
+                        Log.e(TAG, "Relatório ID " + reportId + " não encontrado na lista");
+                        Toast.makeText(ReportDetailActivity.this, "Relatório não encontrado", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+                } else {
+                    Log.e(TAG, "Erro ao carregar lista de relatórios: " + response.code());
+                    Toast.makeText(ReportDetailActivity.this, "Erro ao carregar relatórios", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<PatientReport>> call, Throwable t) {
                 if (progressBar != null) progressBar.setVisibility(View.GONE);
                 Log.e(TAG, "Falha na conexão", t);
                 Toast.makeText(ReportDetailActivity.this, "Erro de conexão", Toast.LENGTH_SHORT).show();
@@ -305,13 +353,16 @@ public class ReportDetailActivity extends AppCompatActivity {
         });
     }
 
-    private String formatDateTimeBrazilian(Date date) {
-        if (date == null) return "Não informado";
+    private String formatDateTimeBrazilian(String dateString) {
+        if (dateString == null) return "Não informado";
         try {
+            // Tentar parse da string de data ISO
+            SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
             SimpleDateFormat brazilianFormat = new SimpleDateFormat("dd/MM/yyyy 'às' HH:mm", Locale.getDefault());
+            Date date = isoFormat.parse(dateString);
             return brazilianFormat.format(date);
         } catch (Exception e) {
-            return date.toString();
+            return dateString; // Retorna a string original se não conseguir parsear
         }
     }
 

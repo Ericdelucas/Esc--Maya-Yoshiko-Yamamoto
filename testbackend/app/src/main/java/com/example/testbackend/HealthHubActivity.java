@@ -16,16 +16,7 @@ public class HealthHubActivity extends AppCompatActivity {
         setContentView(R.layout.activity_health_hub);
 
         setupToolbar();
-
-        MaterialCardView cardImc = findViewById(R.id.cardImc);
-        MaterialCardView cardBodyFat = findViewById(R.id.cardBodyFat);
-        MaterialCardView cardQuestionnaire = findViewById(R.id.cardQuestionnaire);
-        MaterialCardView cardHistory = findViewById(R.id.cardHistory);
-
-        cardImc.setOnClickListener(v -> startActivity(new Intent(this, ImcCalculatorActivity.class)));
-        cardBodyFat.setOnClickListener(v -> startActivity(new Intent(this, BodyFatCalculatorActivity.class)));
-        cardQuestionnaire.setOnClickListener(v -> startActivity(new Intent(this, HealthQuestionnaireActivity.class)));
-        cardHistory.setOnClickListener(v -> startActivity(new Intent(this, HealthHistoryActivity.class)));
+        setupNavigation();
     }
 
     private void setupToolbar() {
@@ -35,7 +26,25 @@ public class HealthHubActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setTitle(R.string.health_tools);
         }
-        toolbar.setNavigationOnClickListener(v -> onBackPressed());
+        toolbar.setNavigationOnClickListener(v -> finish());
+    }
+
+    private void setupNavigation() {
+        // IMC
+        MaterialCardView cardImc = findViewById(R.id.cardImc);
+        cardImc.setOnClickListener(v -> startActivity(new Intent(this, ImcCalculatorActivity.class)));
+
+        // Gordura Corporal
+        MaterialCardView cardBodyFat = findViewById(R.id.cardBodyFat);
+        cardBodyFat.setOnClickListener(v -> startActivity(new Intent(this, BodyFatCalculatorActivity.class)));
+
+        // Questionário de Saúde
+        MaterialCardView cardQuestionnaire = findViewById(R.id.cardQuestionnaire);
+        cardQuestionnaire.setOnClickListener(v -> startActivity(new Intent(this, HealthQuestionnaireActivity.class)));
+
+        // Histórico
+        MaterialCardView cardHistory = findViewById(R.id.cardHistory);
+        cardHistory.setOnClickListener(v -> startActivity(new Intent(this, HealthHistoryActivity.class)));
     }
 
     @Override

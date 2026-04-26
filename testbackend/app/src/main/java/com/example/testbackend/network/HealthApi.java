@@ -14,22 +14,21 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface HealthApi {
-    @POST("metrics/imc")
+    @POST("health-tools/calculate-bmi-test-query")
     Call<HealthMetricResponse> calculateIMC(
         @Query("user_id") int userId,
         @Query("weight") double weight,
         @Query("height") double height
     );
 
-    @GET("metrics/history/{user_id}")
+    @GET("health-tools/history")
     Call<List<HealthMetricResponse>> getHealthHistory(
-        @Path("user_id") int userId,
+        @Query("user_id") int userId,
         @Query("metric_type") String metricType
     );
 
-    @POST("questionnaire")
+    @POST("health-tools/save-questionnaire-test")
     Call<Map<String, Object>> saveQuestionnaire(
-        @Query("user_id") int userId,
         @Body Map<String, Object> questionnaireData
     );
 }

@@ -7,6 +7,7 @@ public class Appointment {
     private String title;
     private Date date;
     private String description;
+    private Integer patientId; // 🔥 NOVO: ID do paciente
 
     public Appointment(int id, String title, Date date, String description) {
         this.id = id;
@@ -27,4 +28,8 @@ public class Appointment {
 
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+    
+    // 🔥 NOVO: Getter e Setter para patientId
+    public Integer getPatientId() { return patientId; }
+    public void setPatientId(Integer patientId) { this.patientId = patientId; }
 }

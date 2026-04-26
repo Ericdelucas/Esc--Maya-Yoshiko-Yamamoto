@@ -4,9 +4,15 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+
+    <!-- 🔥 PERMISSÕES PARA NOTIFICAÇÕES -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:allowBackup="true"
@@ -55,6 +61,13 @@
         <activity android:name=".ExerciseManagementActivity" android:exported="false" />
         <activity android:name=".CreateTaskActivity" android:exported="false" />
         
+        <!-- 🔥 NOVA ACTIVITY DE DADOS DE SAÚDE DO PACIENTE -->
+        <activity 
+            android:name=".PatientHealthDetailsActivity" 
+            android:exported="false"
+            android:label="Dados de Saúde do Paciente"
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
+
         <!-- 🔥 NOVA ACTIVITY DE AVALIAÇÃO FISIOTERAPÊUTICA -->
         <activity 
             android:name=".PatientEvaluationActivity" 
@@ -66,14 +79,12 @@
         <activity
             android:name=".PatientReportsActivity"
             android:exported="false"
-            android:label="Relatórios de Pacientes"
-            android:parentActivityName=".ProfessionalMainActivity" />
+            android:label="Relatórios de Pacientes" />
 
         <activity
             android:name=".CreateReportActivity"
             android:exported="false"
-            android:label="Criar Relatório"
-            android:parentActivityName=".PatientReportsActivity" />
+            android:label="Criar Relatório" />
 
         <activity
             android:name=".ReportDetailActivity"

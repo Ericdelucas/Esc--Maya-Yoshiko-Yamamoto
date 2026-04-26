@@ -77,10 +77,17 @@ public class ReportAdapter extends RecyclerView.Adapter<ReportAdapter.ViewHolder
         return reports != null ? reports.size() : 0;
     }
 
-    private String formatDate(Date date) {
-        if (date == null) return "";
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
-        return sdf.format(date);
+    private String formatDate(String dateString) {
+        if (dateString == null) return "";
+        try {
+            // Tentar parse da string de data ISO
+            SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
+            SimpleDateFormat displayFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+            Date date = isoFormat.parse(dateString);
+            return displayFormat.format(date);
+        } catch (Exception e) {
+            return dateString; // Retorna a string original se não conseguir parsear
+        }
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

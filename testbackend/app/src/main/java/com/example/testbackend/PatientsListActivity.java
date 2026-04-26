@@ -1,5 +1,6 @@
 package com.example.testbackend;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -44,19 +45,23 @@ public class PatientsListActivity extends AppCompatActivity {
 
     private void setupViews() {
         TextView tvTitle = findViewById(R.id.tvTitle);
-        if (tvTitle != null) {
-            tvTitle.setText("Meus Pacientes");
-        }
+        if (tvTitle != null) tvTitle.setText("Meus Pacientes");
 
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
 
         rvPatients = findViewById(R.id.rvPatients);
         rvPatients.setLayoutManager(new LinearLayoutManager(this));
         
+        // 🔥 CORREÇÃO: Implementando a navegação no clique
         adapter = new PatientsAdapter(this, patientList, new PatientsAdapter.OnPatientClickListener() {
             @Override
             public void onPatientClick(Patient patient) {
-                // Navegação opcional para perfil do paciente
+                // AGORA AO CLICAR, ABRE A TELA DE DADOS DE SAÚDE
+                Intent intent = new Intent(PatientsListActivity.this, PatientHealthDetailsActivity.class);
+                intent.putExtra("patient_id", patient.getId());
+                intent.putExtra("patient_name", patient.getDisplayName());
+                intent.putExtra("patient_email", patient.getEmail());
+                startActivity(intent);
             }
 
             @Override
