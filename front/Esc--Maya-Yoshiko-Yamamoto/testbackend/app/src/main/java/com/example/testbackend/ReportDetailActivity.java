@@ -354,7 +354,7 @@ public class ReportDetailActivity extends AppCompatActivity {
     }
 
     private void openAttachment(ReportAttachment attachment) {
-        String downloadUrl = "http://localhost:8080/reports/" + attachment.getReportId() + "/attachments/" + attachment.getId() + "/download";
+        String downloadUrl = "https://esc-maya-yoshiko-yamamoto.onrender.com/reports/" + attachment.getReportId() + "/attachments/" + attachment.getId() + "/download";
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(downloadUrl));
         startActivity(intent);
     }

@@ -52,4 +52,5 @@ app = create_app()
 
 if __name__ == "__main__":
     settings = get_settings()
-    uvicorn.run("main:app", host="0.0.0.0", port=settings.auth_port, reload=False)
+    port = int(os.getenv("PORT", settings.auth_port))
+    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=False)

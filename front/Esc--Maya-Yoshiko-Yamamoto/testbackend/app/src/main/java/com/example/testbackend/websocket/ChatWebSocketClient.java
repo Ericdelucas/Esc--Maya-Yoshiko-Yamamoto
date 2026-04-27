@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 public class ChatWebSocketClient {
     private static final String TAG = "CHAT_WS";
-    private static final String BASE_URL = "ws://10.0.2.2:8000/chat/ws/"; // Ajustado para emulador Android
+    private static final String BASE_URL = "wss://esc-maya-yoshiko-yamamoto.onrender.com/chat/ws/"; // Render.com - Produção
 
     private OkHttpClient client;
     private WebSocket webSocket;
