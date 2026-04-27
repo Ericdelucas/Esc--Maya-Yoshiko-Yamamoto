@@ -120,3 +120,33 @@ class AppointmentRepository:
             session.delete(appointment)
             session.commit()
             return True
+    
+    def get_by_patient_and_month(self, patient_id: int, year: int, month: int) -> list:
+        """Busca agendamentos de um paciente por mês"""
+        with SessionLocal() as session:
+            start_date = datetime(year, month, 1)
+            if month == 12:
+                end_date = datetime(year + 1, 1, 1) - timedelta(days=1)
+            else:
+                end_date = datetime(year, month + 1, 1)
+            
+            appointments = session.query(AppointmentORM).filter(
+                and_(
+                    AppointmentORM.patient_id == patient_id,
+                    AppointmentORM.appointment_date >= start_date,
+                    AppointmentORM.appointment_date < end_date,
+                    AppointmentORM.status.in_(["scheduled", "completed"])
+                )
+            ).order_by(AppointmentORM.appointment_date, AppointmentORM.time).all()
+            
+            return [
+                {
+                    "id": apt.id,
+                    "title": apt.title,
+                    "description": apt.description,
+                    "appointment_date": apt.appointment_date,
+                    "time": apt.time,
+                    "status": apt.status
+                }
+                for apt in appointments
+            ]

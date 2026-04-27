@@ -1,12 +1,17 @@
 package com.example.testbackend;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,13 +35,23 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class CreateTaskActivity extends AppCompatActivity {
-    private TextInputEditText etTitle, etDescription, etPoints;
+    private TextInputEditText etTitle, etDescription;
     private Spinner spPatient, spFrequency;
-    private Button btnSave;
+    private Button btnSave, btnSelectImage, btnSelectVideo;
+    private ImageView ivImagePreview;
+    private TextView tvVideoSelected;
     private TaskApi taskApi;
     private PatientApi patientApi;
     private List<Patient> patientsList = new ArrayList<>();
     private String token;
+    
+    // 🔥 VARIÁVEIS PARA MÍDIA
+    private Uri selectedImageUri;
+    private Uri selectedVideoUri;
+    
+    // 🔥 REQUEST CODES
+    private static final int PICK_IMAGE_REQUEST = 1;
+    private static final int PICK_VIDEO_REQUEST = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,10 +74,15 @@ public class CreateTaskActivity extends AppCompatActivity {
     private void initViews() {
         etTitle = findViewById(R.id.etTitle);
         etDescription = findViewById(R.id.etDescription);
-        etPoints = findViewById(R.id.etPoints);
         spPatient = findViewById(R.id.spPatient);
         spFrequency = findViewById(R.id.spFrequency);
         btnSave = findViewById(R.id.btnSave);
+        
+        // 🔥 INICIAR VIEWS DE MÍDIA
+        btnSelectImage = findViewById(R.id.btnSelectImage);
+        btnSelectVideo = findViewById(R.id.btnSelectVideo);
+        ivImagePreview = findViewById(R.id.ivImagePreview);
+        tvVideoSelected = findViewById(R.id.tvVideoSelected);
     }
 
     private void setupFrequencySpinner() {
@@ -115,12 +135,16 @@ public class CreateTaskActivity extends AppCompatActivity {
 
     private void setupClickListeners() {
         btnSave.setOnClickListener(v -> createTask());
+        
+        // 🔥 LISTENERS DE MÍDIA
+        btnSelectImage.setOnClickListener(v -> selectImage());
+        btnSelectVideo.setOnClickListener(v -> selectVideo());
     }
 
     private void createTask() {
         String title = etTitle.getText().toString().trim();
         String description = etDescription.getText().toString().trim();
-        String pointsStr = etPoints.getText().toString().trim();
+        int points = 15; // 🔥 PONTOS FIXOS AUTOMÁTICOS
 
         // VALIDAÇÃO DETALHADA:
         if (title.isEmpty()) {
@@ -136,25 +160,8 @@ public class CreateTaskActivity extends AppCompatActivity {
             etDescription.setError("Descrição obrigatória");
             return;
         }
-        if (description.length() > 2000) {
-            etDescription.setError("Descrição muito longa (máx 2000)");
-            return;
-        }
-
-        if (pointsStr.isEmpty()) {
-            etPoints.setError("Pontos obrigatórios");
-            return;
-        }
-
-        int points;
-        try {
-            points = Integer.parseInt(pointsStr);
-            if (points < 1 || points > 1000) {
-                etPoints.setError("Pontos devem ser entre 1 e 1000");
-                return;
-            }
-        } catch (NumberFormatException e) {
-            etPoints.setError("Pontos inválidos");
+        if (description.length() > 500) {
+            etDescription.setError("Descrição muito longa (máx 500)");
             return;
         }
 
@@ -174,6 +181,17 @@ public class CreateTaskActivity extends AppCompatActivity {
         request.setPoints_value(points);
         request.setFrequency_per_week(frequency);
         request.setStart_date(startDateStr);
+        
+        // 🔥 ADICIONAR URLs DE MÍDIA
+        if (selectedImageUri != null) {
+            request.setExerciseImageUrl(selectedImageUri.toString());
+            Log.d("TASK_DEBUG", "Imagem URL: " + selectedImageUri.toString());
+        }
+        
+        if (selectedVideoUri != null) {
+            request.setExerciseVideoUrl(selectedVideoUri.toString());
+            Log.d("TASK_DEBUG", "Vídeo URL: " + selectedVideoUri.toString());
+        }
 
         // DEBUG: mostrar o que está sendo enviado para identificar Erro 422
         Log.d("TASK_DEBUG", "=== DADOS DA TAREFA ===");
@@ -183,6 +201,8 @@ public class CreateTaskActivity extends AppCompatActivity {
         Log.d("TASK_DEBUG", "points_value: " + request.getPoints_value());
         Log.d("TASK_DEBUG", "frequency_per_week: " + request.getFrequency_per_week());
         Log.d("TASK_DEBUG", "start_date: " + request.getStart_date());
+        Log.d("TASK_DEBUG", "exercise_image_url: " + request.getExerciseImageUrl());
+        Log.d("TASK_DEBUG", "exercise_video_url: " + request.getExerciseVideoUrl());
         Log.d("TASK_DEBUG", "========================");
 
         taskApi.createTask("Bearer " + token, request).enqueue(new Callback<Task>() {
@@ -218,5 +238,41 @@ public class CreateTaskActivity extends AppCompatActivity {
                 Toast.makeText(CreateTaskActivity.this, "Erro de conexão", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+    
+    // 🔥 MÉTODOS PARA SELECIONAR MÍDIA
+    private void selectImage() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, PICK_IMAGE_REQUEST);
+    }
+    
+    private void selectVideo() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, PICK_VIDEO_REQUEST);
+    }
+    
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        
+        if (resultCode == RESULT_OK && data != null) {
+            Uri uri = data.getData();
+            
+            if (requestCode == PICK_IMAGE_REQUEST) {
+                selectedImageUri = uri;
+                // Mostrar preview da imagem
+                ivImagePreview.setVisibility(View.VISIBLE);
+                ivImagePreview.setImageURI(uri);
+                Toast.makeText(this, "Imagem selecionada", Toast.LENGTH_SHORT).show();
+                
+            } else if (requestCode == PICK_VIDEO_REQUEST) {
+                selectedVideoUri = uri;
+                // Mostrar nome do vídeo
+                tvVideoSelected.setVisibility(View.VISIBLE);
+                String videoName = "Vídeo selecionado: " + uri.getLastPathSegment();
+                tvVideoSelected.setText(videoName);
+                Toast.makeText(this, "Vídeo selecionado", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

@@ -13,7 +13,7 @@ public class PatientReport implements Serializable {
     @SerializedName("professional_id")
     private Integer professionalId;
     @SerializedName("report_date")
-    private Date reportDate;
+    private String reportDate;
     @SerializedName("report_type")
     private String reportType;
     @SerializedName("title")
@@ -41,9 +41,9 @@ public class PatientReport implements Serializable {
     @SerializedName("limitations")
     private List<String> limitations;
     @SerializedName("created_at")
-    private Date createdAt;
+    private String createdAt;
     @SerializedName("updated_at")
-    private Date updatedAt;
+    private String updatedAt;
     @SerializedName("created_by")
     private String createdBy;
 
@@ -54,8 +54,8 @@ public class PatientReport implements Serializable {
     public void setPatientId(Integer patientId) { this.patientId = patientId; }
     public Integer getProfessionalId() { return professionalId; }
     public void setProfessionalId(Integer professionalId) { this.professionalId = professionalId; }
-    public Date getReportDate() { return reportDate; }
-    public void setReportDate(Date reportDate) { this.reportDate = reportDate; }
+    public String getReportDate() { return reportDate; }
+    public void setReportDate(String reportDate) { this.reportDate = reportDate; }
     public String getReportType() { return reportType; }
     public void setReportType(String reportType) { this.reportType = reportType; }
     public String getTitle() { return title; }
@@ -82,10 +82,10 @@ public class PatientReport implements Serializable {
     public void setAchievements(List<String> achievements) { this.achievements = achievements; }
     public List<String> getLimitations() { return limitations; }
     public void setLimitations(List<String> limitations) { this.limitations = limitations; }
-    public Date getCreatedAt() { return createdAt; }
-    public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }
-    public Date getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(Date updatedAt) { this.updatedAt = updatedAt; }
+    public String getCreatedAt() { return createdAt; }
+    public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
+    public String getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(String updatedAt) { this.updatedAt = updatedAt; }
     public String getCreatedBy() { return createdBy; }
     public void setCreatedBy(String createdBy) { this.createdBy = createdBy; }
 }

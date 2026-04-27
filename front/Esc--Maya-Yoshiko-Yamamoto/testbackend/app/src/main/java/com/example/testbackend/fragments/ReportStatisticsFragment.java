@@ -1,6 +1,7 @@
 package com.example.testbackend.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import com.example.testbackend.models.PatientReport;
 import com.example.testbackend.models.ReportStatistics;
 import com.example.testbackend.network.ApiClient;
 import com.example.testbackend.network.PatientReportApi;
+import com.example.testbackend.utils.TokenManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,17 +38,25 @@ public class ReportStatisticsFragment extends Fragment {
     private RecyclerView recyclerViewRecent;
     private ReportAdapter recentAdapter;
     private List<PatientReport> recentReports = new ArrayList<>();
-    private int professionalId = 37;
+    private TokenManager tokenManager;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_report_statistics, container, false);
         
+        tokenManager = new TokenManager(getContext());
         setupViews(view);
         loadStatistics();
         
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // 🔥 REFRESH ESTATÍSTICAS QUANDO RETORNAR
+        loadStatistics();
     }
 
     private void setupViews(View view) {
@@ -63,6 +73,10 @@ public class ReportStatisticsFragment extends Fragment {
 
     private void loadStatistics() {
         PatientReportApi api = ApiClient.getAuthClient().create(PatientReportApi.class);
+        
+        // 🔥 OBTER ID DO PROFISSIONAL LOGADO
+        int professionalId = tokenManager.getUserId();
+        android.util.Log.d("ReportStatistics", "🔍 Carregando estatísticas para profissional ID: " + professionalId);
         
         api.getStatistics(professionalId).enqueue(new Callback<ReportStatistics>() {
             @Override
@@ -88,14 +102,40 @@ public class ReportStatisticsFragment extends Fragment {
                         }
                     }
                     
-                    // Simple average pain logic or from backend if available
-                    tvAvgPainScale.setText("4.2"); // Placeholder or calculate if needed
+                    // 🔥 CALCULAR MÉDIA DE DOR CORRETAMENTE
+                    double totalPain = 0;
+                    int totalReportsWithPain = 0;
+                    
+                    if (reportTypes != null) {
+                        for (Map.Entry<String, Object> entry : reportTypes.entrySet()) {
+                            Object typeData = entry.getValue();
+                            if (typeData instanceof Map) {
+                                Map<?, ?> typeMap = (Map<?, ?>) typeData;
+                                Object avgPain = typeMap.get("avg_pain");
+                                Object count = typeMap.get("count");
+                                
+                                if (avgPain != null && count != null) {
+                                    totalPain += ((Number) avgPain).doubleValue() * ((Number) count).intValue();
+                                    totalReportsWithPain += ((Number) count).intValue();
+                                }
+                            }
+                        }
+                    }
+                    
+                    double avgPain = totalReportsWithPain > 0 ? totalPain / totalReportsWithPain : 0;
+                    tvAvgPainScale.setText(String.format("%.1f", avgPain));
+                    
+                    android.util.Log.d("ReportStatistics", "📊 Estatísticas - Total: " + stats.getTotalReports() + 
+                        ", Média Dor: " + avgPain + ", Relatórios Recentes: " + 
+                        (stats.getRecentReports() != null ? stats.getRecentReports().size() : 0));
                     
                     if (stats.getRecentReports() != null) {
                         recentReports.clear();
                         recentReports.addAll(stats.getRecentReports());
                         recentAdapter.notifyDataSetChanged();
                     }
+                } else {
+                    android.util.Log.e("ReportStatistics", "❌ Erro ao carregar estatísticas: " + response.code());
                 }
             }
             

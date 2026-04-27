@@ -1,13 +1,15 @@
 from fastapi import APIRouter, Depends, Header, HTTPException, status, Request
 from fastapi import UploadFile, File
 
-from app.core.dependencies import get_auth_service
+from app.core.dependencies import get_auth_service, get_current_user, get_session
 from app.core.exceptions import Unauthorized
-from app.models.schemas.user_schema import TokenOut, UserCreateIn, UserLoginIn
+from app.models.schemas.user_schema import TokenOut, UserCreateIn, UserLoginIn, UserOut
 from app.models.schemas.user_me_response import UserMeResponse
 from app.models.schemas.change_password_request import ChangePasswordRequest
 from app.models.schemas.profile_photo_response import ProfilePhotoResponse
 from app.services.auth_service import AuthService
+from app.storage.database.base_repository import SessionLocal
+from app.models.orm.appointment_orm import AppointmentORM
 
 # Forçar ativação do rate limiting
 from app.services.rate_limiter import rate_limiter
@@ -229,3 +231,40 @@ def logout(
     # Por enquanto, apenas confirmação
     # Futuro: implementar blacklist de tokens
     return {"message": "Logged out successfully"}
+
+# 🔥 SOLUÇÃO REAL: Endpoint que busca do banco
+@router.get("/patient-appointments")
+def get_patient_appointments(
+    current_user: UserOut = Depends(get_current_user)
+):
+    """Endpoint para pacientes verem seus agendamentos REAIS do banco"""
+    
+    # Verificar se é paciente
+    if current_user.role != "patient":
+        raise HTTPException(status_code=403, detail="Acesso negado")
+    
+    # 🔥 BUSCAR DADOS REAIS DO BANCO
+    try:
+        with SessionLocal() as session:
+            appointments = session.query(AppointmentORM).filter(
+                AppointmentORM.patient_id == current_user.id,
+                AppointmentORM.status.in_(["scheduled", "completed"])
+            ).order_by(AppointmentORM.appointment_date, AppointmentORM.time).all()
+            
+            if not appointments:
+                return []
+            
+            return [
+                {
+                    "id": apt.id,
+                    "title": apt.title,
+                    "description": apt.description,
+                    "appointment_date": apt.appointment_date,
+                    "time": apt.time,
+                    "status": apt.status
+                }
+                for apt in appointments
+            ]
+    except Exception as e:
+        print(f"ERRO AO BUSCAR AGENDAMENTOS: {e}")
+        return []

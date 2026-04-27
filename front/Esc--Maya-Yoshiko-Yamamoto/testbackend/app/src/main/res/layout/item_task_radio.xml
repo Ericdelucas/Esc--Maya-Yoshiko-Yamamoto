@@ -4,53 +4,113 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="4dp">
+    app:cardCornerRadius="12dp"
+    app:cardElevation="6dp">
     
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp">
+        android:orientation="vertical">
         
-        <RadioButton
-            android:id="@+id/radioButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginEnd="16dp" />
-        
+        <!-- 🔥 CABEÇALHO COM TÍTULO E RADIO -->
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:orientation="horizontal"
+            android:padding="16dp"
+            android:gravity="center_vertical">
+            
+            <RadioButton
+                android:id="@+id/radioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="12dp" />
+            
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                
+                <TextView
+                    android:id="@+id/tvTaskTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Título do Exercício"
+                    android:textColor="#333333"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+                
+                <TextView
+                    android:id="@+id/tvTaskPoints"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="+10 pontos"
+                    android:textColor="#4CAF50"
+                    android:textStyle="bold"
+                    android:layout_marginTop="2dp" />
+                
+            </LinearLayout>
+            
+        </LinearLayout>
+        
+        <!-- 🔥 DESCRIÇÃO -->
+        <TextView
+            android:id="@+id/tvTaskDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Descrição do exercício"
+            android:textColor="#666666"
+            android:textSize="14sp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="12dp" />
+        
+        <!-- 🔥 IMAGEM DO EXERCÍCIO -->
+        <ImageView
+            android:id="@+id/ivExerciseImage"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
+            android:background="#F5F5F5"
+            android:contentDescription="Imagem do exercício" />
+        
+        <!-- 🔥 BOTÃO DE VÍDEO -->
+        <LinearLayout
+            android:id="@+id/llVideoContainer"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            android:gravity="center_vertical"
+            android:background="#E3F2FD"
+            android:padding="16dp">
+            
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@android:drawable/ic_media_play"
+                android:background="#2196F3"
+                android:padding="6dp"
+                android:layout_marginEnd="12dp" />
             
             <TextView
-                android:id="@+id/tvTaskTitle"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Título da tarefa"
-                android:textStyle="bold"
-                android:textSize="16sp" />
+                android:layout_weight="1"
+                android:text="Ver vídeo do exercício"
+                android:textColor="#1976D2"
+                android:textSize="16sp"
+                android:textStyle="bold" />
             
-            <TextView
-                android:id="@+id/tvTaskDescription"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Descrição da tarefa"
-                android:textColor="#666666"
-                android:layout_marginTop="4dp" />
-            
-            <TextView
-                android:id="@+id/tvTaskPoints"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="+10 pontos"
-                android:textColor="#4CAF50"
-                android:textStyle="bold"
-                android:layout_marginTop="8dp" />
-            
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@android:drawable/ic_menu_more"
+                android:rotation="180"
+                android:tint="#1976D2" />
+                
         </LinearLayout>
         
     </LinearLayout>

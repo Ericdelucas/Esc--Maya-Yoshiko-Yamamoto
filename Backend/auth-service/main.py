@@ -16,6 +16,9 @@ from app.routers.patient_evaluation_router import router as patient_evaluation_r
 from app.routers.patient_report_router import router as patient_report_router
 from app.routers.task_router import router as task_router
 from app.routers.notification_router import router as notification_router
+from app.routers.health_tools_router import router as health_tools_router
+from app.routers.patient_health_router import router as patient_health_router
+from app.routers.patient_router import router as patient_router
 
 
 def create_app() -> FastAPI:
@@ -39,6 +42,9 @@ def create_app() -> FastAPI:
     app.include_router(patient_report_router, tags=["patient_reports"])
     app.include_router(task_router, tags=["tasks"])
     app.include_router(notification_router, tags=["notifications"])
+    app.include_router(health_tools_router, prefix="/health-tools", tags=["health-tools"])
+    app.include_router(patient_health_router, tags=["patient-health"])
+    app.include_router(patient_router, tags=["patient"])
     return app
 
 

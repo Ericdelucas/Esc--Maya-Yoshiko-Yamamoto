@@ -116,6 +116,14 @@
                         android:text="@string/calculate_bf_btn"
                         app:cornerRadius="12dp" />
 
+                    <ProgressBar
+                        android:id="@+id/progressBar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="16dp"
+                        android:visibility="gone" />
+
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -145,10 +153,17 @@
                         android:id="@+id/tvBodyFatValue"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="21.5%"
                         android:textAppearance="@style/TextAppearance.Material3.HeadlineLarge"
                         android:textStyle="bold"
                         android:textColor="?attr/colorPrimary" />
+
+                    <TextView
+                        android:id="@+id/tvBodyFatCategory"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                        android:textStyle="bold" />
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

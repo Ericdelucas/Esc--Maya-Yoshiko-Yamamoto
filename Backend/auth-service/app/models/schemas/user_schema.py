@@ -34,6 +34,7 @@ class TokenOut(BaseModel):
     user_role: str = None
     full_name: str | None = None
     email: str = None
+    user_id: int = None
     # 🔥 NOVO: Backend diz para qual tela ir
     target_activity: str = None
     is_professional: bool = False

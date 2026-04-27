@@ -8,6 +8,11 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.example.testbackend.models.HealthMetricResponse;
 import com.example.testbackend.models.UserProfileResponse;
 import com.example.testbackend.network.ApiClient;
@@ -71,11 +76,7 @@ public class HealthHistoryActivity extends AppCompatActivity {
     }
 
     private void setupAPI() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(Constants.HEALTH_BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        healthApi = retrofit.create(HealthApi.class);
+        healthApi = ApiClient.getHealthClient().create(HealthApi.class);
     }
 
     private void loadUserProfile() {
@@ -158,17 +159,21 @@ public class HealthHistoryActivity extends AppCompatActivity {
     }
 
     private void saveQuestionnaire(int userId) {
-        Map<String, Object> medicalHistory = new HashMap<>();
-        medicalHistory.put("observations", etObservations.getText().toString());
-        medicalHistory.put("age", etAge.getText().toString());
-
+        // Criar resposta no formato esperado pelo backend
         Map<String, Object> data = new HashMap<>();
-        data.put("medical_history", medicalHistory);
-        data.put("medications", etMedications.getText().toString().split(","));
-        data.put("allergies", etAllergies.getText().toString().split(","));
-        data.put("habits", new HashMap<>()); // Pode ser expandido futuramente
+        
+        // Criar lista de answers no formato correto
+        List<Map<String, String>> answers = new ArrayList<>();
+        
+        // Adicionar respostas de exemplo (baseado nos campos do formulário)
+        answers.add(createAnswer("q1", etObservations.getText().toString().isEmpty() ? "0" : "1"));
+        answers.add(createAnswer("q2", etAge.getText().toString().isEmpty() ? "0" : "1"));
+        answers.add(createAnswer("q3", etMedications.getText().toString().isEmpty() ? "0" : "1"));
+        answers.add(createAnswer("q4", etAllergies.getText().toString().isEmpty() ? "0" : "1"));
+        
+        data.put("answers", answers);
 
-        healthApi.saveQuestionnaire(userId, data).enqueue(new Callback<Map<String, Object>>() {
+        healthApi.saveQuestionnaire(data).enqueue(new Callback<Map<String, Object>>() {
             @Override
             public void onResponse(Call<Map<String, Object>> call, Response<Map<String, Object>> response) {
                 btnSave.setEnabled(true);
@@ -191,6 +196,13 @@ public class HealthHistoryActivity extends AppCompatActivity {
                 Toast.makeText(HealthHistoryActivity.this, "Erro de rede ao salvar questionário", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private Map<String, String> createAnswer(String questionId, String answer) {
+        Map<String, String> answerMap = new HashMap<>();
+        answerMap.put("question_id", questionId);
+        answerMap.put("answer", answer);
+        return answerMap;
     }
 
     @Override

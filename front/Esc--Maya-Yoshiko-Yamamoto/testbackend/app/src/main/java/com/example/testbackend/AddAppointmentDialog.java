@@ -5,19 +5,32 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
 import com.example.testbackend.models.Appointment;
+import com.example.testbackend.models.Patient;
+import com.example.testbackend.network.ApiClient;
+import com.example.testbackend.network.PatientApi;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class AddAppointmentDialog extends Dialog {
 
@@ -26,8 +39,11 @@ public class AddAppointmentDialog extends Dialog {
     private OnAppointmentSavedListener listener;
     private Date selectedDate; // 🔥 Data selecionada inicial
 
-    private EditText etTitle, etDescription, etTime, etDate;
+    private EditText etTitle, etDescription, etTime, etDate, etPatient;
     private Button btnSave, btnCancel;
+    private Spinner spinnerPatient;
+    private List<Patient> patients = new ArrayList<>();
+    private Patient selectedPatient;
 
     public interface OnAppointmentSavedListener {
         void onAppointmentSaved(Appointment appointment);
@@ -55,11 +71,18 @@ public class AddAppointmentDialog extends Dialog {
         etDescription = findViewById(R.id.etDescription);
         etTime = findViewById(R.id.etTime);
         etDate = findViewById(R.id.etDate);
+        etPatient = findViewById(R.id.etPatient);
         btnSave = findViewById(R.id.btnSave);
         btnCancel = findViewById(R.id.btnCancel);
 
+        // Configurar campo de paciente como clicável
+        etPatient.setOnClickListener(v -> showPatientSelectionDialog());
+        
         btnSave.setOnClickListener(v -> saveAppointment());
         btnCancel.setOnClickListener(v -> dismiss());
+        
+        // Carregar lista de pacientes
+        loadPatients();
     }
 
     private void setupDateField() {
@@ -124,12 +147,21 @@ public class AddAppointmentDialog extends Dialog {
             }
         }
 
+        // VERIFICAÇÃO: Paciente é obrigatório
+        if (selectedPatient == null) {
+            Toast.makeText(context, "Por favor, selecione um paciente", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         Appointment appointment = new Appointment(
                 (int) (System.currentTimeMillis() / 1000),
                 title,
                 cal.getTime(),
                 description
         );
+        
+        // Adicionar ID do paciente ao agendamento
+        appointment.setPatientId(selectedPatient.getId());
 
         if (listener != null) {
             listener.onAppointmentSaved(appointment);
@@ -139,5 +171,56 @@ public class AddAppointmentDialog extends Dialog {
         Toast.makeText(context, "Agendamento salvo para " + 
             new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(selectedDate), 
             Toast.LENGTH_SHORT).show();
+    }
+    
+    // 🔥 MÉTODO PARA CARREGAR PACIENTES
+    private void loadPatients() {
+        PatientApi api = ApiClient.getAuthClient().create(PatientApi.class);
+        // 🔥 CORREÇÃO: Passar token como parâmetro
+        String token = new com.example.testbackend.utils.TokenManager(context).getAuthToken();
+        if (token != null) {
+            api.getPatients(token).enqueue(new Callback<List<Patient>>() {
+                @Override
+                public void onResponse(Call<List<Patient>> call, Response<List<Patient>> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        patients.clear();
+                        patients.addAll(response.body());
+                        Log.d(TAG, "✅ " + patients.size() + " pacientes carregados");
+                    } else {
+                        Log.e(TAG, "❌ Erro ao carregar pacientes: " + response.code());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<Patient>> call, Throwable t) {
+                    Log.e(TAG, "❌ Falha na conexão", t);
+                }
+            });
+        }
+    }
+    
+    // MÉTODO PARA MOSTRAR DIÁLOGO DE SELEÇÃO DE PACIENTE
+    private void showPatientSelectionDialog() {
+        if (patients.isEmpty()) {
+            Toast.makeText(context, "Carregando pacientes...", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Criar array com nomes dos pacientes
+        String[] patientNames = new String[patients.size()];
+        for (int i = 0; i < patients.size(); i++) {
+            patientNames[i] = patients.get(i).getFull_name(); // 🔥 CORREÇÃO: Usar getFull_name()
+        }
+
+        // Criar diálogo de seleção
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(context);
+        builder.setTitle("Selecione o Paciente");
+        builder.setItems(patientNames, (dialog, which) -> {
+            selectedPatient = patients.get(which);
+            etPatient.setText(selectedPatient.getFull_name()); // 🔥 CORREÇÃO: Usar getFull_name()
+            Log.d(TAG, "✅ Paciente selecionado: " + selectedPatient.getFull_name());
+        });
+        builder.setNegativeButton("Cancelar", (dialog, which) -> dialog.dismiss());
+        builder.show();
     }
 }

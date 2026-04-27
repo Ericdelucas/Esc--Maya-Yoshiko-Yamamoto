@@ -115,11 +115,12 @@ public class LoginActivity extends AppCompatActivity {
                     String token = responseBody.getToken();
                     String role = responseBody.getUserRole();
                     String fullName = responseBody.getFullName();
+                    int userId = responseBody.getUserId();
                     
-                    Log.d(TAG, "✅ Sucesso! Token recebido, Role: '" + role + "', Nome: " + fullName);
+                    Log.d(TAG, "✅ Sucesso! Token recebido, Role: '" + role + "', Nome: " + fullName + ", ID: " + userId);
 
                     if (token != null && !token.isEmpty()) {
-                        tokenManager.saveSession(token, role, email, -1, fullName != null ? fullName : "");
+                        tokenManager.saveSession(token, role, email, userId, fullName != null ? fullName : "");
                         loginResponse = responseBody;
                         navigateToCorrectActivity();
                     } else {

@@ -33,13 +33,32 @@
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/tvTime"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="14:30"
-        android:textSize="14sp"
-        android:textColor="#2196F3"
-        android:textStyle="bold" />
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/tvTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="14:30"
+            android:textSize="14sp"
+            android:textColor="#2196F3"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btnDelete"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:text="Deletar"
+            android:textSize="10sp"
+            android:textColor="#FFFFFF"
+            android:background="#FF5252"
+            android:layout_marginTop="4dp"
+            android:padding="4dp" />
+
+    </LinearLayout>
 
 </LinearLayout>

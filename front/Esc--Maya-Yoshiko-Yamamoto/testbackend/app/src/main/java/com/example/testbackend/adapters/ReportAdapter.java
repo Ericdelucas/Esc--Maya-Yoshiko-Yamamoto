@@ -4,7 +4,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -60,17 +59,11 @@ public class ReportAdapter extends RecyclerView.Adapter<ReportAdapter.ViewHolder
         }
 
         // Clique no card inteiro
-        holder.itemView.setOnClickListener(v -> {
-            Log.d("REPORT_ADAPTER", "Clique no card - report ID: " + report.getId());
-            clickListener.onClick(report);
-        });
+        holder.itemView.setOnClickListener(v -> clickListener.onClick(report));
         
         // 🔥 CORREÇÃO: Clique específico no texto "Ver detalhes"
         if (holder.tvSeeDetails != null) {
-            holder.tvSeeDetails.setOnClickListener(v -> {
-                Log.d("REPORT_ADAPTER", "Clique em 'Ver detalhes' - report ID: " + report.getId());
-                clickListener.onClick(report);
-            });
+            holder.tvSeeDetails.setOnClickListener(v -> clickListener.onClick(report));
         }
 
         holder.itemView.setOnLongClickListener(v -> {
@@ -84,10 +77,17 @@ public class ReportAdapter extends RecyclerView.Adapter<ReportAdapter.ViewHolder
         return reports != null ? reports.size() : 0;
     }
 
-    private String formatDate(Date date) {
-        if (date == null) return "";
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
-        return sdf.format(date);
+    private String formatDate(String dateString) {
+        if (dateString == null) return "";
+        try {
+            // Tentar parse da string de data ISO
+            SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
+            SimpleDateFormat displayFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+            Date date = isoFormat.parse(dateString);
+            return displayFormat.format(date);
+        } catch (Exception e) {
+            return dateString; // Retorna a string original se não conseguir parsear
+        }
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

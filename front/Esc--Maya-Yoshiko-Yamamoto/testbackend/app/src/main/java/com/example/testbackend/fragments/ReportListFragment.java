@@ -25,6 +25,7 @@ import com.example.testbackend.adapters.ReportAdapter;
 import com.example.testbackend.models.PatientReport;
 import com.example.testbackend.network.ApiClient;
 import com.example.testbackend.network.PatientReportApi;
+import com.example.testbackend.utils.TokenManager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -44,7 +45,7 @@ public class ReportListFragment extends Fragment {
     private SwipeRefreshLayout swipeRefresh;
     private FloatingActionButton fabAddReport;
     private PatientReportApi api;
-    private int professionalId = 37; // Default for testing
+    private TokenManager tokenManager;
 
     @Nullable
     @Override
@@ -52,6 +53,7 @@ public class ReportListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_report_list, container, false);
         
         api = ApiClient.getAuthClient().create(PatientReportApi.class);
+        tokenManager = new TokenManager(getContext());
         
         setupViews(view);
         loadReports();
@@ -90,6 +92,15 @@ public class ReportListFragment extends Fragment {
     private void loadReports() {
         if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
         
+        // 🔥 OBTER ID DO PROFISSIONAL LOGADO
+        int professionalId = tokenManager.getUserId();
+        Log.d(TAG, "🔍 Carregando relatórios para profissional ID: " + professionalId);
+        
+        // 🔥 DEBUG: Mostrar token e ID
+        String token = tokenManager.getAuthToken();
+        Log.d(TAG, "🔑 Token: " + (token != null ? token.substring(0, Math.min(20, token.length())) + "..." : "null"));
+        Log.d(TAG, "👤 User ID do token: " + professionalId);
+        
         api.getProfessionalReports(professionalId).enqueue(new Callback<List<PatientReport>>() {
             @Override
             public void onResponse(Call<List<PatientReport>> call, Response<List<PatientReport>> response) {
@@ -101,10 +112,16 @@ public class ReportListFragment extends Fragment {
                     reports.addAll(response.body());
                     adapter.notifyDataSetChanged();
                     
+                    Log.d(TAG, "📊 Relatórios recebidos: " + reports.size());
+                    for (PatientReport report : reports) {
+                        Log.d(TAG, "📋 Relatório: " + report.getTitle() + ", Patient ID: " + report.getPatientId());
+                    }
+                    
                     if (tvEmptyState != null) {
                         tvEmptyState.setVisibility(reports.isEmpty() ? View.VISIBLE : View.GONE);
                     }
                 } else {
+                    Log.e(TAG, "❌ Erro na resposta: " + response.code());
                     if (getContext() != null) {
                         Toast.makeText(getContext(), "Erro ao carregar relatórios", Toast.LENGTH_SHORT).show();
                     }
@@ -123,12 +140,9 @@ public class ReportListFragment extends Fragment {
     }
 
     private void onReportClick(PatientReport report) {
-        Log.d("REPORT_LIST", "Abrindo detalhes do relatório ID: " + report.getId());
         Intent intent = new Intent(getContext(), ReportDetailActivity.class);
         intent.putExtra("report_id", report.getId());
-        Log.d("REPORT_LIST", "Intent criado para ReportDetailActivity");
         startActivity(intent);
-        Log.d("REPORT_LIST", "startActivity chamado");
     }
 
     private void onReportLongClick(PatientReport report) {

@@ -1,8 +1,11 @@
 package com.example.testbackend;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,11 +16,14 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.example.testbackend.models.DashboardStats;
 import com.example.testbackend.models.UserProfileResponse;
 import com.example.testbackend.network.ApiClient;
 import com.example.testbackend.network.AuthApi;
+import com.example.testbackend.services.NotificationService;
 import com.example.testbackend.utils.Constants;
 import com.example.testbackend.utils.LocaleHelper;
 import com.example.testbackend.utils.TokenManager;
@@ -33,11 +39,12 @@ public class ProfessionalMainActivity extends AppCompatActivity {
 
     private static final String TAG = "PROFESSIONAL_DEBUG";
     private TextView tvUserInitial, tvGreeting;
-    private TextView tvTotalPacientes, tvConsultasHoje, tvExerciciosAtivos;
+    private TextView tvTotalPacientes, tvConsultasHoje;
     private ImageView ivUserPhoto;
     private MaterialCardView cardAccountAvatar;
     private ImageButton btnSettings;
     private TokenManager tokenManager;
+    private NotificationService notificationService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +69,37 @@ public class ProfessionalMainActivity extends AppCompatActivity {
         loadUserProfile();
         loadDashboardData();
         setupNavigation();
+        
+        // 🔥 INICIAR SERVIÇO DE NOTIFICAÇÕES
+        requestNotificationPermission();
+        notificationService = new NotificationService(this);
+        notificationService.startPolling();
+    }
+
+    private void requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) 
+                != PackageManager.PERMISSION_GRANTED) {
+                
+                ActivityCompat.requestPermissions(
+                    this, 
+                    new String[]{Manifest.permission.POST_NOTIFICATIONS}, 
+                    100
+                );
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 100) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Log.d(TAG, "Permissão de notificação concedida");
+            } else {
+                Log.w(TAG, "Permissão de notificação negada");
+            }
+        }
     }
 
     private void initViews() {
@@ -74,7 +112,6 @@ public class ProfessionalMainActivity extends AppCompatActivity {
         // IDs do Painel de Visão Geral conforme o seu XML restaurado
         tvTotalPacientes = findViewById(R.id.tvTotalPacientes);
         tvConsultasHoje = findViewById(R.id.tvConsultasHoje);
-        tvExerciciosAtivos = findViewById(R.id.tvExerciciosAtivos);
 
         if (cardAccountAvatar != null) {
             cardAccountAvatar.setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
@@ -112,7 +149,6 @@ public class ProfessionalMainActivity extends AppCompatActivity {
         
         if (tvTotalPacientes != null) tvTotalPacientes.setText(String.valueOf(data.getTotalPatients()));
         if (tvConsultasHoje != null) tvConsultasHoje.setText(String.valueOf(data.getAppointmentsToday()));
-        if (tvExerciciosAtivos != null) tvExerciciosAtivos.setText(String.valueOf(data.getActiveExercises()));
         
         Log.d(TAG, "Dashboard atualizado com dados reais do banco.");
     }
@@ -228,6 +264,7 @@ public class ProfessionalMainActivity extends AppCompatActivity {
     }
 
     private void logout() {
+        if (notificationService != null) notificationService.stopPolling();
         tokenManager.clearToken();
         Intent intent = new Intent(this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -240,6 +277,14 @@ public class ProfessionalMainActivity extends AppCompatActivity {
         super.onResume();
         if (tokenManager.isLoggedIn()) {
             loadDashboardData();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (notificationService != null) {
+            notificationService.stopPolling();
         }
     }
 

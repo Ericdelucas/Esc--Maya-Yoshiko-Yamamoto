@@ -185,11 +185,13 @@ def get_daily_progress_percentage(user_id: int):
     else:
         completed_today = len(daily_completed_tasks[user_id][today])
     
-    # 🔥 **CALCULAR PORCENTAGEM COM TOTAL REAL**
+    # 🔥 **CALCULAR PORCENTAGEM LIMITADA A 100%**
     if total_daily_exercises == 0:
         progress_percentage = 0.0
     else:
         progress_percentage = (completed_today / total_daily_exercises) * 100
+        # 🔥 **LIMITAR A 100% MÁXIMO**
+        progress_percentage = min(progress_percentage, 100.0)
     
     return {
         "user_id": user_id,
@@ -326,9 +328,10 @@ task_service = TaskService()
 
 @router.post("")
 def create_task(
-    task_data: TaskCreate
+    task_data: TaskCreate,
+    db: Session = Depends(get_session)
 ):
-    """Criar nova tarefa (profissional) - INTEGRADO COM patient_exercises_db"""
+    """Criar nova tarefa (profissional) - SALVAR NO BANCO DE DADOS"""
     
     # Debug: mostrar dados recebidos
     print(f"=== DEBUG TASK CREATE ===")
@@ -336,44 +339,60 @@ def create_task(
     print(f"Task data dict: {task_data.model_dump()}")
     print(f"========================")
     
-    # 🔥 **ADICIONAR EXERCÍCIO AO patient_exercises_db**
+    # 🔥 **SALVAR NO BANCO DE DADOS REAL**
+    from app.models.orm.task_orm import TaskORM
+    
+    # Criar nova tarefa no banco
+    new_task = TaskORM(
+        professional_id=1,  # TODO: pegar do usuário logado
+        patient_id=task_data.patient_id,
+        title=task_data.title,
+        description=task_data.description,
+        points_value=task_data.points_value,
+        exercise_id=task_data.exercise_id,
+        frequency_per_week=task_data.frequency_per_week,
+        start_date=task_data.start_date,
+        end_date=task_data.end_date,
+        exercise_image_url=task_data.exercise_image_url,
+        exercise_video_url=task_data.exercise_video_url,
+        is_active=True
+    )
+    
+    db.add(new_task)
+    db.commit()
+    db.refresh(new_task)
+    
+    # 🔥 **TAMBÉM ADICIONAR AO patient_exercises_db PARA COMPATIBILIDADE**
     patient_id = task_data.patient_id
     new_exercise = {
-        "id": 9999,  # ID sequencial simples
+        "id": new_task.id,
         "title": task_data.title,
         "description": task_data.description,
         "points_value": task_data.points_value,
         "frequency_per_week": task_data.frequency_per_week,
         "is_active": True,
-        "created_at": task_data.start_date.isoformat() + "T00:00:00",
-        "assigned_by": 1,  # Profissional fixo para teste
-        "assigned_at": date.today().isoformat()
+        "created_at": new_task.created_at.isoformat(),
+        "exercise_image_url": task_data.exercise_image_url or "https://picsum.photos/400/300?random=1",
+        "exercise_video_url": task_data.exercise_video_url or "https://www.w3schools.com/html/movie.mp4"
     }
     
-    # 🔥 **ADICIONAR AO BANCO DE EXERCÍCIOS DO PACIENTE**
     if patient_id not in patient_exercises_db:
         patient_exercises_db[patient_id] = []
     
     patient_exercises_db[patient_id].append(new_exercise)
     
-    print(f"🏋️ EXERCÍCIO CRIADO E ADICIONADO:")
+    print(f"🏋️ EXERCÍCIO CRIADO E SALVO NO BANCO:")
+    print(f"   - ID: {new_task.id}")
     print(f"   - Paciente: {patient_id}")
     print(f"   - Exercício: {task_data.title}")
     print(f"   - Total de exercícios do paciente: {len(patient_exercises_db[patient_id])}")
     
-    # Retorno mock para teste
     return {
-        "id": 999,
-        "professional_id": 1,
-        "patient_id": task_data.patient_id,
-        "title": task_data.title,
-        "description": task_data.description,
-        "points_value": task_data.points_value,
-        "frequency_per_week": task_data.frequency_per_week,
-        "start_date": task_data.start_date,
-        "is_active": True,
-        "created_at": "2024-01-01T00:00:00",
-        "message": f"Exercício '{task_data.title}' criado e atribuído ao paciente {patient_id}!"
+        "success": True,
+        "message": f"Exercício '{task_data.title}' criado e atribuído ao paciente {patient_id}!",
+        "task_id": new_task.id,
+        "patient_id": patient_id,
+        "created_at": new_task.created_at.isoformat()
     }
 
 @router.get("/patient-tasks")
@@ -388,7 +407,7 @@ def get_patient_tasks(current_user: UserOut = Depends(get_current_user)):
         exercises = patient_exercises_db[patient_id]
         print(f"   - Encontrados {len(exercises)} exercícios para paciente {patient_id}")
     else:
-        # 🔥 **SE NÃO TIVER, CRIA EXERCÍCIOS PADRÃO**
+        # 🔥 **SE NÃO TIVER, CRIA EXERCÍCIOS PADRÃO COM MÍDIA**
         exercises = [
             {
                 "id": 9999,
@@ -397,11 +416,24 @@ def get_patient_tasks(current_user: UserOut = Depends(get_current_user)):
                 "points_value": 15,
                 "frequency_per_week": 3,
                 "is_active": True,
-                "created_at": "2026-04-24T00:00:00"
+                "created_at": "2026-04-24T00:00:00",
+                "exercise_image_url": "https://picsum.photos/400/300?random=1",
+                "exercise_video_url": "https://www.w3schools.com/html/mov_bbb.mp4"
+            },
+            {
+                "id": 9998,
+                "title": "Alongamento",
+                "description": "Exercício de alongamento muscular",
+                "points_value": 10,
+                "frequency_per_week": 2,
+                "is_active": True,
+                "created_at": "2026-04-24T00:00:00",
+                "exercise_image_url": "https://picsum.photos/400/300?random=2",
+                "exercise_video_url": "https://www.w3schools.com/html/movie.mp4"
             }
         ]
         patient_exercises_db[patient_id] = exercises
-        print(f"   - Criados exercícios padrão para paciente {patient_id}")
+        print(f"   - Criados exercícios padrão com mídia para paciente {patient_id}")
     
     return {
         "success": True,
@@ -577,18 +609,42 @@ def get_exercises_for_management(
     }
 
 @router.get("/test")
-def test_endpoint(current_user: UserOut = Depends(get_current_user)):
-    """Endpoint de teste - RETORNANDO TAREFAS ESPECÍFICAS DO USUÁRIO"""
+def test_endpoint(current_user: UserOut = Depends(get_current_user), db: Session = Depends(get_session)):
+    """Endpoint de teste - BUSCANDO TAREFAS DO BANCO DE DADOS REAL"""
     patient_id = current_user.id
     
-    print(f"🔍 ENDPOINT /TEST - BUSCANDO EXERCÍCIOS PARA PACIENTE {patient_id}")
+    print(f"🔍 ENDPOINT /TEST - BUSCANDO EXERCÍCIOS DO BANCO PARA PACIENTE {patient_id}")
     
-    # 🔥 **OBTER EXERCÍCIOS ESPECÍFICOS DO PACIENTE**
-    if patient_id in patient_exercises_db:
-        exercises = patient_exercises_db[patient_id]
-        print(f"   - Encontrados {len(exercises)} exercícios para paciente {patient_id}")
-    else:
-        # 🔥 **SE NÃO TIVER, CRIA EXERCÍCIOS PADRÃO**
+    # 🔥 **BUSCAR DO BANCO DE DADOS REAL**
+    from app.models.orm.task_orm import TaskORM
+    
+    tasks_from_db = db.query(TaskORM).filter(
+        TaskORM.patient_id == patient_id,
+        TaskORM.is_active == True
+    ).all()
+    
+    print(f"   - Encontrados {len(tasks_from_db)} exercícios no banco para paciente {patient_id}")
+    
+    # 🔥 **CONVERTER PARA FORMATO ESPERADO PELO FRONTEND**
+    exercises = []
+    for task in tasks_from_db:
+        exercise = {
+            "id": task.id,
+            "title": task.title,
+            "description": task.description,
+            "points_value": task.points_value,
+            "frequency_per_week": task.frequency_per_week,
+            "is_active": task.is_active,
+            "created_at": task.created_at.isoformat() if task.created_at else "2026-04-24T00:00:00",
+            "exercise_image_url": task.exercise_image_url or "https://picsum.photos/400/300?random=1",
+            "exercise_video_url": task.exercise_video_url or "https://www.w3schools.com/html/movie.mp4"
+        }
+        exercises.append(exercise)
+        print(f"   - Exercício {task.id}: {task.title} (Vídeo: {task.exercise_video_url})")
+    
+    # 🔥 **SE NÃO TIVER NO BANCO, CRIA EXERCÍCIOS PADRÃO**
+    if not exercises:
+        print(f"   - Nenhum exercício no banco, criando padrões...")
         exercises = [
             {
                 "id": 9999,
@@ -597,10 +653,22 @@ def test_endpoint(current_user: UserOut = Depends(get_current_user)):
                 "points_value": 15,
                 "frequency_per_week": 3,
                 "is_active": True,
-                "created_at": "2026-04-24T00:00:00"
+                "created_at": "2026-04-24T00:00:00",
+                "exercise_image_url": "https://picsum.photos/400/300?random=1",
+                "exercise_video_url": "https://www.w3schools.com/html/mov_bbb.mp4"
+            },
+            {
+                "id": 9998,
+                "title": "Alongamento",
+                "description": "Exercício de alongamento muscular",
+                "points_value": 10,
+                "frequency_per_week": 2,
+                "is_active": True,
+                "created_at": "2026-04-24T00:00:00",
+                "exercise_image_url": "https://picsum.photos/400/300?random=2",
+                "exercise_video_url": "https://www.w3schools.com/html/movie.mp4"
             }
         ]
-        patient_exercises_db[patient_id] = exercises
         print(f"   - Criados exercícios padrão para paciente {patient_id}")
     
     return {
@@ -787,7 +855,6 @@ def get_leaderboard(current_user: UserOut = Depends(get_current_user)):
         "username": email_username,  # Nome real baseado no login
         "total_points": user_data["total_points"],  # 🔥 PONTOS REAIS ACUMULADOS
         "tasks_completed": user_data["tasks_completed"],  # 🔥 TAREFAS REAIS COMPLETADAS
-        "rank": 1,  # Sempre em 1º por enquanto
         "is_real_user": True  # Marcar como usuário real
     }
     
@@ -796,9 +863,8 @@ def get_leaderboard(current_user: UserOut = Depends(get_current_user)):
         {
             "user_id": 999,
             "username": "Dr. Silva Bot",
-            "total_points": 120,  # Um pouco menos que usuário real
+            "total_points": 120,
             "tasks_completed": 5,
-            "rank": 2,
             "is_real_user": False
         },
         {
@@ -806,7 +872,6 @@ def get_leaderboard(current_user: UserOut = Depends(get_current_user)):
             "username": "Ana Bot",
             "total_points": 95,
             "tasks_completed": 4,
-            "rank": 3,
             "is_real_user": False
         },
         {
@@ -814,7 +879,6 @@ def get_leaderboard(current_user: UserOut = Depends(get_current_user)):
             "username": "Carlos Bot",
             "total_points": 80,
             "tasks_completed": 3,
-            "rank": 4,
             "is_real_user": False
         },
         {
@@ -822,15 +886,31 @@ def get_leaderboard(current_user: UserOut = Depends(get_current_user)):
             "username": "Maria Bot",
             "total_points": 65,
             "tasks_completed": 2,
-            "rank": 5,
             "is_real_user": False
         }
     ]
     
-    # 🔥 **RETORNAR USUÁRIO REAL + BOTS**
-    ranking = [real_user] + bots
+    # 🔥 **ORDENAR POR PONTOS (MAIOR PARA MENOR)**
+    all_users = [real_user] + bots
     
-    return ranking
+    # 🔥 **SEPARAR USUÁRIOS COM PONTOS (>0) E SEM PONTOS (0)**
+    users_with_points = [user for user in all_users if user["total_points"] > 0]
+    users_without_points = [user for user in all_users if user["total_points"] == 0]
+    
+    # 🔥 **ORDENAR USUÁRIOS COM PONTOS POR PONTOS (MAIOR PARA MENOR)**
+    sorted_with_points = sorted(users_with_points, key=lambda x: x["total_points"], reverse=True)
+    
+    # 🔥 **ORDENAR USUÁRIOS SEM PONTOS POR NOME (ALFABÉTICO)**
+    sorted_without_points = sorted(users_without_points, key=lambda x: x["username"])
+    
+    # 🔥 **COMBINAR: COM PONTOS PRIMEIRO, SEM PONTOS DEPOIS**
+    final_ranking = sorted_with_points + sorted_without_points
+    
+    # 🔥 **ATRIBUIR POSIÇÕES CORRETAS**
+    for i, user in enumerate(final_ranking, 1):
+        user["rank"] = i
+    
+    return final_ranking
 
 
 @router.get("/patient/{patient_id}")

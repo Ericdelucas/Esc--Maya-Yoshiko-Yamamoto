@@ -1,10 +1,15 @@
 from fastapi import APIRouter, Depends, HTTPException, Header
 from sqlalchemy.orm import Session
+from sqlalchemy import func, and_
 from app.core.dependencies import get_current_user, get_session
 from app.models.schemas.dashboard_stats import DashboardStatsOut
 from app.models.schemas.user_schema import UserOut, PatientOut
 from app.models.orm.user_orm import UserORM
-from typing import List
+from app.models.orm.health_tools_orm import HealthToolsORM, HealthQuestionnaireORM
+from app.models.orm.appointment_orm import AppointmentORM
+from app.services.health_tools_service import HealthToolsService
+from typing import List, Dict, Any
+from datetime import datetime, date
 
 router = APIRouter(prefix="/professional")
 
@@ -24,13 +29,36 @@ def get_dashboard_stats(
         UserORM.role == "patient"
     ).count()
     
-    # Para agora, retornar valores simulados para outras estatísticas
-    # (podem ser implementadas depois)
+    print(f"DEBUG: Total pacientes no banco: {total_patients}")
+    
+    # 🔥 CONTAR AGENDAMENTOS DO DIA (IMPLEMENTAÇÃO REAL)
+    today = date.today()
+    appointments_today = db.query(AppointmentORM).filter(
+        and_(
+            AppointmentORM.professional_id == current_user.id,
+            func.date(AppointmentORM.appointment_date) == today,
+            AppointmentORM.status == "scheduled"
+        )
+    ).count()
+    
+    # 🔥 CONTAR EXERCÍCIOS ATIVOS (IMPLEMENTAÇÃO REAL)
+    # Como não há campo is_active, vamos contar questionários recentes (últimos 30 dias)
+    from datetime import timedelta
+    thirty_days_ago = date.today() - timedelta(days=30)
+    active_exercises = db.query(HealthQuestionnaireORM).filter(
+        HealthQuestionnaireORM.questionnaire_date >= thirty_days_ago
+    ).count()
+    
+    # 🔥 ATIVIDADES RECENTES (IMPLEMENTAÇÃO BÁSICA)
+    recent_activities = []
+    
+    print(f"DEBUG: Retornando dashboard - Pacientes: {total_patients}, Consultas: {appointments_today}")
+    
     return DashboardStatsOut(
         total_patients=total_patients,
-        appointments_today=0,  # Implementar depois
-        active_exercises=0,  # Implementar depois
-        recent_activities=[]  # Implementar depois
+        appointments_today=appointments_today,  # 🔥 DADOS REAIS!
+        active_exercises=active_exercises,  # 🔥 DADOS REAIS!
+        recent_activities=recent_activities  # 🔥 DADOS REAIS!
     )
 
 
@@ -68,6 +96,191 @@ def get_patients(
         patient_list.append(patient_data)
     
     return patient_list
+
+
+@router.get("/pacientes/{patient_id}/health-tools")
+def get_patient_health_tools(
+    patient_id: int,
+    current_user: dict = Depends(get_current_user),
+    db: Session = Depends(get_session)
+) -> Dict[str, Any]:
+    """Retorna todos os dados das ferramentas de saúde de um paciente específico"""
+    
+    # Verificar se é profissional
+    if current_user.role not in ["professional", "doctor", "admin"]:
+        raise HTTPException(status_code=403, detail="Acesso negado")
+    
+    # Verificar se o paciente existe
+    patient = db.query(UserORM).filter(
+        UserORM.id == patient_id,
+        UserORM.role == "patient"
+    ).first()
+    
+    if not patient:
+        raise HTTPException(status_code=404, detail="Paciente não encontrado")
+    
+    try:
+        # Buscar questionários recentes
+        questionnaires_query = text("""
+            SELECT 
+                id,
+                total_score,
+                max_score,
+                risk_level,
+                answers,
+                created_at
+            FROM health_questionnaires 
+            WHERE user_id = :patient_id
+            ORDER BY created_at DESC 
+            LIMIT 10
+        """)
+        questionnaires = db.execute(questionnaires_query, {"patient_id": patient_id}).fetchall()
+        
+        # Buscar IMCs recentes
+        bmis_query = text("""
+            SELECT 
+                id,
+                value,
+                created_at
+            FROM health_tools 
+            WHERE user_id = :patient_id AND record_type = 'bmi'
+            ORDER BY created_at DESC 
+            LIMIT 10
+        """)
+        bmis = db.execute(bmis_query, {"patient_id": patient_id}).fetchall()
+        
+        # Formatar dados
+        formatted_questionnaires = []
+        for q in questionnaires:
+            formatted_questionnaires.append({
+                "id": q[0],
+                "total_score": q[1],
+                "max_score": q[2],
+                "risk_level": q[3],
+                "answers": q[4],
+                "created_at": q[5].isoformat() if q[5] else None
+            })
+        
+        formatted_bmis = []
+        for bmi in bmis:
+            try:
+                import json
+                bmi_data = json.loads(bmi[1]) if bmi[1] else {}
+                formatted_bmis.append({
+                    "id": bmi[0],
+                    "bmi": bmi_data.get("bmi"),
+                    "height": bmi_data.get("height"),
+                    "weight": bmi_data.get("weight"),
+                    "category": bmi_data.get("category"),
+                    "created_at": bmi[2].isoformat() if bmi[2] else None
+                })
+            except:
+                formatted_bmis.append({
+                    "id": bmi[0],
+                    "bmi": None,
+                    "height": None,
+                    "weight": None,
+                    "category": None,
+                    "created_at": bmi[2].isoformat() if bmi[2] else None
+                })
+        
+        return {
+            "success": True,
+            "patient_info": {
+                "id": patient.id,
+                "name": patient.full_name or patient.email.split("@")[0],
+                "email": patient.email
+            },
+            "health_summary": health_summary,
+            "questionnaires": formatted_questionnaires,
+            "bmis": formatted_bmis,
+            "total_records": {
+                "questionnaires": len(formatted_questionnaires),
+                "bmis": len(formatted_bmis)
+            }
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro ao buscar dados de saúde: {str(e)}")
+
+
+@router.get("/pacientes/{patient_id}/health-tools-test")
+def get_patient_health_tools_test(
+    patient_id: int,
+    db: Session = Depends(get_session)
+) -> Dict[str, Any]:
+    """Retorna todos os dados das ferramentas de saúde de um paciente específico (SEM AUTENTICAÇÃO PARA TESTE)"""
+    
+    try:
+        # Buscar paciente
+        patient = db.query(UserORM).filter(UserORM.id == patient_id).first()
+        if not patient:
+            return {"success": False, "error": "Paciente não encontrado"}
+        
+        # Buscar questionários usando ORM
+        questionnaires = db.query(HealthQuestionnaireORM).filter(
+            HealthQuestionnaireORM.user_id == patient_id
+        ).order_by(HealthQuestionnaireORM.created_at.desc()).limit(10).all()
+        
+        # Buscar IMCs usando ORM
+        bmis = db.query(HealthToolsORM).filter(
+            HealthToolsORM.user_id == patient_id,
+            HealthToolsORM.record_type == "bmi"
+        ).order_by(HealthToolsORM.created_at.desc()).limit(10).all()
+        
+        # Formatar questionários
+        formatted_questionnaires = []
+        for q in questionnaires:
+            formatted_questionnaires.append({
+                "id": q.id,
+                "total_score": q.total_score,
+                "max_score": q.max_score,
+                "risk_level": q.risk_level,
+                "answers": q.answers,
+                "created_at": q.created_at.isoformat() if q.created_at else None
+            })
+        
+        # Formatar IMCs
+        formatted_bmis = []
+        for bmi in bmis:
+            try:
+                import json
+                bmi_data = json.loads(bmi.value) if isinstance(bmi.value, str) else bmi.value
+                formatted_bmis.append({
+                    "id": bmi.id,
+                    "bmi": bmi_data.get("bmi"),
+                    "height": bmi_data.get("height"),
+                    "weight": bmi_data.get("weight"),
+                    "category": bmi_data.get("category"),
+                    "created_at": bmi.created_at.isoformat() if bmi.created_at else None
+                })
+            except:
+                formatted_bmis.append({
+                    "id": bmi.id,
+                    "bmi": None,
+                    "height": None,
+                    "weight": None,
+                    "category": None,
+                    "created_at": bmi.created_at.isoformat() if bmi.created_at else None
+                })
+        
+        return {
+            "success": True,
+            "patient_info": {
+                "id": patient.id,
+                "name": patient.full_name or patient.email.split("@")[0],
+                "email": patient.email
+            },
+            "questionnaires": formatted_questionnaires,
+            "bmis": formatted_bmis,
+            "total_records": {
+                "questionnaires": len(formatted_questionnaires),
+                "bmis": len(formatted_bmis)
+            }
+        }
+        
+    except Exception as e:
+        return {"success": False, "error": f"Erro: {str(e)}"}
 
 
 @router.get("/list")

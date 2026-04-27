@@ -48,6 +48,7 @@ class AuthService:
             "user_role": user.role,
             "full_name": user.full_name,
             "email": user.email,
+            "user_id": user.id,
             "target_activity": target_activity,
             "is_professional": is_professional
         }

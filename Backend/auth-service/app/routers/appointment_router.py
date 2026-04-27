@@ -7,8 +7,40 @@ from app.core.dependencies import get_current_user, get_session
 from app.storage.database.appointment_repository import AppointmentRepository
 from app.models.schemas.user_schema import UserOut
 from app.services.appointment_notification_service import AppointmentNotificationService
+from app.storage.database.base_repository import SessionLocal
+from app.models.orm.appointment_orm import AppointmentORM
 
 router = APIRouter(prefix="/appointments")
+
+# 🔥 SOLUÇÃO: Endpoint simples para pacientes
+@router.get("/patient-appointments")
+def get_patient_appointments_simple(
+    current_user: UserOut = Depends(get_current_user)
+):
+    """Endpoint simples para pacientes verem seus agendamentos"""
+    
+    # Verificar se é paciente
+    if current_user.role != "patient":
+        raise HTTPException(status_code=403, detail="Acesso negado")
+    
+    # Buscar agendamentos do paciente
+    with SessionLocal() as session:
+        appointments = session.query(AppointmentORM).filter(
+            AppointmentORM.patient_id == current_user.id,
+            AppointmentORM.status.in_(["scheduled", "completed"])
+        ).order_by(AppointmentORM.appointment_date).all()
+        
+        return [
+            {
+                "id": apt.id,
+                "title": apt.title,
+                "description": apt.description,
+                "appointment_date": apt.appointment_date,
+                "time": apt.time,
+                "status": apt.status
+            }
+            for apt in appointments
+        ]
 
 # Pydantic models
 class AppointmentCreate(BaseModel):
@@ -82,16 +114,56 @@ def get_appointments_by_month(
 ):
     """Busca agendamentos por mês"""
     
-    if current_user.role not in ["professional", "doctor", "admin"]:
+    repo = AppointmentRepository()
+    
+    # 🔥 CORREÇÃO: Permitir pacientes e profissionais
+    if current_user.role in ["professional", "doctor", "admin"]:
+        # Profissional vê seus próprios agendamentos
+        appointments = repo.get_by_professional_and_month(
+            professional_id=current_user.id,
+            year=year,
+            month=month
+        )
+    elif current_user.role == "patient":
+        # Paciente vê agendamentos onde ele é o paciente
+        appointments = repo.get_by_patient_and_month(
+            patient_id=current_user.id,
+            year=year,
+            month=month
+        )
+    else:
+        # Outros roles não têm acesso
+        raise HTTPException(status_code=403, detail="Acesso negado")
+    
+    return {"appointments": appointments}
+
+# 🔥 NOVO: Endpoint específico para pacientes
+@router.get("/patient/month/{year}/{month}")
+def get_patient_appointments_by_month(
+    year: int,
+    month: int,
+    current_user: UserOut = Depends(get_current_user),
+    db: Session = Depends(get_session)
+):
+    """Busca agendamentos de um PACIENTE por mês"""
+    
+    # 🔥 DEBUG: Log do usuário
+    print(f"DEBUG PATIENT: Usuário {current_user.id}, role: {current_user.role}")
+    
+    # 🔥 VERIFICAÇÃO: Permitir apenas pacientes
+    if current_user.role not in ["patient"]:
         raise HTTPException(status_code=403, detail="Acesso negado")
     
     repo = AppointmentRepository()
-    appointments = repo.get_by_professional_and_month(
-        professional_id=current_user.id,
+    print(f"DEBUG PATIENT: Buscando agendamentos do paciente {current_user.id}")
+    
+    appointments = repo.get_by_patient_and_month(
+        patient_id=current_user.id,
         year=year,
         month=month
     )
     
+    print(f"DEBUG PATIENT: Encontrados {len(appointments)} agendamentos")
     return {"appointments": appointments}
 
 @router.get("/day/{year}/{month}/{day}")

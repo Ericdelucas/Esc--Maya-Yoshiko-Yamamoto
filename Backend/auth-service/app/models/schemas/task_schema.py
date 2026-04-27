@@ -12,6 +12,8 @@ class TaskCreate(BaseModel):
     frequency_per_week: int = Field(default=1, ge=1, le=7, description="Frequência semanal")
     start_date: date = Field(..., description="Data de início")
     end_date: Optional[date] = Field(None, description="Data de fim (opcional)")
+    exercise_image_url: Optional[str] = Field(None, description="URL da imagem do exercício (opcional)")
+    exercise_video_url: Optional[str] = Field(None, description="URL do vídeo do exercício (opcional)")
 
 
 class TaskUpdate(BaseModel):
@@ -36,6 +38,8 @@ class TaskOut(BaseModel):
     is_active: bool
     start_date: date
     end_date: Optional[date]
+    exercise_image_url: Optional[str]
+    exercise_video_url: Optional[str]
     created_at: datetime
     updated_at: Optional[datetime]
 

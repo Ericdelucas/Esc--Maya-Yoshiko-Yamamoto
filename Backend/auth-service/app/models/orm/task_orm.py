@@ -17,6 +17,8 @@ class TaskORM(Base):
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     start_date: Mapped[Date] = mapped_column(Date, nullable=False)
     end_date: Mapped[Date | None] = mapped_column(Date, nullable=True)
+    exercise_image_url: Mapped[str | None] = mapped_column(Text, nullable=True)
+    exercise_video_url: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[DateTime] = mapped_column(DateTime, server_default=func.now())
     updated_at: Mapped[DateTime | None] = mapped_column(DateTime, nullable=True)
 
