@@ -5,7 +5,7 @@ import json
 
 router = APIRouter(prefix="/ai", tags=["ai"])
 
-AI_SERVICE_URL = os.getenv("AI_SERVICE_URL", "http://ai-service:8090")
+AI_SERVICE_URL = os.getenv("AI_SERVICE_URL", "https://esc-maya-yoshiko-yamamoto.onrender.com")
 
 
 def get_professionals_context():
