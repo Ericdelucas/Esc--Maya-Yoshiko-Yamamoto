@@ -190,12 +190,27 @@ def upload_profile_photo(
     svc: AuthService = Depends(get_auth_service),
 ) -> ProfilePhotoResponse:
     """Upload de foto de perfil do usuário logado"""
+    
+    print(f"🔍 DEBUG: Profile photo upload request")
+    print(f"   - Authorization: {authorization[:50] if authorization else 'None'}...")
+    print(f"   - File: {file.filename}")
+    print(f"   - Content-Type: {file.content_type}")
+    print(f"   - Size: {file.size if hasattr(file, 'size') else 'Unknown'}")
+    
     if not authorization or not authorization.startswith("Bearer "):
+        print("❌ DEBUG: Missing or invalid Bearer token")
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Missing bearer token")
     
     token = authorization.replace("Bearer ", "", 1).strip()
-    jwt_payload = svc.verify(token)
-    user_id = int(jwt_payload["sub"])
+    print(f"🔍 DEBUG: Token extracted: {token[:20]}...")
+    
+    try:
+        jwt_payload = svc.verify(token)
+        user_id = int(jwt_payload["sub"])
+        print(f"✅ DEBUG: Token valid for user_id: {user_id}")
+    except Exception as e:
+        print(f"❌ DEBUG: Token verification failed: {e}")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
     
     # Validações de arquivo
     if not file.content_type or not file.content_type.startswith("image/"):

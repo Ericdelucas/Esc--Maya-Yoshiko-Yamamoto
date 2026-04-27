@@ -88,9 +88,17 @@ class AuthService:
 
     def upload_profile_photo(self, user_id: int, file: UploadFile) -> str:
         """Salva foto de perfil com validações robustas e retorna URL"""
+        print(f"🔍 DEBUG: upload_profile_photo called")
+        print(f"   - user_id: {user_id}")
+        print(f"   - file.filename: {file.filename}")
+        print(f"   - file.content_type: {file.content_type}")
+        
         user = self.users.get_by_id(user_id)
         if not user:
+            print(f"❌ DEBUG: User {user_id} not found")
             raise BadRequest("user not found")
+        
+        print(f"✅ DEBUG: User found: {user.email}")
         
         # Validações de arquivo
         if not file.filename:
@@ -143,15 +151,33 @@ class AuthService:
         safe_filename = f"user_{user_id}_{uuid.uuid4().hex[:12]}{file_extension}"
         file_path = os.path.join(upload_dir, safe_filename)
         
+        print(f"🔍 DEBUG: File details")
+        print(f"   - upload_dir: {upload_dir}")
+        print(f"   - safe_filename: {safe_filename}")
+        print(f"   - file_path: {file_path}")
+        print(f"   - file_size: {len(file_content)} bytes")
+        
         # Salvar arquivo
-        with open(file_path, "wb") as buffer:
-            buffer.write(file_content)
+        try:
+            with open(file_path, "wb") as buffer:
+                buffer.write(file_content)
+            print(f"✅ DEBUG: File saved successfully")
+        except Exception as e:
+            print(f"❌ DEBUG: Failed to save file: {e}")
+            raise
         
         # Gerar URL absoluta para Render
         base_url = os.getenv("BASE_URL", "https://esc-maya-yoshiko-yamamoto.onrender.com")
         profile_url = f"{base_url}/media/profiles/{safe_filename}"
         
+        print(f"🔍 DEBUG: Generated URL: {profile_url}")
+        
         # Atualizar banco
-        self.users.update_profile_photo(user_id, profile_url)
+        try:
+            self.users.update_profile_photo(user_id, profile_url)
+            print(f"✅ DEBUG: Database updated successfully")
+        except Exception as e:
+            print(f"❌ DEBUG: Failed to update database: {e}")
+            raise
         
         return profile_url

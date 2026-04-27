@@ -15,5 +15,3 @@ services:
           property: connectionString
       - key: BASE_URL
         value: https://esc-maya-yoshiko-yamamoto.onrender.com
-    staticPublishPath: storage
-    staticPublishDir: .
