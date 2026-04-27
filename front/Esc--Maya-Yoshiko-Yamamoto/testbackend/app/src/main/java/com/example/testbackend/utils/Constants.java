@@ -8,8 +8,7 @@ public class Constants {
     
     /**
      *  CONFIGURAÇÃO DE HOST:
-     *  127.0.0.1 -> Use se estiver com 'adb reverse tcp:8080 tcp:8080' (Recomendado)
-     *  10.0.2.2  -> Use para acessar o localhost do PC diretamente do Emulador Android
+     *  Render.com - Produção (HTTPS padrão, sem porta específica)
      */
     // 🔥 URLs do Render.com - Produção
     public static final String AUTH_BASE_URL = "https://esc-maya-yoshiko-yamamoto.onrender.com/";

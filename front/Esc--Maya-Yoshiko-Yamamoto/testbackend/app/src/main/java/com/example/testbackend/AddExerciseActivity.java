@@ -173,8 +173,8 @@ public class AddExerciseActivity extends AppCompatActivity {
         }
         
         try {
-            // # FORÇAR URL 127.0.0.1 (ignorar Constants para teste se necessário)
-            String baseUrl = "http://127.0.0.1:8081";
+            // Usar URL do Render.com via Constants
+            String baseUrl = com.example.testbackend.utils.Constants.EXERCISE_BASE_URL;
             Log.d(TAG, "BaseUrl: " + baseUrl);
             
             if (imageUrl == null || imageUrl.isEmpty()) {

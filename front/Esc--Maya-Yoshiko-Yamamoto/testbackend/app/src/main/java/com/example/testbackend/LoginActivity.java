@@ -160,8 +160,11 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<LoginResponse> call, Throwable t) {
                 setLoading(false);
+                String attemptedUrl = call.request().url().toString();
                 Log.e(TAG, "❌ FALHA DE REDE: " + t.getMessage());
-                Toast.makeText(LoginActivity.this, "Erro de conexão com o servidor", Toast.LENGTH_LONG).show();
+                Log.e(TAG, "🌐 URL TENTADA: " + attemptedUrl);
+                Log.e(TAG, "🌐 BASE URL: " + Constants.AUTH_BASE_URL);
+                Toast.makeText(LoginActivity.this, "Erro de conexão: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }

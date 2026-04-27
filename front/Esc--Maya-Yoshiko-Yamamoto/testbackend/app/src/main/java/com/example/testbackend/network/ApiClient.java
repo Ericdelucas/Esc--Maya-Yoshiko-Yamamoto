@@ -34,9 +34,9 @@ public class ApiClient {
         
         return new OkHttpClient.Builder()
                 .addInterceptor(interceptor)
-                .connectTimeout(60, TimeUnit.SECONDS)
-                .readTimeout(60, TimeUnit.SECONDS)
-                .writeTimeout(60, TimeUnit.SECONDS)
+                .connectTimeout(90, TimeUnit.SECONDS)
+                .readTimeout(90, TimeUnit.SECONDS)
+                .writeTimeout(90, TimeUnit.SECONDS)
                 .retryOnConnectionFailure(true)
                 .addInterceptor(chain -> {
                     okhttp3.Request request = chain.request();
