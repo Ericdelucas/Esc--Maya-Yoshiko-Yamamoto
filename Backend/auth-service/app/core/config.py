@@ -1,4 +1,5 @@
 
+import os
 from functools import lru_cache
 
 from pydantic_settings import BaseSettings
@@ -7,7 +8,9 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
 	auth_port: int = 8080
 
-	db_url: str = "postgresql+psycopg2://user:password@localhost:5432/smartsaude"
+	# Prioritize DB_URL environment variable for Render/Production PostgreSQL
+	# Fallback to PostgreSQL local development
+	db_url: str = os.getenv("DB_URL", "postgresql+psycopg2://user:password@localhost:5432/smartsaude")
 	jwt_secret: str = "change_me"
 	pepper_key: str = "change_me"
 
