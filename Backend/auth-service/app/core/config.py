@@ -7,7 +7,7 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
 	auth_port: int = 8080
 
-	db_url: str = "mysql+pymysql://smartuser:smartpass@mysql:3306/smartsaude"
+	db_url: str = "postgresql+psycopg2://user:password@localhost:5432/smartsaude"
 	jwt_secret: str = "change_me"
 	pepper_key: str = "change_me"
 
