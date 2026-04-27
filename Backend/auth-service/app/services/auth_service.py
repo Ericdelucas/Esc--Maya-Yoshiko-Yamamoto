@@ -142,8 +142,8 @@ class AuthService:
         # Reset file pointer
         file.file.seek(0)
         
-        # Criar diretório se não existir (usar path relativo para Render)
-        upload_dir = os.path.join(os.getcwd(), "storage", "profile_photos")
+        # Criar diretório se não existir
+        upload_dir = "/app/storage/profile_photos"
         os.makedirs(upload_dir, exist_ok=True)
         
         # Gerar nome seguro
@@ -166,9 +166,8 @@ class AuthService:
             print(f"❌ DEBUG: Failed to save file: {e}")
             raise
         
-        # Gerar URL absoluta para Render
-        base_url = os.getenv("BASE_URL", "https://esc-maya-yoshiko-yamamoto.onrender.com")
-        profile_url = f"{base_url}/media/profiles/{safe_filename}"
+        # Gerar URL relativa
+        profile_url = f"/media/profiles/{safe_filename}"
         
         print(f"🔍 DEBUG: Generated URL: {profile_url}")
         
