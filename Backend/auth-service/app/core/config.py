@@ -1,4 +1,5 @@
 
+import os
 from functools import lru_cache
 
 from pydantic_settings import BaseSettings
@@ -7,7 +8,9 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
 	auth_port: int = 8080
 
-	db_url: str = "mysql+pymysql://smartuser:smartpass@mysql:3306/smartsaude"
+	# Prioritize DB_URL environment variable for Render/Production
+	# Fallback to SQLite for local development
+	db_url: str = os.getenv("DB_URL", "sqlite:///./test.db")
 	jwt_secret: str = "change_me"
 	pepper_key: str = "change_me"
 
