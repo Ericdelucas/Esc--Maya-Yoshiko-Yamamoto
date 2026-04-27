@@ -1,9 +1,7 @@
 from sqlalchemy import String, Text, DateTime, Integer
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column
 from datetime import datetime
-
-class Base(DeclarativeBase):
-    pass
+from . import Base
 
 class AppointmentORM(Base):
     __tablename__ = "appointments"

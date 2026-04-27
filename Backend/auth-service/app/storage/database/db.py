@@ -17,8 +17,18 @@ engine = create_engine(
     echo=False  # Mudar para True para debug SQL se necessário
 )
 
+# Debug: Mostrar todas as tabelas que serão criadas
+print("Tabelas a serem criadas:")
+for table_name in Base.metadata.tables.keys():
+    print(f"  - {table_name}")
+
 # Criar tabelas automaticamente se não existirem
-Base.metadata.create_all(bind=engine)
+try:
+    Base.metadata.create_all(bind=engine)
+    print("✅ Tabelas criadas com sucesso!")
+except Exception as e:
+    print(f"❌ Erro ao criar tabelas: {e}")
+    raise
 
 SessionLocal = sessionmaker(
     autocommit=False,

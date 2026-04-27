@@ -2,11 +2,8 @@ from datetime import datetime
 from typing import Optional
 
 from sqlalchemy import Integer, String, DateTime, Text, Column, JSON
-from sqlalchemy.orm import mapped_column, Mapped, DeclarativeBase
-
-
-class Base(DeclarativeBase):
-    pass
+from sqlalchemy.orm import mapped_column, Mapped
+from . import Base
 
 
 class PatientEvaluationORM(Base):

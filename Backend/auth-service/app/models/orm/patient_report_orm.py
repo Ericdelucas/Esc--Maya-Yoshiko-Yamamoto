@@ -1,9 +1,7 @@
 from sqlalchemy import Column, Integer, String, Text, DateTime, JSON, ForeignKey, Float
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column
 from datetime import datetime
-
-class Base(DeclarativeBase):
-    pass
+from . import Base
 
 class PatientReportORM(Base):
     __tablename__ = "patient_reports"

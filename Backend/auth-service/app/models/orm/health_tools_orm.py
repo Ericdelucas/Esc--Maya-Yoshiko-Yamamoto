@@ -1,6 +1,6 @@
 from sqlalchemy import Integer, String, Text, DateTime, Float, JSON, func
 from sqlalchemy.orm import Mapped, mapped_column
-from app.storage.database.base import Base
+from . import Base
 
 
 class HealthToolsORM(Base):
