@@ -134,8 +134,8 @@ class AuthService:
         # Reset file pointer
         file.file.seek(0)
         
-        # Criar diretório se não existir
-        upload_dir = "/app/storage/profile_photos"
+        # Criar diretório se não existir (usar path relativo para Render)
+        upload_dir = os.path.join(os.getcwd(), "storage", "profile_photos")
         os.makedirs(upload_dir, exist_ok=True)
         
         # Gerar nome seguro
