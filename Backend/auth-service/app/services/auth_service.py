@@ -147,8 +147,9 @@ class AuthService:
         with open(file_path, "wb") as buffer:
             buffer.write(file_content)
         
-        # Gerar URL relativa
-        profile_url = f"/media/profiles/{safe_filename}"
+        # Gerar URL absoluta para Render
+        base_url = os.getenv("BASE_URL", "https://esc-maya-yoshiko-yamamoto.onrender.com")
+        profile_url = f"{base_url}/media/profiles/{safe_filename}"
         
         # Atualizar banco
         self.users.update_profile_photo(user_id, profile_url)
