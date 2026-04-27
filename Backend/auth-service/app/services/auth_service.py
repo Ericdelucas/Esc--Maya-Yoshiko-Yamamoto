@@ -135,9 +135,9 @@ class AuthService:
         if file_size > max_size:
             raise BadRequest(f"File too large. Maximum size: {max_size // (1024*1024)}MB")
         
-        # Mínimo 1KB para evitar arquivos vazios
-        if file_size < 1024:
-            raise BadRequest("File too small. Minimum size: 1KB")
+        # Mínimo 100 bytes para evitar arquivos completamente vazios
+        if file_size < 100:
+            raise BadRequest("File too small. Minimum size: 100 bytes")
         
         # Reset file pointer
         file.file.seek(0)
