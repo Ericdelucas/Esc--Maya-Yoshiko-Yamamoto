@@ -28,14 +28,14 @@ Vide tutoriais do PI.
       <p><b>Tela de Login</b></p>
     </td>
     <td align="center" valign="top">
-      <a href="https://ibb.co/B2vjs9M8"><img src="https://i.ibb.co/5hCvcPHq/337-Sem-T-tulo-20260403154311.png" alt="Tela de Home" border="none"></a>
+      <a href="https://ibb.co/1fmz96yv"><img src="https://i.ibb.co/nsLPDCdg/1000146910.png" alt="Tela de Home(paciente)" border="none"></a>
       </a>
-      <p><b>Tela Principal (Home)</b></p>
-    </td>
+      <p><b>Tela Principal (Paciente)</b></p>
+      </td>
     <td align="center" valign="top">
-      <a href="https://ibb.co/DgPqHdGz"><img src="https://i.ibb.co/rfKWR9bF/337-Sem-T-tulo-20260403154305.png" alt="Tela de Meu Progresso" border="none"></a>
+      <a href="https://ibb.co/B2vjs9M8"><img src="https://i.ibb.co/HTRxCskV/1000146911.png" alt="Tela de Home (profissional)" border="none"></a>
       </a>
-      <p><b>Tela de Meu Progresso</b></p>
+      <p><b>Tela Principal (Profissional)</b></p>
     </td>
   </tr>
 </table>
@@ -49,59 +49,116 @@ Como diferencial, o sistema utiliza inteligência artificial para analisar os mo
 
 ## 🛠 Estrutura de pastas
 
--Raiz<br>
-|<br>
-|-->documentos<br>
-  &emsp;|-->antigos<br>
-  &emsp;|Documentação.docx<br>
-|-->executáveis<br>
-  &emsp;|-->windows<br>
-  &emsp;|-->android<br>
-  &emsp;|-->HTML<br>
-|-->imagens<br>
-|-->src<br>
-  &emsp;|-->Backend<br>
-  &emsp;|-->Frontend<br>
-|readme.md<br>
+<h3>Frontend</h3>
+<pre>
+Esc--Maya-Yoshiko-Yamamoto/
+│   └── front/Esc--Maya-Yoshiko-Yamamoto/testbackend/
+│       ├── 📱 app/src/main/                 # Código principal Android
+│       │   ├── java/com/example/testbackend/
+│       │   │   ├── 🎯 MainActivity.java
+│       │   │   ├── 👤 ProfileActivity.java
+│       │   │   ├── 🏥 ProfessionalMainActivity.java
+│       │   │   ├── 🔐 LoginActivity.java
+│       │   │   ├── 📋 PatientHealthDetailsActivity.java
+│       │   │   └── 📚 models/                # Models de dados
+│       │   ├── 🎨 res/layout/               # Layouts XML
+│       │   └── 🎨 res/values/               # Recursos Android
+│       ├── 📦 gradle/                       # Configuração Gradle
+│       └── 📦 build/                        # Build artifacts
+</pre>
 
-A pasta raiz contem dois arquivos que devem ser alterados:
-
-<b>README.MD</b>: Arquivo que serve como guia e explicação geral sobre seu projeto. O mesmo que você está lendo agora.
-
-Há também 4 pastas que seguem da seguinte forma:
-
-<b>documentos</b>: Toda a documentação estará nesta pasta.
-
-<b>executáveis</b>: Binários e executáveis do projeto devem estar nesta pasta.
-
-<b>imagens</b>: Imagens do sistema
-
-<b>src</b>: Pasta que contém o código fonte.
+<h3>Backend</h3>
+<pre>
+Backend/
+        ├── 🔐 auth-service/                  # Serviço de Autenticação
+        │   ├── 📱 app/
+        │   │   ├── 🧠 core/                  # Configuração central
+        │   │   ├── 🗄️ models/                # ORM Models
+        │   │   ├── 🛣️ routers/               # Endpoints API
+        │   │   ├── 🔧 services/              # Lógica de negócio
+        │   │   └── 💾 storage/               # Database layer
+        │   ├── 📊 migrations/                # Migrações PostgreSQL
+        │   └── 📁 storage/profile_photos/    # Upload de fotos
+        │
+        ├── 🤖 ai-service/                    # Serviço de IA
+        │   ├── 📱 app/
+        │   │   ├── 🧠 core/                  # Configuração Ollama
+        │   │   ├── 🗄️ models/                # Schemas de dados
+        │   │   ├── 🛣️ routers/               # Chat, Pose, WebSocket
+        │   │   ├── 🔧 services/              # LLM, Pose Detection
+        │   │   ├── 🤖 agents/                # Agentes de IA
+        │   │   ├── 💬 prompts/               # Prompts do sistema
+        │   │   └── 💾 storage/               # Arquivos de mídia
+        │   └── 📦 requirements.txt            # Dependências Python
+        │
+        ├── 🏥 health-service/                # Serviço de Saúde
+        │   ├── 📱 app/
+        │   │   ├── 🗄️ models/                # Health data models
+        │   │   ├── 🛣️ routers/               # Health endpoints
+        │   │   ├── 🔧 services/              # Health calculations
+        │   │   └── 💾 storage/               # Health data storage
+        │
+        ├── 💪 exercise-service/              # Serviço de Exercícios
+        │   ├── 📱 app/
+        │   │   ├── 🤖 agents/                # Exercise agents
+        │   │   ├── 🗄️ models/                # Exercise models
+        │   │   ├── 🛣️ routers/               # Exercise endpoints
+        │   │   ├── 🔧 services/              # Exercise logic
+        │   │   └── 💾 storage/               # Exercise data
+        │
+        ├── 📊 analytics-service/             # Serviço de Analytics
+        │   ├── 📱 app/
+        │   │   ├── 🧠 core/                  # Analytics core
+        │   │   ├── 🗄️ models/                # Analytics models
+        │   │   ├── 🛣️ routers/               # Analytics endpoints
+        │   │   ├── 🔧 services/              # Analytics logic
+        │   │   └── 💾 storage/               # Analytics data
+        │
+        ├── 🏥 ehr-service/                   # Electronic Health Records
+        │   ├── 📱 app/
+        │   │   ├── 🧠 core/                  # EHR core
+        │   │   ├── 🗄️ models/                # EHR models
+        │   │   ├── 📁 repositories/          # Data repositories
+        │   │   ├── 🛣️ routers/               # EHR endpoints
+        │   │   ├── 🔧 services/              # EHR services
+        │   │   ├── 💾 storage/               # EHR storage
+        │   │   └── 🛠️ utils/                # Utilities
+        │
+        ├── 🔔 notification-service/          # Serviço de Notificações
+        │   ├── 📱 app/
+        │   │   ├── 🧠 core/                  # Notification core
+        │   │   ├── 🗄️ models/                # Notification models
+        │   │   ├── 🛣️ routers/               # Notification endpoints
+        │   │   ├── 🔧 services/              # Notification logic
+        │   │   └── 💾 storage/               # Notification storage
+        │
+        ├── 🎯 training-service/              # Serviço de Treinamento
+        │   ├── 📱 app/
+        │   │   ├── 🧠 core/                  # Training core
+        │   │   ├── 🗄️ models/                # Training models
+        │   │   ├── 📁 repositories/          # Training repos
+        │   │   ├── 🛣️ routers/               # Training endpoints
+        │   │   ├── 🔧 services/              # Training logic
+        │   │   └── 💾 storage/               # Training data
+        │
+        ├── 🔐 shared/                        # Módulos Compartilhados
+        │   ├── 🔒 security/                  # Segurança compartilhada
+        │   └── 📚 __pycache__/               # Cache Python
+        │
+        ├── 🗄️ database/                      # Configuração Database
+        │   └── 📊 migrations/                # Migrações gerais
+        │
+        ├── 🧪 tests/                         # Testes Backend
+        │   └── 📚 __pycache__/               # Cache de testes
+        │
+        └── 📦 .venv/                         # Ambiente Virtual Python
+</pre>
 
 ## 🛠 Instalação
 
 <b>Android:</b>
 
-Faça o Download do JOGO.apk no seu celular.
-Execute o APK e siga as instruções de seu telefone.
-
-```sh
-Coloque código do prompt de comnando se for necessário
-```
-
-<b>Windows:</b>
-
-Não há instalação! Apenas executável!
-Encontre o JOGO.exe na pasta executáveis e execute-o como qualquer outro programa.
-
-```sh
-Coloque código do prompt de comnando se for necessário
-```
-
-<b>HTML:</b>
-
-Não há instalação!
-Encontre o index.html na pasta executáveis e execute-o como uma página WEB (através de algum browser).
+https://drive.google.com/file/d/1bZhjURfa8ue7h2TGKx2VhKunDvap8EEC/view?usp=sharing
 
 ## 💻 Configuração para Desenvolvimento
 
