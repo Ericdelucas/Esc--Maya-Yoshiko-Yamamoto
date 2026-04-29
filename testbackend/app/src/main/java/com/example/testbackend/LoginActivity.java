@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,6 +34,7 @@ public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LOGIN_DEBUG";
     private EditText etEmail, etPassword;
     private Button btnLogin, btnGoToRegister;
+    private TextView tvForgotPassword;
     private ProgressBar loadingIndicator;
     private TokenManager tokenManager;
     private LoginResponse loginResponse;
@@ -42,13 +44,13 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         
         try {
-            setContentView(R.layout.activity_login);
+            setContentView(R.layout.activity_login_new);
             tokenManager = new TokenManager(this);
 
             etEmail = findViewById(R.id.etEmail);
             etPassword = findViewById(R.id.etPassword);
             btnLogin = findViewById(R.id.btnLogin);
-            btnGoToRegister = findViewById(R.id.btnGoToRegister);
+            tvForgotPassword = findViewById(R.id.tvForgotPassword);
             loadingIndicator = findViewById(R.id.loadingIndicator);
 
             if (btnLogin == null) {
@@ -62,7 +64,12 @@ public class LoginActivity extends AppCompatActivity {
                 }
             });
 
-            btnGoToRegister.setOnClickListener(v -> {
+            tvForgotPassword.setOnClickListener(v -> {
+                Toast.makeText(LoginActivity.this, "Funcionalidade de recuperação de senha em breve!", Toast.LENGTH_SHORT).show();
+            });
+            
+            TextView noAccountText = findViewById(R.id.noAccountText);
+            noAccountText.setOnClickListener(v -> {
                 startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
             });
             

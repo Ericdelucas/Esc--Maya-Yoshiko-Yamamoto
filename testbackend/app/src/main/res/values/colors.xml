@@ -37,4 +37,8 @@
     <color name="accent_green">#4CAF50</color>
     <color name="text_primary">#212121</color>
     <color name="background_light">#F5F5F5</color>
+    
+    <!-- Cores para o novo design de login -->
+    <color name="blue_primary">#6CB4BE</color>
+    <color name="teal_link">#00ACC1</color>
 </resources>
