@@ -27,7 +27,7 @@
             android:layout_width="180dp"
             android:layout_height="180dp"
             android:layout_marginTop="32dp"
-            android:src="@drawable/logo_maya"
+            android:src="@drawable/img_2"
             android:scaleType="fitCenter"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -99,7 +99,6 @@
                     android:textColorHint="#888888" />
 
                 <TextView
-                    android:id="@+id/tvForgotPassword"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="28dp"
@@ -108,7 +107,7 @@
                     android:textSize="14sp" />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnLogin"
+                    android:id="@+id/loginButton"
                     android:layout_width="match_parent"
                     android:layout_height="65dp"
                     android:text="Entrar"
@@ -123,7 +122,6 @@
 
         <!-- Bottom Registration Section -->
         <TextView
-            android:id="@+id/noAccountText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="48dp"

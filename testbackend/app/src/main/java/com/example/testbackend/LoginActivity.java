@@ -34,7 +34,6 @@ public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LOGIN_DEBUG";
     private EditText etEmail, etPassword;
     private Button btnLogin, btnGoToRegister;
-    private TextView tvForgotPassword;
     private ProgressBar loadingIndicator;
     private TokenManager tokenManager;
     private LoginResponse loginResponse;
@@ -49,8 +48,7 @@ public class LoginActivity extends AppCompatActivity {
 
             etEmail = findViewById(R.id.etEmail);
             etPassword = findViewById(R.id.etPassword);
-            btnLogin = findViewById(R.id.btnLogin);
-            tvForgotPassword = findViewById(R.id.tvForgotPassword);
+            btnLogin = findViewById(R.id.loginButton);
             loadingIndicator = findViewById(R.id.loadingIndicator);
 
             if (btnLogin == null) {
@@ -64,15 +62,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
             });
 
-            tvForgotPassword.setOnClickListener(v -> {
-                Toast.makeText(LoginActivity.this, "Funcionalidade de recuperação de senha em breve!", Toast.LENGTH_SHORT).show();
-            });
-            
-            TextView noAccountText = findViewById(R.id.noAccountText);
-            noAccountText.setOnClickListener(v -> {
-                startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
-            });
-            
+                        
         } catch (Exception e) {
             Log.e(TAG, "Erro fatal no onCreate", e);
         }
