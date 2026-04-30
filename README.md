@@ -49,6 +49,11 @@ Como diferencial, o sistema utiliza inteligência artificial para analisar os mo
 
 ## 🛠 Estrutura de pastas
 
+<h3>Entregas</h3>
+<pre>
+
+</pre>
+
 <h3>Frontend</h3>
 <pre>
 Esc--Maya-Yoshiko-Yamamoto/
@@ -70,118 +75,153 @@ Esc--Maya-Yoshiko-Yamamoto/
 <h3>Backend</h3>
 <pre>
 Backend/
-        ├── 🔐 auth-service/                  # Serviço de Autenticação
-        │   ├── 📱 app/
-        │   │   ├── 🧠 core/                  # Configuração central
-        │   │   ├── 🗄️ models/                # ORM Models
-        │   │   ├── 🛣️ routers/               # Endpoints API
-        │   │   ├── 🔧 services/              # Lógica de negócio
-        │   │   └── 💾 storage/               # Database layer
-        │   ├── 📊 migrations/                # Migrações PostgreSQL
-        │   └── 📁 storage/profile_photos/    # Upload de fotos
-        │
-        ├── 🤖 ai-service/                    # Serviço de IA
-        │   ├── 📱 app/
-        │   │   ├── 🧠 core/                  # Configuração Ollama
-        │   │   ├── 🗄️ models/                # Schemas de dados
-        │   │   ├── 🛣️ routers/               # Chat, Pose, WebSocket
-        │   │   ├── 🔧 services/              # LLM, Pose Detection
-        │   │   ├── 🤖 agents/                # Agentes de IA
-        │   │   ├── 💬 prompts/               # Prompts do sistema
-        │   │   └── 💾 storage/               # Arquivos de mídia
-        │   └── 📦 requirements.txt            # Dependências Python
-        │
-        ├── 🏥 health-service/                # Serviço de Saúde
-        │   ├── 📱 app/
-        │   │   ├── 🗄️ models/                # Health data models
-        │   │   ├── 🛣️ routers/               # Health endpoints
-        │   │   ├── 🔧 services/              # Health calculations
-        │   │   └── 💾 storage/               # Health data storage
-        │
-        ├── 💪 exercise-service/              # Serviço de Exercícios
-        │   ├── 📱 app/
-        │   │   ├── 🤖 agents/                # Exercise agents
-        │   │   ├── 🗄️ models/                # Exercise models
-        │   │   ├── 🛣️ routers/               # Exercise endpoints
-        │   │   ├── 🔧 services/              # Exercise logic
-        │   │   └── 💾 storage/               # Exercise data
-        │
-        ├── 📊 analytics-service/             # Serviço de Analytics
-        │   ├── 📱 app/
-        │   │   ├── 🧠 core/                  # Analytics core
-        │   │   ├── 🗄️ models/                # Analytics models
-        │   │   ├── 🛣️ routers/               # Analytics endpoints
-        │   │   ├── 🔧 services/              # Analytics logic
-        │   │   └── 💾 storage/               # Analytics data
-        │
-        ├── 🏥 ehr-service/                   # Electronic Health Records
-        │   ├── 📱 app/
-        │   │   ├── 🧠 core/                  # EHR core
-        │   │   ├── 🗄️ models/                # EHR models
-        │   │   ├── 📁 repositories/          # Data repositories
-        │   │   ├── 🛣️ routers/               # EHR endpoints
-        │   │   ├── 🔧 services/              # EHR services
-        │   │   ├── 💾 storage/               # EHR storage
-        │   │   └── 🛠️ utils/                # Utilities
-        │
-        ├── 🔔 notification-service/          # Serviço de Notificações
-        │   ├── 📱 app/
-        │   │   ├── 🧠 core/                  # Notification core
-        │   │   ├── 🗄️ models/                # Notification models
-        │   │   ├── 🛣️ routers/               # Notification endpoints
-        │   │   ├── 🔧 services/              # Notification logic
-        │   │   └── 💾 storage/               # Notification storage
-        │
-        ├── 🎯 training-service/              # Serviço de Treinamento
-        │   ├── 📱 app/
-        │   │   ├── 🧠 core/                  # Training core
-        │   │   ├── 🗄️ models/                # Training models
-        │   │   ├── 📁 repositories/          # Training repos
-        │   │   ├── 🛣️ routers/               # Training endpoints
-        │   │   ├── 🔧 services/              # Training logic
-        │   │   └── 💾 storage/               # Training data
-        │
-        ├── 🔐 shared/                        # Módulos Compartilhados
-        │   ├── 🔒 security/                  # Segurança compartilhada
-        │   └── 📚 __pycache__/               # Cache Python
-        │
-        ├── 🗄️ database/                      # Configuração Database
-        │   └── 📊 migrations/                # Migrações gerais
-        │
-        ├── 🧪 tests/                         # Testes Backend
-        │   └── 📚 __pycache__/               # Cache de testes
-        │
-        └── 📦 .venv/                         # Ambiente Virtual Python
+├── auth-service/          # 🏛️ Serviço Central de Autenticação
+├── training-service/      # 💪 Serviço de Treinamento e Progresso
+├── ehr-service/          # 📋 Serviço de Prontuário Eletrônico
+├── exercise-service/     # 🏃‍♂️ Serviço de Exercícios e Mídia
+├── ai-service/          # 🤖 Serviço de IA e Análise
+├── health-service/      # 🏥 Serviço de Ferramentas de Saúde
+├── notification-service/ # 📬 Serviço de Notificações
+├── analytics-service/   # 📊 Serviço de Análises
+└── shared/             # 🔧 Componentes Compartilhados
 </pre>
 
-## 🛠 Instalação
+## 🛠Instalação
 
-<b>Android:</b>
+<h3><b>Android:</b></h3>
+<h3><p>https://drive.google.com/file/d/1bZhjURfa8ue7h2TGKx2VhKunDvap8EEC/view?usp=sharing<p></h3>
 
-https://drive.google.com/file/d/1bZhjURfa8ue7h2TGKx2VhKunDvap8EEC/view?usp=sharing
+## 💻 Como rodar o projeto?
+
+<h3><p>✅ Ferramentas necessárias<p></h3>
+<li>Android Studio</li>
+<li>Visual Studio Code</li>
+<li>Java 11+</li>
+<li>python 3(backend)</li>
+<li>MySQL</li>
+<br>
 
 ## 💻 Configuração para Desenvolvimento
 
-Descreva como instalar todas as dependências para desenvolvimento e como rodar um test-suite automatizado de algum tipo. Se necessário, faça isso para múltiplas plataformas.
+Este guia explica como preparar e rodar o projeto SmartSaúde AI em ambiente local.
 
-Para abrir este projeto você necessita das seguintes ferramentas:
+---
 
--<a href="https://godotengine.org/download">GODOT</a>
+## 🗂️ Caminho do projeto
 
-```sh
-make install
-npm test
-Coloque código do prompt de comnando se for necessário
+```
+git clone https://github.com/Ericdelucas/Esc--Maya-Yoshiko-Yamamoto.git
+cd Esc--Maya-Yoshiko-Yamamoto
+cd Backend
+````
+
+## 🚀 Inicie os serviços com Docker (Recomendado)
+
+Na pasta `Backend`, execute:
+
+```bash
+docker-compose up --build
 ```
 
-## 📋 Licença/License
-Utilize o link <https://chooser-beta.creativecommons.org/> para fazer uma licença CC BY 4.0.
+Para rodar em background (detached mode):
+```bash
+docker-compose up -d --build
+```
 
-## 🎓 Referências
+Para parar os serviços:
+```bash
+docker-compose down
+```
+<br>
+
+## 🌐 Acesse os serviços
+
+| Serviço | URL | Health Check |
+|---------|-----|--------------|
+| Auth Service | http://localhost:8080 | http://localhost:8080/health |
+| Exercise Service | http://localhost:8081 | http://localhost:8081/health |
+| Training Service | http://localhost:8030 | http://localhost:8030/health |
+| EHR Service | http://localhost:8060 | http://localhost:8060/health |
+| AI Service | http://localhost:8090 | http://localhost:8090/health |
+| Health Service | http://localhost:8070 | http://localhost:8070/health |
+| Notification Service | http://localhost:8040 | http://localhost:8040/health |
+| Analytics Service | http://localhost:8050 | http://localhost:8050/health |
+
+
+---
+<br>
+
+## 🎥Demonstração do Projeto
+<p>Assista ao vídeo abaixo para uma demonstração completa das funcionalidades do sistema, incluindo a criação de participantes, equipes e atividades.</p>
+
+<h3>conta do paciente</h3>
+https://drive.google.com/file/d/1MjeqjMs6TLmSSI7D7qzJa9heRKmzGFyZ/view?usp=sharing
+
+<h3>conta do profissional</h3>
+https://drive.google.com/file/d/1cFt2RKfjQtuLXf7qkEg2YvvB7zD0ppAB/view?usp=sharing
+<br>
+
+## 📱Configuração do Frontend (Android)
+
+O frontend do projeto é um aplicativo Android.
+
+### Pré-requisitos:
+- Android Studio (https://developer.android.com/studio)
+- Java JDK 17 ou superior
+- Android SDK
+
+### Abra o projeto no Android Studio:
+1. Abra o Android Studio
+2. Selecione "Open an existing project"
+3. Navegue até: `Esc--Maya-Yoshiko-Yamamoto\front\Esc--Maya-Yoshiko-Yamamoto\testbackend`
+4. Aguarde o Gradle sincronizar
+
+### Configure a URL da API:
+No código do app, configure o IP da máquina para conectar ao backend:
+
+```java
+// Exemplo em Constants.kt ou similar
+const val BASE_URL = "http://SEU_IP:8080/"
+```
+
+> **Nota:** Use o IP da sua máquina na rede local, não `localhost`, pois o emulador/Android tem seu próprio localhost.
+
+### Execute o app:
+- Clique no botão "Run" (▶️) no Android Studio
+- Selecione um emulador ou dispositivo físico
+
+
+---
+<br>
+## Rotas da API 🚀
+
+<h3>Arquitetura de Microserviços</h3>
+<table>
+  <thead>
+    <tr>
+      <th align="left">Serviço</th>
+      <th align="left">Porta</th>
+      <th align="left">Descrição</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>auth-service</code></td><td>8080</td><td>Autenticação e gestão de usuários</td></tr>
+    <tr><td><code>exercise-service</code></td><td>8081</td><td>Gestão de exercícios</td></tr>
+    <tr><td><code>training-service</code></td><td>8030</td><td>Planos de treino e gamificação</td></tr>
+    <tr><td><code>ehr-service</code></td><td>8060</td><td>Prontuário eletrônico (EHR)</td></tr>
+    <tr><td><code>ai-service</code></td><td>8090</td><td>Inteligência artificial e pose detection</td></tr>
+    <tr><td><code>health-service</code></td><td>8070</td><td>Métricas de saúde (IMC, gordura corporal)</td></tr>
+  </tbody>
+</table>
+<br>
+
+## 📋Licença/License
+<h3><p><a href="https://github.com/Ericdelucas/Esc--Maya-Yoshiko-Yamamoto.git">ESC</a> © 2026 by <a href="https://www.linkedin.com/in/eric-de-lucas-silva/">Eric de Lucas Silva, Stephanie Macedo da Silva e En Hsiang Chien</a> is licensed under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a><img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" alt="" style="max-width: 1em;max-height:1em;margin-left: .2em;"><img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" alt="" style="max-width: 1em;max-height:1em;margin-left: .2em;"><p></h3>
+
+## 🎓Referências
 
 Aqui estão as referências usadas no projeto.
 
 1. <https://mayayamamoto.com.br/>
 2. <https://www.linkedin.com/in/maya-yoshiko-yamamoto-bb18a736/.org/>
 3. <https://www.instagram.com/rpg.maya/>
-4. <https://www.toptal.com/developers/gitignore>
