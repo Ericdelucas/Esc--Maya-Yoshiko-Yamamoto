@@ -26,14 +26,25 @@ import java.util.Locale;
 public class TaskWithRadioAdapter extends RecyclerView.Adapter<TaskWithRadioAdapter.TaskViewHolder> {
     private final List<Task> tasks;
     private final OnTaskCompleteListener listener;
+    private final OnTaskLongClickListener longClickListener;
 
     public interface OnTaskCompleteListener {
         void onTaskComplete(Task task);
     }
     
-    public TaskWithRadioAdapter(List<Task> tasks, OnTaskCompleteListener listener) {
+    public interface OnTaskLongClickListener {
+        void onTaskLongClick(Task task);
+    }
+    
+    public TaskWithRadioAdapter(List<Task> tasks, OnTaskCompleteListener listener, OnTaskLongClickListener longClickListener) {
         this.tasks = tasks;
         this.listener = listener;
+        this.longClickListener = longClickListener;
+    }
+    
+    // Construtor antigo para compatibilidade
+    public TaskWithRadioAdapter(List<Task> tasks, OnTaskCompleteListener listener) {
+        this(tasks, listener, null);
     }
     
     @NonNull
@@ -139,6 +150,14 @@ public class TaskWithRadioAdapter extends RecyclerView.Adapter<TaskWithRadioAdap
                     listener.onTaskComplete(task);
                 }
             }
+        });
+        
+        // Adicionar clique longo para exclusão
+        holder.itemView.setOnLongClickListener(v -> {
+            if (longClickListener != null) {
+                longClickListener.onTaskLongClick(task);
+            }
+            return true;
         });
     }
     

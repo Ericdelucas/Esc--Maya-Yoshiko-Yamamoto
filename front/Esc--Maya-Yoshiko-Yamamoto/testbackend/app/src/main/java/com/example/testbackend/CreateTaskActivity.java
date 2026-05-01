@@ -58,6 +58,13 @@ public class CreateTaskActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_task);
 
+        // Configurar toolbar com botão de voltar
+        setSupportActionBar(findViewById(R.id.toolbar));
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+
         SharedPreferences prefs = getSharedPreferences("SmartSaudePrefs", MODE_PRIVATE);
         token = prefs.getString("jwt_token", "");
 
@@ -274,5 +281,14 @@ public class CreateTaskActivity extends AppCompatActivity {
                 Toast.makeText(this, "Vídeo selecionado", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(android.view.MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish(); // Voltar para activity anterior
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

@@ -20,11 +20,13 @@ import com.example.testbackend.models.TaskCompletionRequest;
 import com.example.testbackend.models.TaskCompletionResponse;
 import com.example.testbackend.models.TestTasksResponse;
 import com.example.testbackend.models.UserPointsResponse;
+import com.example.testbackend.models.DeleteExerciseResponse;
 import com.example.testbackend.network.ApiClient;
 import com.example.testbackend.network.TaskApi;
 import com.example.testbackend.utils.LocaleHelper;
 import com.example.testbackend.utils.TokenManager;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import androidx.appcompat.app.AlertDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +35,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ExerciseListActivity extends AppCompatActivity implements TaskWithRadioAdapter.OnTaskCompleteListener {
+public class ExerciseListActivity extends AppCompatActivity implements TaskWithRadioAdapter.OnTaskCompleteListener, TaskWithRadioAdapter.OnTaskLongClickListener {
 
     private static final String TAG = "EXERCISE_DEBUG";
     private RecyclerView rvExercises;
@@ -41,8 +43,7 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
     private TextView tvUserPoints;
     private TaskWithRadioAdapter adapter;
     private List<Task> taskList = new ArrayList<>();
-    private FloatingActionButton fabAdd;
-    private TokenManager tokenManager;
+        private TokenManager tokenManager;
     private TaskApi taskApi;
     private UserPointsResponse currentUserPoints;
 
@@ -58,7 +59,6 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
 
             setupToolbar();
             initViews();
-            checkUserRole();
             loadPatientTasks();
             updateUserPoints(); 
         } catch (Exception e) {
@@ -87,15 +87,13 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
         
         if (rvExercises != null) {
             rvExercises.setLayoutManager(new LinearLayoutManager(this));
-            adapter = new TaskWithRadioAdapter(taskList, this);
+            adapter = new TaskWithRadioAdapter(taskList, this, this);
             rvExercises.setAdapter(adapter);
         }
 
         if (swipeRefresh != null) {
             swipeRefresh.setOnRefreshListener(this::refreshData);
         }
-
-        fabAdd = findViewById(R.id.fabAddExercise);
     }
 
     private void refreshData() {
@@ -103,16 +101,7 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
         updateUserPoints();
     }
 
-    private void checkUserRole() {
-        if (tokenManager == null || fabAdd == null) return;
-        String role = tokenManager.getUserRole();
-        if (role != null && (role.equalsIgnoreCase("professional") || role.equalsIgnoreCase("doctor"))) {
-            fabAdd.setVisibility(View.VISIBLE);
-        } else {
-            fabAdd.setVisibility(View.GONE);
-        }
-    }
-
+    
     private void loadPatientTasks() {
         String token = tokenManager.getAuthToken();
         if (token == null || taskApi == null) {
@@ -137,7 +126,7 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
                     }
                     
                     if (rvExercises != null) {
-                        adapter = new TaskWithRadioAdapter(taskList, ExerciseListActivity.this);
+                        adapter = new TaskWithRadioAdapter(taskList, ExerciseListActivity.this, ExerciseListActivity.this);
                         rvExercises.setAdapter(adapter);
                     }
                 } else if (response.code() == 401 || response.code() == 403) {
@@ -266,6 +255,59 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    public void onTaskLongClick(Task task) {
+        new AlertDialog.Builder(this)
+            .setTitle("Excluir Exercício")
+            .setMessage("Tem certeza que deseja excluir o exercício \"" + task.getTitle() + "\"?")
+            .setPositiveButton("Excluir", (dialog, which) -> deleteTask(task))
+            .setNegativeButton("Cancelar", null)
+            .show();
+    }
+
+    private void deleteTask(Task task) {
+        String token = tokenManager.getAuthToken();
+        if (token == null || taskApi == null) {
+            Toast.makeText(this, "Erro de autenticação", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
+        Log.d(TAG, "Excluindo exercício ID: " + task.getId());
+        
+        // Usar endpoint de exclusão profissional
+        taskApi.deleteExerciseProfessional(token, task.getId()).enqueue(new Callback<DeleteExerciseResponse>() {
+            @Override
+            public void onResponse(Call<DeleteExerciseResponse> call, Response<DeleteExerciseResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    DeleteExerciseResponse result = response.body();
+                    
+                    if (result.isSuccess()) {
+                        // Remover da lista local
+                        int position = taskList.indexOf(task);
+                        if (position != -1) {
+                            taskList.remove(position);
+                            adapter.notifyItemRemoved(position);
+                            adapter.notifyItemRangeChanged(position, taskList.size());
+                        }
+                        
+                        Toast.makeText(ExerciseListActivity.this, "Exercício excluído com sucesso", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(ExerciseListActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(ExerciseListActivity.this, "Erro ao excluir exercício", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Erro na resposta: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<DeleteExerciseResponse> call, Throwable t) {
+                Toast.makeText(ExerciseListActivity.this, "Erro de conexão", Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "Falha na conexão", t);
+            }
+        });
     }
 
     @Override
