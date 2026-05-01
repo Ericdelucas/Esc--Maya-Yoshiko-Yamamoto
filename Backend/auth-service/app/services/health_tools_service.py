@@ -25,7 +25,7 @@ class HealthToolsService:
     def save_questionnaire(self, user_id: int, answers: dict, db: Session) -> dict:
         """Salvar questionário de saúde"""
         repository = HealthToolsRepository(db)
-        return repository.create_questionnaire_record(user_id, answers, db)
+        return repository.create_questionnaire_record(user_id, answers)
 
     def get_health_history(self, user_id: int, db: Session, limit: int = 50) -> list:
         """Buscar histórico completo de saúde"""

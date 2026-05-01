@@ -106,7 +106,7 @@ class HealthToolsRepository:
             "created_at": record.created_at
         }
 
-    def create_questionnaire_record(self, user_id: int, answers: dict, db: Session) -> dict:
+    def create_questionnaire_record(self, user_id: int, answers: dict) -> dict:
         """Criar registro de questionário de saúde"""
         
         # Calcular pontuação baseado nas respostas
@@ -155,9 +155,9 @@ class HealthToolsRepository:
             answers=json.dumps(answers)
         )
         
-        db.add(record)
-        db.commit()
-        db.refresh(record)
+        self._db.add(record)
+        self._db.commit()
+        self._db.refresh(record)
         
         return {
             "id": record.id,

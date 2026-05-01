@@ -175,8 +175,17 @@ def save_questionnaire_test(
     
     try:
         service = HealthToolsService()
-        # Usar usuário fixo para teste (ID 3)
-        result = service.save_questionnaire(3, request.answers, db)
+        
+        # Converter respostas para dicionário
+        answers_dict = {}
+        for answer in request.answers:
+            answers_dict[answer.question_id] = answer.answer
+        
+        # 🔥 CORREÇÃO: Usar usuário dinâmico ou ID padrão
+        # Vamos extrair user_id das respostas ou usar ID 2 (ericdelucass)
+        user_id = 2  # ID do usuário ericdelucass
+        
+        result = service.save_questionnaire(user_id, answers_dict, db)
         
         return {
             "success": True,
@@ -200,10 +209,11 @@ def save_questionnaire_simple(
         
         questionnaire = HealthQuestionnaireORM(
             user_id=user_id,
-            questionnaire_type="phq9",
-            responses={"q1": 2, "q2": 1, "q3": 3, "q4": 2, "q5": 1, "q6": 2, "q7": 3, "q8": 2, "q9": 1},
-            score=17,
-            created_at=datetime.now()
+            questionnaire_date=datetime.now(),
+            total_score=17,
+            max_score=27,
+            risk_level="Moderado",
+            answers={"q1": 2, "q2": 1, "q3": 3, "q4": 2, "q5": 1, "q6": 2, "q7": 3, "q8": 2, "q9": 1}
         )
         
         db.add(questionnaire)
@@ -239,10 +249,11 @@ def save_questionnaire_test_query(
         
         questionnaire = HealthQuestionnaireORM(
             user_id=user_id,
-            questionnaire_type="phq9",
-            responses={"q1": 2, "q2": 1, "q3": 3, "q4": 2, "q5": 1, "q6": 2, "q7": 3, "q8": 2, "q9": 1},
-            score=17,
-            created_at=datetime.now()
+            questionnaire_date=datetime.now(),
+            total_score=17,
+            max_score=27,
+            risk_level="Moderado",
+            answers={"q1": 2, "q2": 1, "q3": 3, "q4": 2, "q5": 1, "q6": 2, "q7": 3, "q8": 2, "q9": 1}
         )
         
         db.add(questionnaire)
@@ -255,36 +266,9 @@ def save_questionnaire_test_query(
             "data": {
                 "id": questionnaire.id,
                 "user_id": user_id,
-                "score": questionnaire.score,
+                "total_score": questionnaire.total_score,
                 "created_at": questionnaire.created_at.isoformat()
             }
-        }
-        
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Erro ao salvar questionário: {str(e)}")
-
-@router.post("/save-questionnaire-test")
-def save_questionnaire_test(
-    request: QuestionnaireRequest,
-    db: Session = Depends(get_session)
-):
-    """Salvar questionário de saúde (SEM AUTENTICAÇÃO PARA TESTE)"""
-    
-    try:
-        service = HealthToolsService()
-        
-        # Converter respostas para dicionário
-        answers_dict = {}
-        for answer in request.answers:
-            answers_dict[answer.question_id] = answer.answer
-        
-        # Usar usuário fixo para teste (ID 3)
-        result = service.save_questionnaire(3, answers_dict, db)
-        
-        return {
-            "success": True,
-            "message": "Questionário salvo com sucesso (TESTE)",
-            "data": result
         }
         
     except Exception as e:
