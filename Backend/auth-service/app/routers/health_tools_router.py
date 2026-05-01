@@ -637,7 +637,7 @@ def get_bmi_history_test(
     
     try:
         service = HealthToolsService()
-        history = service.get_bmi_history(user_id, limit, db)
+        history = service.get_bmi_history(user_id, db, limit)
         
         return {
             "success": True,
@@ -658,7 +658,7 @@ def get_questionnaire_history_test(
     
     try:
         service = HealthToolsService()
-        history = service.get_questionnaire_history(user_id, limit, db)
+        history = service.get_questionnaire_history(user_id, db, limit)
         
         return {
             "success": True,
