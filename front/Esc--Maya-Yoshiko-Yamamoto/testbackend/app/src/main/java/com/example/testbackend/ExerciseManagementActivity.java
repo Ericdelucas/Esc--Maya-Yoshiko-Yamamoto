@@ -143,7 +143,29 @@ public class ExerciseManagementActivity extends AppCompatActivity {
                         showError(deleteResponse.getMessage());
                     }
                 } else {
-                    showError("Erro ao deletar exercício");
+                    // Tratar diferentes tipos de erro
+                    if (response.code() == 401) {
+                        showError("Sessão expirada. Faça login novamente.");
+                        Log.e(TAG, "Erro 401 - Sessão expirada");
+                        // Limpar token e redirecionar para login
+                        tokenManager.clearToken();
+                        // Intent loginIntent = new Intent(this, LoginActivity.class);
+                        // startActivity(loginIntent);
+                        // finish();
+                    } else if (response.code() == 403) {
+                        showError("Você não tem permissão para excluir exercícios.");
+                        Log.e(TAG, "Erro 403 - Sem permissão");
+                    } else if (response.code() == 404) {
+                        showError("Exercício não encontrado ou já excluído.");
+                        Log.e(TAG, "Erro 404 - Exercício não encontrado");
+                        // Remover da lista local mesmo assim
+                        exerciseList.removeIf(exercise -> exercise.getId().equals(exerciseId));
+                        adapter.notifyDataSetChanged();
+                        updateUI();
+                    } else {
+                        showError("Erro ao deletar exercício (" + response.code() + ")");
+                        Log.e(TAG, "Erro na resposta: " + response.code());
+                    }
                 }
             }
             

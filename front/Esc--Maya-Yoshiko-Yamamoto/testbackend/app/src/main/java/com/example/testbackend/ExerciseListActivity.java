@@ -297,8 +297,32 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
                         Toast.makeText(ExerciseListActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(ExerciseListActivity.this, "Erro ao excluir exercício", Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, "Erro na resposta: " + response.code());
+                    // Tratar diferentes tipos de erro
+                    if (response.code() == 401) {
+                        Toast.makeText(ExerciseListActivity.this, "Sessão expirada. Faça login novamente.", Toast.LENGTH_LONG).show();
+                        Log.e(TAG, "Erro 401 - Sessão expirada");
+                        // Opcional: redirecionar para tela de login
+                        tokenManager.clearToken();
+                        // Intent loginIntent = new Intent(this, LoginActivity.class);
+                        // startActivity(loginIntent);
+                        // finish();
+                    } else if (response.code() == 403) {
+                        Toast.makeText(ExerciseListActivity.this, "Você não tem permissão para excluir exercícios.", Toast.LENGTH_LONG).show();
+                        Log.e(TAG, "Erro 403 - Sem permissão");
+                    } else if (response.code() == 404) {
+                        Toast.makeText(ExerciseListActivity.this, "Exercício não encontrado ou já excluído.", Toast.LENGTH_SHORT).show();
+                        Log.e(TAG, "Erro 404 - Exercício não encontrado");
+                        // Remover da lista local mesmo assim
+                        int position = taskList.indexOf(task);
+                        if (position != -1) {
+                            taskList.remove(position);
+                            adapter.notifyItemRemoved(position);
+                            adapter.notifyItemRangeChanged(position, taskList.size());
+                        }
+                    } else {
+                        Toast.makeText(ExerciseListActivity.this, "Erro ao excluir exercício (" + response.code() + ")", Toast.LENGTH_SHORT).show();
+                        Log.e(TAG, "Erro na resposta: " + response.code());
+                    }
                 }
             }
 

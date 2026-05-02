@@ -20,60 +20,60 @@ daily_completed_tasks = {}  # {user_id: {date: [task_ids]}}
 # 🔥 **SISTEMA DE EXERCÍCIOS POR PACIENTE**
 patient_exercises_db = {}  # {patient_id: [exercises]}
 
-# 🔥 **EXERCÍCIOS INICIAIS POR PACIENTE**
-patient_exercises_db = {
-    1: [  # Paciente Edgar - Problema de ombro
-        {
-            "id": 1001,
-            "title": "Rotação de ombro",
-            "description": "Movimentos circulares suaves para fortalecer ombro",
-            "points_value": 15,
-            "frequency_per_week": 3,
-            "is_active": True,
-            "created_at": "2026-04-24T00:00:00"
-        },
-        {
-            "id": 1002,
-            "title": "Elevação lateral",
-            "description": "Levantar braços lateralmente até altura dos ombros",
-            "points_value": 20,
-            "frequency_per_week": 2,
-            "is_active": True,
-            "created_at": "2026-04-24T00:00:00"
-        }
-    ],
-    2: [  # Paciente Vinícius - Problema de perna
-        {
-            "id": 2001,
-            "title": "Agachamento parcial",
-            "description": "Agachar até 45 graus para fortalecer quadríceps",
-            "points_value": 25,
-            "frequency_per_week": 4,
-            "is_active": True,
-            "created_at": "2026-04-24T00:00:00"
-        },
-        {
-            "id": 2002,
-            "title": "Elevação de panturrilha",
-            "description": "Levantar-se na ponta dos pés para fortalecer panturrilhas",
-            "points_value": 15,
-            "frequency_per_week": 3,
-            "is_active": True,
-            "created_at": "2026-04-24T00:00:00"
-        }
-    ],
-    3: [  # Paciente teste - Exercícios gerais
-        {
-            "id": 3001,
-            "title": "Caminhada leve",
-            "description": "Caminhar por 15 minutos para aquecimento",
-            "points_value": 10,
-            "frequency_per_week": 5,
-            "is_active": True,
-            "created_at": "2026-04-24T00:00:00"
-        }
-    ]
-}
+# 🔥 **EXERCÍCIOS INICIAIS POR PACIENTE** (MOVIDOS PARA BANCO DE DADOS)
+# patient_exercises_db = {
+#     1: [  # Paciente Edgar - Problema de ombro
+#         {
+#             "id": 1001,
+#             "title": "Rotação de ombro",
+#             "description": "Movimentos circulares suaves para fortalecer ombro",
+#             "points_value": 15,
+#             "frequency_per_week": 3,
+#             "is_active": True,
+#             "created_at": "2026-04-24T00:00:00"
+#         },
+#         {
+#             "id": 1002,
+#             "title": "Elevação lateral",
+#             "description": "Levantar braços lateralmente até altura dos ombros",
+#             "points_value": 20,
+#             "frequency_per_week": 2,
+#             "is_active": True,
+#             "created_at": "2026-04-24T00:00:00"
+#         }
+#     ],
+#     2: [  # Paciente Vinícius - Problema de perna
+#         {
+#             "id": 2001,
+#             "title": "Agachamento parcial",
+#             "description": "Agachar até 45 graus para fortalecer quadríceps",
+#             "points_value": 25,
+#             "frequency_per_week": 4,
+#             "is_active": True,
+#             "created_at": "2026-04-24T00:00:00"
+#         },
+#         {
+#             "id": 2002,
+#             "title": "Elevação de panturrilha",
+#             "description": "Levantar-se na ponta dos pés para fortalecer panturrilhas",
+#             "points_value": 15,
+#             "frequency_per_week": 3,
+#             "is_active": True,
+#             "created_at": "2026-04-24T00:00:00"
+#         }
+#     ],
+#     3: [  # Paciente teste - Exercícios gerais
+#         {
+#             "id": 3001,
+#             "title": "Caminhada leve",
+#             "description": "Caminhar por 15 minutos para aquecimento",
+#             "points_value": 10,
+#             "frequency_per_week": 5,
+#             "is_active": True,
+#             "created_at": "2026-04-24T00:00:00"
+#         }
+#     ]
+# }
 
 # 🔥 **FUNÇÕES DE GERENCIAMENTO DE PONTOS COM RESET DIÁRIO**
 def should_reset_daily(user_id: int):
