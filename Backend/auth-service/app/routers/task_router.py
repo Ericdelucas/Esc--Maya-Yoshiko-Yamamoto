@@ -728,28 +728,45 @@ def complete_task_with_control(task_data: dict = None, current_user: UserOut = D
 def get_user_points(current_user: UserOut = Depends(get_current_user)):
     """Obter pontos do usuário atual - USUÁRIO REAL DO LOGIN"""
     
-    # 🔥 **PEGAR NOME REAL DO USUÁRIO DO TOKEN**
-    # Extrair nome do email (parte antes do @)
-    # Se o login for "chien@test.com" -> nome será "chien"
-    # Se o login for "007@test.com" -> nome será "007"
-    email_username = current_user.email.split("@")[0]
-    
-    # 🔥 **OBTER PONTOS REAIS DO SISTEMA**
-    # Pega pontos acumulados do usuário (começa do 0 e soma com tarefas)
-    user_data = get_user_points_data(current_user.id)
-    
-    return {
-        "user_id": current_user.id,  # ID real do usuário logado
-        "username": email_username,  # Nome real baseado no login
-        "total_points": user_data["total_points"],  # 🔥 PONTOS REAIS ACUMULADOS
-        "tasks_completed": user_data["tasks_completed"],  # 🔥 TAREFAS REAIS COMPLETADAS
-        "current_streak": user_data["current_streak"],  # 🔥 SEQUÊNCIA REAL
-        "weekly_points": user_data["weekly_points"],  # Pontos da semana
-        "monthly_points": user_data["monthly_points"],  # Pontos do mês
-        "level": user_data["level"],  # 🔥 NÍVEL REAL BASEADO EM PONTOS
-        "next_level_points": user_data["next_level_points"],  # Próximo nível
-        "badges": user_data["badges"]  # 🔥 BADGES REAIS CONQUISTADOS
-    }
+    try:
+        # 🔥 **PEGAR NOME REAL DO USUÁRIO DO TOKEN**
+        # Extrair nome do email (parte antes do @)
+        # Se o login for "chien@test.com" -> nome será "chien"
+        # Se o login for "007@test.com" -> nome será "007"
+        email_username = current_user.email.split("@")[0]
+        
+        # 🔥 **OBTER PONTOS REAIS DO SISTEMA**
+        # Pega pontos acumulados do usuário (começa do 0 e soma com tarefas)
+        user_data = get_user_points_data(current_user.id)
+        
+        return {
+            "user_id": current_user.id,  # ID real do usuário logado
+            "username": email_username,  # Nome real baseado no login
+            "total_points": user_data["total_points"],  # 🔥 PONTOS REAIS ACUMULADOS
+            "tasks_completed": user_data["tasks_completed"],  # 🔥 TAREFAS REAIS COMPLETADAS
+            "current_streak": user_data["current_streak"],  # 🔥 SEQUÊNCIA REAL
+            "weekly_points": user_data["weekly_points"],  # Pontos da semana
+            "monthly_points": user_data["monthly_points"],  # Pontos do mês
+            "level": user_data["level"],  # 🔥 NÍVEL REAL BASEADO EM PONTOS
+            "next_level_points": user_data["next_level_points"],  # Próximo nível
+            "badges": user_data["badges"]  # 🔥 BADGES REAIS CONQUISTADOS
+        }
+    except Exception as e:
+        print(f"❌ Erro ao obter pontos do usuário {current_user.id}: {e}")
+        email_username = current_user.email.split("@")[0]
+        
+        return {
+            "user_id": current_user.id,
+            "username": email_username,
+            "total_points": 0,
+            "tasks_completed": 0,
+            "current_streak": 0,
+            "weekly_points": 0,
+            "monthly_points": 0,
+            "level": 1,
+            "next_level_points": 100,
+            "badges": []
+        }
 
 # REMOVIDO - ENDPOINT DUPLICADO
 
@@ -804,19 +821,37 @@ def clear_test_data(current_user: UserOut = Depends(get_current_user)):
 @router.get("/progress/daily")
 def get_daily_progress(current_user: UserOut = Depends(get_current_user)):
     """Obter progresso diário do usuário"""
-    progress_data = get_daily_progress_percentage(current_user.id)
-    
-    print(f"📊 PROGRESSO DIÁRIO - Usuário {current_user.id}:")
-    print(f"   - Completados hoje: {progress_data['completed_today']}")
-    print(f"   - Total diário: {progress_data['total_daily_exercises']}")
-    print(f"   - Porcentagem: {progress_data['progress_percentage']}%")
-    print(f"   - Status: {progress_data['status_message']}")
-    
-    return {
-        "success": True,
-        "message": "Progresso diário carregado com sucesso!",
-        "data": progress_data
-    }
+    try:
+        progress_data = get_daily_progress_percentage(current_user.id)
+        
+        print(f"📊 PROGRESSO DIÁRIO - Usuário {current_user.id}:")
+        print(f"   - Completados hoje: {progress_data['completed_today']}")
+        print(f"   - Total diário: {progress_data['total_daily_exercises']}")
+        print(f"   - Porcentagem: {progress_data['progress_percentage']}%")
+        print(f"   - Status: {progress_data['status_message']}")
+        
+        return {
+            "success": True,
+            "message": "Progresso diário carregado com sucesso!",
+            "data": progress_data
+        }
+    except Exception as e:
+        print(f"❌ Erro ao obter progresso diário: {e}")
+        return {
+            "success": False,
+            "message": "Erro ao carregar progresso diário",
+            "data": {
+                "user_id": current_user.id,
+                "date": date.today().isoformat(),
+                "total_daily_exercises": 0,
+                "completed_today": 0,
+                "remaining_today": 0,
+                "progress_percentage": 0.0,
+                "progress_fraction": "0/0",
+                "is_complete": False,
+                "status_message": "Dados não disponíveis"
+            }
+        }
 
 @router.get("/progress/detailed")
 def get_detailed_progress(current_user: UserOut = Depends(get_current_user)):

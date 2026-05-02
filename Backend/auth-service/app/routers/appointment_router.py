@@ -242,16 +242,43 @@ def get_pending_notifications(
     """Buscar notificações pendentes para o usuário atual"""
     
     try:
-        # Buscar notificações do notification-service
-        import requests
+        # Buscar notificações baseadas em agendamentos
+        from datetime import datetime, timedelta
+        from app.storage.database.base_repository import SessionLocal
+        from app.models.orm.appointment_orm import AppointmentORM
         
-        response = requests.get(f"http://notification-service:8070/notifications/user/{current_user.id}", timeout=5)
-        
-        if response.status_code == 200:
-            notifications = response.json()
+        with SessionLocal() as session:
+            # Buscar agendamentos futuros (próximos 7 dias)
+            future_date = datetime.now() + timedelta(days=7)
+            appointments = session.query(AppointmentORM).filter(
+                AppointmentORM.patient_id == current_user.id,
+                AppointmentORM.status == "scheduled",
+                AppointmentORM.appointment_date <= future_date,
+                AppointmentORM.appointment_date >= datetime.now().date()
+            ).order_by(AppointmentORM.appointment_date).all()
+            
+            notifications = []
+            for apt in appointments:
+                days_until = (apt.appointment_date - datetime.now().date()).days
+                
+                if days_until == 0:
+                    message = f"Consulta hoje: {apt.title} às {apt.time}"
+                elif days_until == 1:
+                    message = f"Consulta amanhã: {apt.title} às {apt.time}"
+                else:
+                    message = f"Consulta em {days_until} dias: {apt.title} às {apt.time}"
+                
+                notifications.append({
+                    "id": f"apt_{apt.id}",
+                    "type": "appointment",
+                    "title": "Lembrete de Consulta",
+                    "message": message,
+                    "date": apt.appointment_date.isoformat(),
+                    "time": apt.time,
+                    "priority": "high" if days_until <= 1 else "medium"
+                })
+            
             return {"notifications": notifications}
-        else:
-            return {"notifications": []}
             
     except Exception as e:
         print(f"❌ Erro ao buscar notificações: {e}")

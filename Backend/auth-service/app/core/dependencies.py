@@ -1,5 +1,6 @@
 from functools import lru_cache
 
+import jwt
 from fastapi import Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
@@ -30,17 +31,38 @@ def get_current_user(
     session=Depends(get_session),
 ) -> UserOut:
     settings = get_settings()
-    payload = decode_access_token(
-        token=creds.credentials,
-        secret_key=settings.jwt_secret,
-        issuer="smartsaude-auth"
-    )
+    try:
+        payload = decode_access_token(
+            token=creds.credentials,
+            secret_key=settings.jwt_secret,
+            issuer="smartsaude-auth"
+        )
+    except jwt.exceptions.ExpiredSignatureError:
+        from fastapi import HTTPException
+        raise HTTPException(
+            status_code=401,
+            detail="Token expired. Please login again.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    except jwt.exceptions.InvalidTokenError:
+        from fastapi import HTTPException
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid token. Please login again.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
     user_id = int(payload["sub"])
 
     repo = UserRepository()
     user = repo.get_by_id(user_id, session)
 
     if user is None:
-        raise ValueError("User not found")
+        from fastapi import HTTPException
+        raise HTTPException(
+            status_code=401,
+            detail="User not found",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
 
     return UserOut(id=user.id, email=user.email, role=user.role)
