@@ -407,33 +407,10 @@ def get_patient_tasks(current_user: UserOut = Depends(get_current_user)):
         exercises = patient_exercises_db[patient_id]
         print(f"   - Encontrados {len(exercises)} exercícios para paciente {patient_id}")
     else:
-        # 🔥 **SE NÃO TIVER, CRIA EXERCÍCIOS PADRÃO COM MÍDIA**
-        exercises = [
-            {
-                "id": 9999,
-                "title": "Exercício básico",
-                "description": "Exercício inicial para novo paciente",
-                "points_value": 15,
-                "frequency_per_week": 3,
-                "is_active": True,
-                "created_at": "2026-04-24T00:00:00",
-                "exercise_image_url": "https://picsum.photos/400/300?random=1",
-                "exercise_video_url": "https://www.w3schools.com/html/mov_bbb.mp4"
-            },
-            {
-                "id": 9998,
-                "title": "Alongamento",
-                "description": "Exercício de alongamento muscular",
-                "points_value": 10,
-                "frequency_per_week": 2,
-                "is_active": True,
-                "created_at": "2026-04-24T00:00:00",
-                "exercise_image_url": "https://picsum.photos/400/300?random=2",
-                "exercise_video_url": "https://www.w3schools.com/html/movie.mp4"
-            }
-        ]
-        patient_exercises_db[patient_id] = exercises
-        print(f"   - Criados exercícios padrão com mídia para paciente {patient_id}")
+        # 🔥 **SE NÃO TIVER, RETORNA LISTA VAZIA**
+        exercises = []
+        print(f"   - Nenhum exercício encontrado para paciente {patient_id}")
+        # Não cria mais exercícios padrão automaticamente
     
     return {
         "success": True,
@@ -642,34 +619,11 @@ def test_endpoint(current_user: UserOut = Depends(get_current_user), db: Session
         exercises.append(exercise)
         print(f"   - Exercício {task.id}: {task.title} (Vídeo: {task.exercise_video_url})")
     
-    # 🔥 **SE NÃO TIVER NO BANCO, CRIA EXERCÍCIOS PADRÃO**
+    # 🔥 **SE NÃO TIVER NO BANCO, RETORNA LISTA VAZIA**
     if not exercises:
-        print(f"   - Nenhum exercício no banco, criando padrões...")
-        exercises = [
-            {
-                "id": 9999,
-                "title": "Exercício básico",
-                "description": "Exercício inicial para novo paciente",
-                "points_value": 15,
-                "frequency_per_week": 3,
-                "is_active": True,
-                "created_at": "2026-04-24T00:00:00",
-                "exercise_image_url": "https://picsum.photos/400/300?random=1",
-                "exercise_video_url": "https://www.w3schools.com/html/mov_bbb.mp4"
-            },
-            {
-                "id": 9998,
-                "title": "Alongamento",
-                "description": "Exercício de alongamento muscular",
-                "points_value": 10,
-                "frequency_per_week": 2,
-                "is_active": True,
-                "created_at": "2026-04-24T00:00:00",
-                "exercise_image_url": "https://picsum.photos/400/300?random=2",
-                "exercise_video_url": "https://www.w3schools.com/html/movie.mp4"
-            }
-        ]
-        print(f"   - Criados exercícios padrão para paciente {patient_id}")
+        print(f"   - Nenhum exercício encontrado no banco para paciente {patient_id}")
+        # Não cria mais exercícios padrão automaticamente
+        # Use o endpoint /professional/exercises/initialize para criar dados mockados
     
     return {
         "message": "test working",
