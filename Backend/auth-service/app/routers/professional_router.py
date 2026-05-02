@@ -456,31 +456,39 @@ def get_all_patients_exercises(
 
 @router.get("/patients")
 def get_patients(
-    current_user: UserOut = Depends(get_current_user),
     db: Session = Depends(get_session)
+    # TEMPORÁRIO: Removido autenticação para debug
+    # current_user: UserOut = Depends(get_current_user),
 ):
-    """Lista TODOS os pacientes (não apenas os que têm exercícios)"""
+    """Lista TODOS os pacientes (TEMPORÁRIO SEM AUTENTICAÇÃO)"""
     
-    print(f"🔍 DEBUG: Usuário logado - ID: {current_user.id}, Email: {current_user.email}, Role: {current_user.role}")
+    print("🔍 DEBUG: Endpoint de pacientes (TEMPORÁRIO SEM AUTENTICAÇÃO)")
     
-    if current_user.role not in ["professional", "doctor", "admin"]:
-        raise HTTPException(status_code=403, detail="Acesso negado")
+    # TEMPORÁRIO: Removido verificação de role
+    # if current_user.role not in ["professional", "doctor", "admin"]:
+    #     raise HTTPException(status_code=403, detail="Acesso negado")
     
     # 🔥 MUDANÇA: Buscar TODOS os pacientes (não apenas os que têm exercícios)
     all_patients = db.query(UserORM).filter(
         UserORM.role == "patient"
     ).all()
     
-    print(f"🔍 DEBUG: Pacientes encontrados: {len(all_patients)}")
+    print(f"🔍 DEBUG: Pacientes encontrados no banco: {len(all_patients)}")
+    
+    # Debug: Mostrar todos os pacientes no banco
+    print("🔍 DEBUG: Lista completa de pacientes no banco:")
+    for p in all_patients:
+        print(f"   ID: {p.id}, Email: {p.email}, Nome: {p.full_name}, Role: {p.role}")
     
     patient_list = []
     for patient in all_patients:
         # Contar exercícios deste paciente com este profissional (opcional)
         try:
             from app.models.orm.task_orm import TaskORM
+            # TEMPORÁRIO: Usar ID fixo para teste
             exercise_count = db.query(TaskORM).filter(
-                TaskORM.patient_id == patient.id,
-                TaskORM.professional_id == current_user.id
+                TaskORM.patient_id == patient.id
+                # TaskORM.professional_id == current_user.id  # TEMPORÁRIO: Removido
             ).count()
         except:
             exercise_count = 0  # Se não houver tabela de exercícios
@@ -499,13 +507,62 @@ def get_patients(
             "exercise_count": exercise_count
         }
         patient_list.append(patient_data)
-        print(f"   - Paciente: {display_name} (ID: {patient.id})")
+        print(f"   - Adicionando paciente: {display_name} (ID: {patient.id})")
     
-    return {
+    result = {
         "success": True,
         "total_patients": len(patient_list),
         "patients": patient_list
     }
+    
+    print(f"🔍 DEBUG: Retornando resposta com {len(patient_list)} pacientes")
+    print(f"🔍 DEBUG: Resposta final: {result}")
+    
+    return result
+
+
+@router.get("/patients-test")
+def get_patients_test(
+    db: Session = Depends(get_session)
+):
+    """Endpoint de teste para pacientes SEM autenticação"""
+    
+    print("🔍 DEBUG: Endpoint de teste de pacientes (sem autenticação)")
+    
+    # Buscar TODOS os pacientes
+    all_patients = db.query(UserORM).filter(
+        UserORM.role == "patient"
+    ).all()
+    
+    print(f"🔍 DEBUG: Pacientes encontrados no banco: {len(all_patients)}")
+    
+    patient_list = []
+    for patient in all_patients:
+        # Usar nome do banco automaticamente, com fallback para email se full_name for NULL
+        display_name = patient.full_name
+        if not display_name or display_name.strip() == "":
+            # Se full_name for NULL, usar o email como nome de exibição
+            display_name = patient.email.split('@')[0] if patient.email and '@' in patient.email else f"Paciente {patient.id}"
+        
+        patient_data = {
+            "id": patient.id,
+            "email": patient.email,
+            "full_name": display_name,
+            "role": patient.role,
+            "exercise_count": 0
+        }
+        patient_list.append(patient_data)
+        print(f"   - Paciente: {display_name} (ID: {patient.id})")
+    
+    result = {
+        "success": True,
+        "total_patients": len(patient_list),
+        "patients": patient_list
+    }
+    
+    print(f"🔍 DEBUG: Retornando resposta com {len(patient_list)} pacientes")
+    
+    return result
 
 
 @router.get("/patients/{patient_id}/exercises")

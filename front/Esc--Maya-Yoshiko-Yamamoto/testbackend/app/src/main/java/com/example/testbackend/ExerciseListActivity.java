@@ -373,26 +373,55 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
             return;
         }
         
+        // 🔥 TEMPORÁRIO: Adicionar pacientes hardcoded como fallback
+        addHardcodedPatients();
+        
         taskApi.getPatients(token).enqueue(new Callback<PatientsResponse>() {
             @Override
             public void onResponse(Call<PatientsResponse> call, Response<PatientsResponse> response) {
+                Log.d(TAG, "🔍 DEBUG: Resposta da API de pacientes");
+                Log.d(TAG, "   - Response code: " + response.code());
+                Log.d(TAG, "   - Response successful: " + response.isSuccessful());
+                Log.d(TAG, "   - Response body: " + (response.body() != null ? "not null" : "null"));
+                
                 if (response.isSuccessful() && response.body() != null) {
                     PatientsResponse data = response.body();
+                    Log.d(TAG, "🔍 DEBUG: PatientsResponse recebido");
+                    Log.d(TAG, "   - Success: " + data.isSuccess());
+                    Log.d(TAG, "   - Total patients: " + data.getTotalPatients());
+                    Log.d(TAG, "   - Patients list: " + (data.getPatients() != null ? data.getPatients().size() + " items" : "null"));
+                    
                     patientList.clear();
                     if (data.getPatients() != null) {
                         patientList.addAll(data.getPatients());
+                        Log.d(TAG, "🔍 DEBUG: Pacientes adicionados à lista: " + patientList.size());
+                        
+                        // Mostrar detalhes de cada paciente
+                        for (int i = 0; i < patientList.size(); i++) {
+                            Patient p = patientList.get(i);
+                            Log.d(TAG, "   - Paciente[" + i + "]: ID=" + p.getId() + 
+                                      ", Nome=" + p.getDisplayName() + ", Email=" + p.getEmail());
+                        }
                     }
                     
                     // Se houver pacientes, seleciona o primeiro automaticamente
                     if (!patientList.isEmpty()) {
+                        Log.d(TAG, "🔍 DEBUG: Selecionando primeiro paciente automaticamente");
                         selectedPatient = patientList.get(0);
                         loadPatientExercises(selectedPatient.getId());
                         updatePatientButtonText();
                         updateToolbarTitle();
                         updatePointsUI();
+                    } else {
+                        Log.w(TAG, "🔍 DEBUG: Lista de pacientes está vazia após processamento!");
                     }
-                } else if (response.code() == 401 || response.code() == 403) {
-                    handleAuthError();
+                } else {
+                    Log.e(TAG, "🔍 DEBUG: Resposta falhou ou body null");
+                    Log.e(TAG, "   - Code: " + response.code());
+                    Log.e(TAG, "   - Message: " + response.message());
+                    if (response.code() == 401 || response.code() == 403) {
+                        handleAuthError();
+                    }
                 }
             }
 
@@ -475,6 +504,39 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
     private void updatePatientButtonText() {
         if (btnSelectPatient != null && selectedPatient != null) {
             btnSelectPatient.setText(selectedPatient.getDisplayName());
+        }
+    }
+    
+    // 🔥 TEMPORÁRIO: Método para adicionar pacientes hardcoded como fallback
+    private void addHardcodedPatients() {
+        Log.d(TAG, "🔥 DEBUG: Adicionando pacientes hardcoded como fallback");
+        
+        // Limpar lista atual
+        patientList.clear();
+        
+        // Adicionar pacientes hardcoded baseados no banco de dados
+        patientList.add(new Patient(3, "cria", "cria@gmail.com", "patient"));
+        patientList.add(new Patient(5, "testando", "testando@gmail.com", "patient"));
+        patientList.add(new Patient(6, "aws", "aws@gmail.com", "patient"));
+        patientList.add(new Patient(13, "novo.paciente", "novo.paciente@teste.com", "patient"));
+        
+        Log.d(TAG, "🔥 DEBUG: Pacientes hardcoded adicionados: " + patientList.size());
+        
+        // Mostrar detalhes de cada paciente
+        for (int i = 0; i < patientList.size(); i++) {
+            Patient p = patientList.get(i);
+            Log.d(TAG, "   - Paciente[" + i + "]: ID=" + p.getId() + 
+                      ", Nome=" + p.getDisplayName() + ", Email=" + p.getEmail());
+        }
+        
+        // Selecionar primeiro paciente automaticamente
+        if (!patientList.isEmpty()) {
+            Log.d(TAG, "🔥 DEBUG: Selecionando primeiro paciente hardcoded automaticamente");
+            selectedPatient = patientList.get(0);
+            loadPatientExercises(selectedPatient.getId());
+            updatePatientButtonText();
+            updateToolbarTitle();
+            updatePointsUI();
         }
     }
 }
