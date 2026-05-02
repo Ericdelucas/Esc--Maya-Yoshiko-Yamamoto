@@ -454,6 +454,72 @@ def get_all_patients_exercises(
     }
 
 
+@router.get("/patients")
+def get_patients(
+    current_user: UserOut = Depends(get_current_user),
+    db: Session = Depends(get_session)
+):
+    """Lista todos os pacientes disponíveis para o profissional"""
+    
+    if current_user.role not in ["professional", "doctor", "admin"]:
+        raise HTTPException(status_code=403, detail="Acesso negado")
+    
+    # Buscar todos os pacientes
+    patients = db.query(UserORM).filter(
+        UserORM.role == "patient"
+    ).all()
+    
+    patient_list = []
+    for patient in patients:
+        patient_data = {
+            "id": patient.id,
+            "email": patient.email,
+            "full_name": patient.full_name or f"Paciente {patient.id}",
+            "role": patient.role
+        }
+        patient_list.append(patient_data)
+    
+    return {
+        "success": True,
+        "total_patients": len(patient_list),
+        "patients": patient_list
+    }
+
+
+@router.get("/patients/{patient_id}/exercises")
+def get_patient_exercises(
+    patient_id: int,
+    current_user: UserOut = Depends(get_current_user),
+    db: Session = Depends(get_session)
+):
+    """Obter exercícios de um paciente específico"""
+    
+    if current_user.role not in ["professional", "doctor", "admin"]:
+        raise HTTPException(status_code=403, detail="Acesso negado")
+    
+    # Verificar se o paciente existe
+    patient = db.query(UserORM).filter(
+        UserORM.id == patient_id,
+        UserORM.role == "patient"
+    ).first()
+    
+    if not patient:
+        raise HTTPException(status_code=404, detail="Paciente não encontrado")
+    
+    # Buscar exercícios do paciente
+    from app.services.exercise_service import ExerciseService
+    exercise_service = ExerciseService()
+    exercises = exercise_service.get_exercises_by_patient(patient_id, db)
+    
+    return {
+        "success": True,
+        "patient_id": patient_id,
+        "patient_name": patient.full_name or f"Paciente {patient_id}",
+        "total_exercises": len(exercises),
+        "exercises": exercises
+    }
+
+
 @router.post("/exercises/initialize")
 def initialize_exercises(
     current_user: UserOut = Depends(get_current_user),

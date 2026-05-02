@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +22,9 @@ import com.example.testbackend.models.TaskCompletionResponse;
 import com.example.testbackend.models.TestTasksResponse;
 import com.example.testbackend.models.UserPointsResponse;
 import com.example.testbackend.models.DeleteExerciseResponse;
+import com.example.testbackend.models.Patient;
+import com.example.testbackend.models.PatientsResponse;
+import com.example.testbackend.models.PatientExercisesResponse;
 import com.example.testbackend.network.ApiClient;
 import com.example.testbackend.network.TaskApi;
 import com.example.testbackend.utils.LocaleHelper;
@@ -41,11 +45,14 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
     private RecyclerView rvExercises;
     private SwipeRefreshLayout swipeRefresh;
     private TextView tvUserPoints;
+    private Button btnSelectPatient;
     private TaskWithRadioAdapter adapter;
     private List<Task> taskList = new ArrayList<>();
-        private TokenManager tokenManager;
+    private List<Patient> patientList = new ArrayList<>();
+    private TokenManager tokenManager;
     private TaskApi taskApi;
     private UserPointsResponse currentUserPoints;
+    private Patient selectedPatient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +66,7 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
 
             setupToolbar();
             initViews();
-            loadPatientTasks();
+            loadPatients();
             updateUserPoints(); 
         } catch (Exception e) {
             Log.e(TAG, "Erro fatal no onCreate: " + e.getMessage(), e);
@@ -84,6 +91,7 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
         swipeRefresh = findViewById(R.id.swipeRefresh);
         rvExercises = findViewById(R.id.rvExercises);
         tvUserPoints = findViewById(R.id.tvUserPoints);
+        btnSelectPatient = findViewById(R.id.btnSelectPatient);
         
         if (rvExercises != null) {
             rvExercises.setLayoutManager(new LinearLayoutManager(this));
@@ -93,6 +101,10 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
 
         if (swipeRefresh != null) {
             swipeRefresh.setOnRefreshListener(this::refreshData);
+        }
+
+        if (btnSelectPatient != null) {
+            btnSelectPatient.setOnClickListener(v -> showPatientSelectionDialog());
         }
     }
 
@@ -337,5 +349,116 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(LocaleHelper.onAttach(newBase));
+    }
+
+    private void loadPatients() {
+        String token = tokenManager.getAuthToken();
+        if (token == null || taskApi == null) {
+            if (token == null) handleAuthError();
+            return;
+        }
+        
+        taskApi.getPatients(token).enqueue(new Callback<PatientsResponse>() {
+            @Override
+            public void onResponse(Call<PatientsResponse> call, Response<PatientsResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    PatientsResponse data = response.body();
+                    patientList.clear();
+                    if (data.getPatients() != null) {
+                        patientList.addAll(data.getPatients());
+                    }
+                    
+                    // Se houver pacientes, seleciona o primeiro automaticamente
+                    if (!patientList.isEmpty()) {
+                        selectedPatient = patientList.get(0);
+                        loadPatientExercises(selectedPatient.getId());
+                        updatePatientButtonText();
+                    }
+                } else if (response.code() == 401 || response.code() == 403) {
+                    handleAuthError();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PatientsResponse> call, Throwable t) {
+                Log.e(TAG, "Falha ao carregar pacientes: " + t.getMessage());
+                Toast.makeText(ExerciseListActivity.this, "Erro ao carregar pacientes", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void showPatientSelectionDialog() {
+        if (patientList.isEmpty()) {
+            Toast.makeText(this, "Nenhum paciente disponível", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String[] patientNames = new String[patientList.size()];
+        for (int i = 0; i < patientList.size(); i++) {
+            patientNames[i] = patientList.get(i).getFullName();
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Selecione um Paciente");
+        builder.setItems(patientNames, (dialog, which) -> {
+            selectedPatient = patientList.get(which);
+            loadPatientExercises(selectedPatient.getId());
+            updatePatientButtonText();
+            Toast.makeText(this, "Paciente selecionado: " + selectedPatient.getFullName(), Toast.LENGTH_SHORT).show();
+        });
+        builder.show();
+    }
+
+    private void loadPatientExercises(int patientId) {
+        String token = tokenManager.getAuthToken();
+        if (token == null || taskApi == null) {
+            if (token == null) handleAuthError();
+            return;
+        }
+        
+        if (swipeRefresh != null) swipeRefresh.setRefreshing(true);
+        
+        taskApi.getPatientExercises(token, patientId).enqueue(new Callback<PatientExercisesResponse>() {
+            @Override
+            public void onResponse(Call<PatientExercisesResponse> call, Response<PatientExercisesResponse> response) {
+                if (swipeRefresh != null) swipeRefresh.setRefreshing(false);
+                if (isFinishing()) return;
+                
+                if (response.isSuccessful() && response.body() != null) {
+                    PatientExercisesResponse data = response.body();
+                    List<Task> exercises = data.getExercises();
+                    
+                    taskList.clear();
+                    if (exercises != null) {
+                        taskList.addAll(exercises);
+                    }
+                    
+                    if (rvExercises != null) {
+                        adapter = new TaskWithRadioAdapter(taskList, ExerciseListActivity.this, ExerciseListActivity.this);
+                        rvExercises.setAdapter(adapter);
+                    }
+                    
+                    // Atualizar título com nome do paciente
+                    if (getSupportActionBar() != null && selectedPatient != null) {
+                        getSupportActionBar().setTitle("Exercícios: " + selectedPatient.getFullName());
+                    }
+                } else if (response.code() == 401 || response.code() == 403) {
+                    handleAuthError();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PatientExercisesResponse> call, Throwable t) {
+                if (swipeRefresh != null) swipeRefresh.setRefreshing(false);
+                Log.e(TAG, "Falha ao carregar exercícios do paciente: " + t.getMessage());
+                Toast.makeText(ExerciseListActivity.this, "Erro ao carregar exercícios", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void updatePatientButtonText() {
+        if (btnSelectPatient != null && selectedPatient != null) {
+            btnSelectPatient.setText(selectedPatient.getFullName());
+        }
     }
 }

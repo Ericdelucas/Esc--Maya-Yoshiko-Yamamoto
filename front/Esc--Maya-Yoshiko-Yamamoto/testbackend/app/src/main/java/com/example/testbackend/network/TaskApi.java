@@ -4,7 +4,10 @@ import com.example.testbackend.models.DailyProgressResponse;
 import com.example.testbackend.models.DeleteExerciseResponse;
 import com.example.testbackend.models.LeaderboardEntry;
 import com.example.testbackend.models.ManageExercisesResponse;
+import com.example.testbackend.models.Patient;
+import com.example.testbackend.models.PatientExercisesResponse;
 import com.example.testbackend.models.PatientTasksResponse;
+import com.example.testbackend.models.PatientsResponse;
 import com.example.testbackend.models.ProfessionalExercisesResponse;
 import com.example.testbackend.models.Task;
 import com.example.testbackend.models.TaskCompletion;
@@ -92,5 +95,17 @@ public interface TaskApi {
     Call<DeleteExerciseResponse> deleteExerciseProfessional(
         @Header("Authorization") String token,
         @Path("exercise_id") int exerciseId
+    );
+
+    // 🔥 MÉTODOS PARA SELEÇÃO DE PACIENTES
+    @GET("professional/patients")
+    Call<PatientsResponse> getPatients(
+        @Header("Authorization") String token
+    );
+
+    @GET("professional/patients/{patient_id}/exercises")
+    Call<PatientExercisesResponse> getPatientExercises(
+        @Header("Authorization") String token,
+        @Path("patient_id") int patientId
     );
 }
