@@ -395,7 +395,7 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
 
         String[] patientNames = new String[patientList.size()];
         for (int i = 0; i < patientList.size(); i++) {
-            patientNames[i] = patientList.get(i).getFullName();
+            patientNames[i] = patientList.get(i).getDisplayName();
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -404,7 +404,7 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
             selectedPatient = patientList.get(which);
             loadPatientExercises(selectedPatient.getId());
             updatePatientButtonText();
-            Toast.makeText(this, "Paciente selecionado: " + selectedPatient.getFullName(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Paciente selecionado: " + selectedPatient.getDisplayName(), Toast.LENGTH_SHORT).show();
         });
         builder.show();
     }
@@ -440,7 +440,7 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
                     
                     // Atualizar título com nome do paciente
                     if (getSupportActionBar() != null && selectedPatient != null) {
-                        getSupportActionBar().setTitle("Exercícios: " + selectedPatient.getFullName());
+                        getSupportActionBar().setTitle("Exercícios: " + selectedPatient.getDisplayName());
                     }
                 } else if (response.code() == 401 || response.code() == 403) {
                     handleAuthError();
@@ -458,7 +458,7 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
 
     private void updatePatientButtonText() {
         if (btnSelectPatient != null && selectedPatient != null) {
-            btnSelectPatient.setText(selectedPatient.getFullName());
+            btnSelectPatient.setText(selectedPatient.getDisplayName());
         }
     }
 }

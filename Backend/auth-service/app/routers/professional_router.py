@@ -459,23 +459,40 @@ def get_patients(
     current_user: UserOut = Depends(get_current_user),
     db: Session = Depends(get_session)
 ):
-    """Lista todos os pacientes disponíveis para o profissional"""
+    """Lista apenas pacientes que têm exercícios com este profissional"""
+    
+    print(f"🔍 DEBUG: Usuário logado - ID: {current_user.id}, Email: {current_user.email}, Role: {current_user.role}")
     
     if current_user.role not in ["professional", "doctor", "admin"]:
         raise HTTPException(status_code=403, detail="Acesso negado")
     
-    # Buscar todos os pacientes
-    patients = db.query(UserORM).filter(
-        UserORM.role == "patient"
-    ).all()
+    # Buscar apenas pacientes que têm exercícios atribuídos por este profissional
+    from app.models.orm.task_orm import TaskORM
+    
+    # Usar DISTINCT para evitar duplicatas
+    patients_with_exercises = db.query(UserORM).join(
+        TaskORM, UserORM.id == TaskORM.patient_id
+    ).filter(
+        UserORM.role == "patient",
+        TaskORM.professional_id == current_user.id
+    ).distinct().all()
+    
+    print(f"🔍 DEBUG: Pacientes encontrados: {len(patients_with_exercises)}")
     
     patient_list = []
-    for patient in patients:
+    for patient in patients_with_exercises:
+        # Contar exercícios deste paciente com este profissional
+        exercise_count = db.query(TaskORM).filter(
+            TaskORM.patient_id == patient.id,
+            TaskORM.professional_id == current_user.id
+        ).count()
+        
         patient_data = {
             "id": patient.id,
             "email": patient.email,
             "full_name": patient.full_name or f"Paciente {patient.id}",
-            "role": patient.role
+            "role": patient.role,
+            "exercise_count": exercise_count
         }
         patient_list.append(patient_data)
     
