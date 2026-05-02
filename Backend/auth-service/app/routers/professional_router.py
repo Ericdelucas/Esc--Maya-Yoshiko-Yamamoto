@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Header
 from sqlalchemy.orm import Session
-from sqlalchemy import func, and_
+from sqlalchemy import func, and_, text
 from app.core.dependencies import get_current_user, get_session
 from app.models.schemas.dashboard_stats import DashboardStatsOut
 from app.models.schemas.user_schema import UserOut, PatientOut
