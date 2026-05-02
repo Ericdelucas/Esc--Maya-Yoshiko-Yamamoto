@@ -98,6 +98,109 @@ def get_patients(
     return patient_list
 
 
+@router.delete("/pacientes/{patient_id}")
+def delete_patient(
+    patient_id: int,
+    current_user: dict = Depends(get_current_user),
+    db: Session = Depends(get_session)
+):
+    """Deleta um paciente (apenas para profissionais)"""
+    
+    # Verificar se é profissional
+    if current_user.role not in ["professional", "doctor", "admin"]:
+        raise HTTPException(status_code=403, detail="Acesso negado")
+    
+    # Buscar paciente
+    patient = db.query(UserORM).filter(
+        UserORM.id == patient_id,
+        UserORM.role == "patient"
+    ).first()
+    
+    if not patient:
+        raise HTTPException(status_code=404, detail="Paciente não encontrado")
+    
+    try:
+        # Deletar dados relacionados ao paciente (health_tools, health_questionnaires)
+        # Deletar questionários
+        db.query(HealthQuestionnaireORM).filter(
+            HealthQuestionnaireORM.user_id == patient_id
+        ).delete()
+        
+        # Deletar health tools (IMCs, etc.)
+        db.query(HealthToolsORM).filter(
+            HealthToolsORM.user_id == patient_id
+        ).delete()
+        
+        # Deletar agendamentos do paciente
+        db.query(AppointmentORM).filter(
+            AppointmentORM.patient_id == patient_id
+        ).delete()
+        
+        # Deletar paciente
+        db.delete(patient)
+        db.commit()
+        
+        print(f"🔥 PACIENTE DELETADO: {patient.email} (ID: {patient_id}) pelo profissional {current_user.email}")
+        
+        return {
+            "success": True,
+            "message": f"Paciente {patient.email} deletado com sucesso"
+        }
+        
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Erro ao deletar paciente: {str(e)}")
+
+
+@router.delete("/pacientes/{patient_id}/test")
+def delete_patient_test(
+    patient_id: int,
+    db: Session = Depends(get_session)
+):
+    """Deleta um paciente (SEM AUTENTICAÇÃO PARA TESTE)"""
+    
+    # Buscar paciente
+    patient = db.query(UserORM).filter(
+        UserORM.id == patient_id,
+        UserORM.role == "patient"
+    ).first()
+    
+    if not patient:
+        raise HTTPException(status_code=404, detail="Paciente não encontrado")
+    
+    try:
+        # Deletar dados relacionados ao paciente (health_tools, health_questionnaires)
+        # Deletar questionários
+        db.query(HealthQuestionnaireORM).filter(
+            HealthQuestionnaireORM.user_id == patient_id
+        ).delete()
+        
+        # Deletar health tools (IMCs, etc.)
+        db.query(HealthToolsORM).filter(
+            HealthToolsORM.user_id == patient_id
+        ).delete()
+        
+        # Deletar agendamentos do paciente
+        db.query(AppointmentORM).filter(
+            AppointmentORM.patient_id == patient_id
+        ).delete()
+        
+        # Deletar paciente
+        db.delete(patient)
+        db.commit()
+        
+        print(f"🔥 PACIENTE DELETADO (TESTE): {patient.email} (ID: {patient_id})")
+        
+        return {
+            "success": True,
+            "message": f"Paciente {patient.email} deletado com sucesso (TESTE)"
+        }
+        
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Erro ao deletar paciente: {str(e)}")
+
+
 @router.get("/pacientes/{patient_id}/health-tools")
 def get_patient_health_tools(
     patient_id: int,
