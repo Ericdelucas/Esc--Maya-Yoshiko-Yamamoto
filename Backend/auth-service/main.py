@@ -41,12 +41,49 @@ def create_app() -> FastAPI:
     app.include_router(patient_health_router, tags=["patient-health"])
     app.include_router(patient_router, tags=["patient"])
     
-    # Configurar arquivos estáticos para fotos de perfil (usar diretório temporário no Render)
-    import tempfile
-    profile_photos_dir = tempfile.mkdtemp(prefix="profile_photos_")
+    # Configurar arquivos estáticos para fotos de perfil (usar diretório persistente)
+    # Render permite escrita em /tmp, então usamos isso para persistência
+    profile_photos_dir = "/tmp/profile_photos"
     os.makedirs(profile_photos_dir, exist_ok=True)
     
+    print(f"📁 Profile photos directory: {profile_photos_dir}")
+    
     app.mount("/media/profiles", StaticFiles(directory=profile_photos_dir), name="profile_photos")
+    
+    # Endpoint para debug de fotos de perfil
+    @app.get("/media/profiles/debug")
+    def debug_profile_photos():
+        try:
+            import os
+            files = os.listdir(profile_photos_dir)
+            return {
+                "directory": profile_photos_dir,
+                "exists": os.path.exists(profile_photos_dir),
+                "files": files,
+                "count": len(files)
+            }
+        except Exception as e:
+            return {
+                "error": str(e),
+                "directory": profile_photos_dir
+            }
+    
+    # Endpoint fallback para fotos ausentes
+    @app.get("/media/profiles/{filename}")
+    def get_profile_photo_fallback(filename: str):
+        from fastapi import HTTPException
+        import os
+        from fastapi.responses import Response
+        
+        file_path = os.path.join(profile_photos_dir, filename)
+        
+        if not os.path.exists(file_path):
+            # Retornar imagem padrão (1x1 pixel transparente)
+            transparent_pixel = b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f\x15\xc4\x89\x00\x00\x00\rIDATx\x9cc\xf8\x00\x00\x00\x01\x00\x01\x00\x00\x00\x00IEND\xaeB`\x82'
+            return Response(content=transparent_pixel, media_type="image/png")
+        
+        # Se o arquivo existe, deixar o StaticFiles lidar com isso
+        raise HTTPException(status_code=404, detail="File not found")
     
     return app
 
