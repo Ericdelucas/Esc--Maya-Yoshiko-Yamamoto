@@ -975,11 +975,11 @@ def get_patient_tasks(
 
 @router.get("/professional/list", response_model=List[TaskOut])
 def get_professional_tasks(
-    current_user: dict = Depends(require_permission(TASK_READ)),
+    current_user: UserOut = Depends(require_permission(TASK_READ)),
     db: Session = Depends(get_session)
 ):
     """Obter tarefas criadas pelo profissional"""
-    professional_id = current_user.get("sub")
+    professional_id = current_user.id
     return task_service.get_tasks_by_professional(professional_id, db)
 
 
@@ -1003,13 +1003,13 @@ def complete_task(
 @router.get("/patient/{patient_id}/daily", response_model=List[TaskOut])
 def get_daily_tasks(
     patient_id: int,
-    current_user: dict = Depends(require_permission(TASK_READ)),
+    current_user: UserOut = Depends(require_permission(TASK_READ)),
     db: Session = Depends(get_session)
 ):
     """Obter tarefas diárias que podem ser completadas hoje"""
     # Verificar permissão
-    user_role = current_user.get("role", "").lower()
-    user_id = current_user.get("sub")
+    user_role = current_user.role.lower()
+    user_id = current_user.id
     
     if user_role == "patient" and user_id != patient_id:
         raise HTTPException(
@@ -1025,13 +1025,13 @@ def get_daily_tasks(
 @router.get("/points/{user_id}", response_model=UserPointsOut)
 def get_user_points(
     user_id: int,
-    current_user: dict = Depends(require_permission(TASK_READ)),
+    current_user: UserOut = Depends(require_permission(TASK_READ)),
     db: Session = Depends(get_session)
 ):
     """Obter pontos do usuário"""
     # Verificar se o usuário pode ver os pontos
-    user_role = current_user.get("role", "").lower()
-    current_user_id = current_user.get("sub")
+    user_role = current_user.role.lower()
+    current_user_id = current_user.id
     
     if user_role == "patient" and current_user_id != user_id:
         raise HTTPException(
@@ -1052,13 +1052,13 @@ def get_user_points(
 def get_points_history(
     user_id: int,
     limit: int = Query(default=50, ge=1, le=100),
-    current_user: dict = Depends(require_permission(TASK_READ)),
+    current_user: UserOut = Depends(require_permission(TASK_READ)),
     db: Session = Depends(get_session)
 ):
     """Obter histórico de pontos do usuário"""
     # Verificar permissão
-    user_role = current_user.get("role", "").lower()
-    current_user_id = current_user.get("sub")
+    user_role = current_user.role.lower()
+    current_user_id = current_user.id
     
     if user_role == "patient" and current_user_id != user_id:
         raise HTTPException(
@@ -1069,12 +1069,12 @@ def get_points_history(
     return task_service.get_points_history(user_id, db, limit)
 
 
-@router.post("/points/{user_id}/bonus")
+@router.post("/points/{user_id}/bonus", response_model=dict)
 def add_bonus_points(
     user_id: int,
     points: int,
     description: str,
-    current_user: dict = Depends(require_permission(USER_MANAGE)),
+    current_user: UserOut = Depends(require_permission(USER_MANAGE)),
     db: Session = Depends(get_session)
 ):
     """Adicionar pontos de bônus (admin)"""
@@ -1098,7 +1098,7 @@ def add_bonus_points(
 @router.get("/challenges", response_model=List[GlobalChallengeOut])
 def get_global_challenges(
     active_only: bool = Query(default=True),
-    current_user: dict = Depends(require_permission(TASK_READ)),
+    current_user: UserOut = Depends(require_permission(TASK_READ)),
     db: Session = Depends(get_session)
 ):
     """Obter desafios globais"""
@@ -1108,11 +1108,11 @@ def get_global_challenges(
 @router.post("/challenges/join", response_model=ChallengeParticipationOut)
 def join_challenge(
     participation_data: ChallengeParticipationCreate,
-    current_user: dict = Depends(require_permission(TASK_READ)),
+    current_user: UserOut = Depends(require_permission(TASK_READ)),
     db: Session = Depends(get_session)
 ):
     """Participar de um desafio global"""
-    user_id = current_user.get("sub")
+    user_id = current_user.id
     participation = task_service.join_challenge(user_id, participation_data.challenge_id, db)
     if not participation:
         raise HTTPException(
@@ -1124,11 +1124,11 @@ def join_challenge(
 
 @router.get("/challenges/my", response_model=List[ChallengeParticipationOut])
 def get_user_challenges(
-    current_user: dict = Depends(require_permission(TASK_READ)),
+    current_user: UserOut = Depends(require_permission(TASK_READ)),
     db: Session = Depends(get_session)
 ):
     """Obter desafios do usuário"""
-    user_id = current_user.get("sub")
+    user_id = current_user.id
     return task_service.get_user_challenges(user_id, db)
 
 
@@ -1137,17 +1137,17 @@ def get_user_challenges(
 @router.get("/stats", response_model=TaskStats)
 def get_task_stats(
     patient_id: Optional[int] = Query(None),
-    current_user: dict = Depends(require_permission(TASK_READ)),
+    current_user: UserOut = Depends(require_permission(TASK_READ)),
     db: Session = Depends(get_session)
 ):
     """Obter estatísticas de tarefas"""
-    user_role = current_user.get("role", "").lower()
+    user_role = current_user.role.lower()
     professional_id = None
     
     if user_role == "professional":
-        professional_id = current_user.get("sub")
+        professional_id = current_user.id
     elif user_role == "patient":
-        patient_id = current_user.get("sub")
+        patient_id = current_user.id
     elif user_role in ["admin", "doctor"]:
         # Admin pode ver estatísticas de qualquer paciente se especificado
         pass

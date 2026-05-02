@@ -15,7 +15,7 @@ router = APIRouter(prefix="/professional")
 
 @router.get("/dashboard-stats")
 def get_dashboard_stats(
-    current_user: dict = Depends(get_current_user),
+    current_user: UserOut = Depends(get_current_user),
     db: Session = Depends(get_session)
 ) -> DashboardStatsOut:
     """Retorna estatísticas do dashboard para profissionais"""
@@ -64,7 +64,7 @@ def get_dashboard_stats(
 
 @router.get("/pacientes")
 def get_patients(
-    current_user: dict = Depends(get_current_user),
+    current_user: UserOut = Depends(get_current_user),
     db: Session = Depends(get_session)
 ) -> List[PatientOut]:
     """Lista todos os pacientes (apenas para profissionais)"""
@@ -101,7 +101,7 @@ def get_patients(
 @router.delete("/pacientes/{patient_id}")
 def delete_patient(
     patient_id: int,
-    current_user: dict = Depends(get_current_user),
+    current_user: UserOut = Depends(get_current_user),
     db: Session = Depends(get_session)
 ):
     """Deleta um paciente (apenas para profissionais)"""
@@ -204,7 +204,7 @@ def delete_patient_test(
 @router.get("/pacientes/{patient_id}/health-tools")
 def get_patient_health_tools(
     patient_id: int,
-    current_user: dict = Depends(get_current_user),
+    current_user: UserOut = Depends(get_current_user),
     db: Session = Depends(get_session)
 ) -> Dict[str, Any]:
     """Retorna todos os dados das ferramentas de saúde de um paciente específico"""
@@ -388,7 +388,7 @@ def get_patient_health_tools_test(
 
 @router.get("/list")
 def get_professionals(
-    current_user: dict = Depends(get_current_user),
+    current_user: UserOut = Depends(get_current_user),
     db: Session = Depends(get_session)
 ) -> List[dict]:
     """Lista todos os profissionais (para IA ter contexto)"""
@@ -428,7 +428,7 @@ def get_specialty_by_role(role: str) -> str:
 
 @router.get("/exercises/manage")
 def get_all_patients_exercises(
-    current_user: dict = Depends(get_current_user)
+    current_user: UserOut = Depends(get_current_user)
 ):
     """Profissional visualiza todos os exercícios de todos os pacientes para gerenciamento"""
     
@@ -472,7 +472,7 @@ def get_all_patients_exercises(
 @router.delete("/exercises/{exercise_id}")
 def delete_exercise_professional(
     exercise_id: int,
-    current_user: dict = Depends(get_current_user)
+    current_user: UserOut = Depends(get_current_user)
 ):
     """Profissional deleta exercício específico"""
     
