@@ -81,9 +81,19 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
             setSupportActionBar(toolbar);
             if (getSupportActionBar() != null) {
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                getSupportActionBar().setTitle("Meus Exercícios");
+                updateToolbarTitle();
             }
             toolbar.setNavigationOnClickListener(v -> onBackPressed());
+        }
+    }
+
+    private void updateToolbarTitle() {
+        if (getSupportActionBar() != null) {
+            if (selectedPatient != null) {
+                getSupportActionBar().setTitle("Exercícios: " + selectedPatient.getDisplayName());
+            } else {
+                getSupportActionBar().setTitle("Meus Exercícios");
+            }
         }
     }
 
@@ -253,8 +263,13 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
             
             if (userName == null || userName.isEmpty()) userName = "Usuário";
 
+            String patientInfo = "";
+            if (selectedPatient != null) {
+                patientInfo = " [" + selectedPatient.getDisplayName() + "]";
+            }
+
             tvUserPoints.setText("🏆 " + userName + " | Pontos: " + currentUserPoints.getTotalPoints() + 
-                               " | Nível: " + currentUserPoints.getLevel());
+                               " | Nível: " + currentUserPoints.getLevel() + patientInfo);
             tvUserPoints.setVisibility(View.VISIBLE);
         }
     }
@@ -373,6 +388,8 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
                         selectedPatient = patientList.get(0);
                         loadPatientExercises(selectedPatient.getId());
                         updatePatientButtonText();
+                        updateToolbarTitle();
+                        updatePointsUI();
                     }
                 } else if (response.code() == 401 || response.code() == 403) {
                     handleAuthError();
@@ -404,6 +421,7 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
             selectedPatient = patientList.get(which);
             loadPatientExercises(selectedPatient.getId());
             updatePatientButtonText();
+            updateToolbarTitle();
             Toast.makeText(this, "Paciente selecionado: " + selectedPatient.getDisplayName(), Toast.LENGTH_SHORT).show();
         });
         builder.show();
@@ -439,9 +457,7 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
                     }
                     
                     // Atualizar título com nome do paciente
-                    if (getSupportActionBar() != null && selectedPatient != null) {
-                        getSupportActionBar().setTitle("Exercícios: " + selectedPatient.getDisplayName());
-                    }
+                    updateToolbarTitle();
                 } else if (response.code() == 401 || response.code() == 403) {
                     handleAuthError();
                 }

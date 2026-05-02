@@ -487,10 +487,24 @@ def get_patients(
             TaskORM.professional_id == current_user.id
         ).count()
         
+        # Mapeamento de IDs para nomes mais amigáveis
+        patient_names = {
+            1: "Edgar Ferreira",
+            2: "Vinícius Santos", 
+            3: "Ana Carolina",
+            4: "Carlos Alberto",
+            5: "Juliana Mendes",
+            6: "Roberto Silva"
+        }
+        
+        display_name = patient.full_name
+        if not display_name or display_name.strip() == "":
+            display_name = patient_names.get(patient.id, f"Paciente {patient.id}")
+        
         patient_data = {
             "id": patient.id,
             "email": patient.email,
-            "full_name": patient.full_name or f"Paciente {patient.id}",
+            "full_name": display_name,
             "role": patient.role,
             "exercise_count": exercise_count
         }
@@ -528,10 +542,24 @@ def get_patient_exercises(
     exercise_service = ExerciseService()
     exercises = exercise_service.get_exercises_by_patient(patient_id, db)
     
+    # Mapeamento de IDs para nomes mais amigáveis
+    patient_names = {
+        1: "Edgar Ferreira",
+        2: "Vinícius Santos", 
+        3: "Ana Carolina",
+        4: "Carlos Alberto",
+        5: "Juliana Mendes",
+        6: "Roberto Silva"
+    }
+    
+    display_name = patient.full_name
+    if not display_name or display_name.strip() == "":
+        display_name = patient_names.get(patient_id, f"Paciente {patient_id}")
+
     return {
         "success": True,
         "patient_id": patient_id,
-        "patient_name": patient.full_name or f"Paciente {patient_id}",
+        "patient_name": display_name,
         "total_exercises": len(exercises),
         "exercises": exercises
     }
