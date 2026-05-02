@@ -41,16 +41,12 @@ def create_app() -> FastAPI:
     app.include_router(patient_health_router, tags=["patient-health"])
     app.include_router(patient_router, tags=["patient"])
     
-    # Configurar arquivos estáticos para fotos de perfil (no final para não conflitar)
-    profile_photos_dir = "/app/storage/profile_photos"
+    # Configurar arquivos estáticos para fotos de perfil (usar diretório temporário no Render)
+    import tempfile
+    profile_photos_dir = tempfile.mkdtemp(prefix="profile_photos_")
     os.makedirs(profile_photos_dir, exist_ok=True)
     
-    print(f"🔍 DEBUG: Montando StaticFiles em /media/profiles -> {profile_photos_dir}")
-    print(f"🔍 DEBUG: Arquivos no diretório: {os.listdir(profile_photos_dir)}")
-    
     app.mount("/media/profiles", StaticFiles(directory=profile_photos_dir), name="profile_photos")
-    
-    print(f"🔍 DEBUG: StaticFiles montado com sucesso")
     
     return app
 
