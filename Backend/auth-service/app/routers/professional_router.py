@@ -459,33 +459,31 @@ def get_patients(
     current_user: UserOut = Depends(get_current_user),
     db: Session = Depends(get_session)
 ):
-    """Lista apenas pacientes que têm exercícios com este profissional"""
+    """Lista TODOS os pacientes (não apenas os que têm exercícios)"""
     
     print(f"🔍 DEBUG: Usuário logado - ID: {current_user.id}, Email: {current_user.email}, Role: {current_user.role}")
     
     if current_user.role not in ["professional", "doctor", "admin"]:
         raise HTTPException(status_code=403, detail="Acesso negado")
     
-    # Buscar apenas pacientes que têm exercícios atribuídos por este profissional
-    from app.models.orm.task_orm import TaskORM
+    # 🔥 MUDANÇA: Buscar TODOS os pacientes (não apenas os que têm exercícios)
+    all_patients = db.query(UserORM).filter(
+        UserORM.role == "patient"
+    ).all()
     
-    # Usar DISTINCT para evitar duplicatas
-    patients_with_exercises = db.query(UserORM).join(
-        TaskORM, UserORM.id == TaskORM.patient_id
-    ).filter(
-        UserORM.role == "patient",
-        TaskORM.professional_id == current_user.id
-    ).distinct().all()
-    
-    print(f"🔍 DEBUG: Pacientes encontrados: {len(patients_with_exercises)}")
+    print(f"🔍 DEBUG: Pacientes encontrados: {len(all_patients)}")
     
     patient_list = []
-    for patient in patients_with_exercises:
-        # Contar exercícios deste paciente com este profissional
-        exercise_count = db.query(TaskORM).filter(
-            TaskORM.patient_id == patient.id,
-            TaskORM.professional_id == current_user.id
-        ).count()
+    for patient in all_patients:
+        # Contar exercícios deste paciente com este profissional (opcional)
+        try:
+            from app.models.orm.task_orm import TaskORM
+            exercise_count = db.query(TaskORM).filter(
+                TaskORM.patient_id == patient.id,
+                TaskORM.professional_id == current_user.id
+            ).count()
+        except:
+            exercise_count = 0  # Se não houver tabela de exercícios
         
         # Usar nome do banco automaticamente, com fallback para email se full_name for NULL
         display_name = patient.full_name
@@ -501,6 +499,7 @@ def get_patients(
             "exercise_count": exercise_count
         }
         patient_list.append(patient_data)
+        print(f"   - Paciente: {display_name} (ID: {patient.id})")
     
     return {
         "success": True,
