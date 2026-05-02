@@ -6,7 +6,7 @@ from app.services.ollama_client import ollama_client
 router = APIRouter()
 
 
-@router.post("/ai/chat", response_model=ChatResponse)
+@router.post("/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest) -> ChatResponse:
     """
     Endpoint principal do assistente SmartSaúde
@@ -56,7 +56,7 @@ async def chat(request: ChatRequest) -> ChatResponse:
         )
 
 
-@router.get("/ai/chat/status")
+@router.get("/chat/status")
 async def chat_status():
     """
     Verifica status do serviço de chat
@@ -79,7 +79,7 @@ async def chat_status():
         }
 
 
-@router.delete("/ai/chat/session/{session_id}")
+@router.delete("/chat/session/{session_id}")
 async def clear_session(session_id: str):
     """
     Limpa memória de uma sessão específica

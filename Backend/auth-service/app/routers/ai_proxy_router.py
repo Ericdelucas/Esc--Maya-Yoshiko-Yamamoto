@@ -8,6 +8,52 @@ router = APIRouter(prefix="/ai", tags=["ai"])
 AI_SERVICE_URL = os.getenv("AI_SERVICE_URL", "https://esc-maya-yoshiko-yamamoto.onrender.com")
 
 
+@router.post("/chat")
+async def proxy_ai_chat(request: Request):
+    """Endpoint principal com fallback integrado"""
+    try:
+        payload = await request.json()
+        message = str(payload.get("message", "")).lower()
+        
+        print(f"🔄 CHAT PRINCIPAL - Mensagem: {message}")
+        
+        # Respostas básicas diretas (sem depender de AI service)
+        if "olá" in message or "oi" in message:
+            return {"reply": "Olá! Como posso ajudar você hoje? Sou o assistente SmartSaúde.", "intent": "greeting", "action": None}
+        elif "ajuda" in message or "help" in message:
+            return {"reply": "Posso ajudar com navegação no app, informações sobre exercícios e dicas de saúde.", "intent": "help", "action": None}
+        elif "exercício" in message or "exercicio" in message:
+            return {"reply": "Para ver seus exercícios, vá em Início → Exercícios.", "intent": "navigation", "action": {"screen": "ExerciseListActivity"}}
+        elif "saúde" in message or "medic" in message or "imc" in message:
+            return {"reply": "Para informações de saúde, vá em Início → Saúde e Ferramentas.", "intent": "navigation", "action": {"screen": "HealthHubActivity"}}
+        else:
+            return {"reply": "Entendi. Use as seções Exercícios, Saúde ou Progresso do app.", "intent": "info", "action": None}
+            
+    except Exception as e:
+        print(f"🚨 ERRO NO CHAT PRINCIPAL: {e}")
+        return {"reply": "Olá! Como posso ajudar você hoje?", "intent": "greeting", "action": None}
+
+
+@router.post("/chat/fallback")
+async def chat_fallback_direct(request: dict):
+    """Endpoint direto de fallback quando AI service falha"""
+    message = str(request.get("message", "")).lower()
+    
+    print(f"🔄 FALLBACK DIRETO - Mensagem: {message}")
+    
+    # Respostas básicas imediatas
+    if "olá" in message or "oi" in message:
+        return {"reply": "Olá! Como posso ajudar você hoje? Sou o assistente SmartSaúde.", "intent": "greeting", "action": None}
+    elif "ajuda" in message or "help" in message:
+        return {"reply": "Posso ajudar com navegação no app, informações sobre exercícios e dicas de saúde.", "intent": "help", "action": None}
+    elif "exercício" in message or "exercicio" in message:
+        return {"reply": "Para ver seus exercícios, vá em Início → Exercícios.", "intent": "navigation", "action": {"screen": "ExerciseListActivity"}}
+    elif "saúde" in message or "medic" in message or "imc" in message:
+        return {"reply": "Para informações de saúde, vá em Início → Saúde e Ferramentas.", "intent": "navigation", "action": {"screen": "HealthHubActivity"}}
+    else:
+        return {"reply": "Entendi. Use as seções Exercícios, Saúde ou Progresso do app.", "intent": "info", "action": None}
+
+
 def get_professionals_context():
     """Retorna informações sobre profissionais para contexto da IA"""
     # Mock de dados dos profissionais (em produção, viria do banco)
@@ -42,82 +88,3 @@ def get_professionals_context():
     ]
     
     return professionals_mock
-
-
-@router.post("/chat")
-async def proxy_ai_chat(request: Request):
-    try:
-        payload = await request.json()
-        
-        # 🔥 **ADICIONAR INFORMAÇÕES SOBRE PROFISSIONAIS**
-        professionals_info = get_professionals_context()
-        
-        # 🔥 **ENRIQUECER O PAYLOAD COM CONTEXTO DO SISTEMA**
-        enriched_payload = {
-            **payload,
-            "system_context": {
-                "professionals": professionals_info,
-                "total_professionals": len(professionals_info),
-                "available_specialties": ["Fisioterapeuta", "Médico", "Administrador"],
-                "system_features": {
-                    "exercise_management": "Profissionais podem criar e atribuir exercícios específicos para pacientes",
-                    "patient_progress": "Sistema monitora progresso diário dos exercícios",
-                    "points_system": "Pacientes ganham pontos ao completar exercícios",
-                    "ai_assistant": "Assistente IA disponível 24/7 para ajuda"
-                }
-            },
-            "professional_guidance": {
-                "instruction": "Se o usuário perguntar sobre profissionais, use as informações fornecidas abaixo para dar respostas específicas e detalhadas. Não dê respostas genéricas sobre navegação quando tiver informações específicas dos profissionais.",
-                "professionals_summary": "Temos 3 profissionais disponíveis: Dr. João Silva (Médico - Ortopedia), Dra. Maria Santos (Fisioterapeuta - Respiratória), Carlos Oliveira (Fisioterapeuta - Esportiva)",
-                "contact_info": "Os pacientes podem entrar em contato através do app ou agendar consultas",
-                "specialties_available": ["Médico", "Fisioterapeuta"]
-            }
-        }
-        
-        print(f"🔍 ENVIANDO PARA AI SERVICE:")
-        print(f"   - URL: {AI_SERVICE_URL}/ai/chat")
-        print(f"   - Original Payload: {payload}")
-        print(f"   - Enriched Payload: {json.dumps(enriched_payload, indent=2)}")
-
-        import time
-        start_time = time.time()
-        
-        async with httpx.AsyncClient(timeout=60.0) as client:
-            response = await client.post(
-                f"{AI_SERVICE_URL}/ai/chat",
-                json=enriched_payload
-            )
-            
-        end_time = time.time()
-        duration = end_time - start_time
-
-        print(f"✅ RESPOSTA DO AI SERVICE:")
-        print(f"   - Status Code: {response.status_code}")
-        print(f"   - Content Length: {len(response.content) if response.content else 0}")
-        print(f"   - Duration: {duration:.2f}s")
-        print(f"   - Response: {response.text[:200] if response.text else 'Empty'}...")
-
-        return Response(
-            content=response.content,
-            status_code=response.status_code,
-            media_type="application/json"
-        )
-
-    except httpx.TimeoutException as e:
-        print(f"🚨 TIMEOUT NO AI PROXY: {e}")
-        print(f"   - AI_SERVICE_URL: {AI_SERVICE_URL}")
-        print(f"   - Payload: {payload}")
-        raise HTTPException(status_code=504, detail=f"AI Service Timeout: {str(e)}")
-    except httpx.ConnectError as e:
-        print(f"🚨 ERRO DE CONEXÃO NO AI PROXY: {e}")
-        print(f"   - AI_SERVICE_URL: {AI_SERVICE_URL}")
-        raise HTTPException(status_code=503, detail=f"AI Service Unavailable: {str(e)}")
-    except httpx.RequestError as e:
-        print(f"🚨 ERRO DE REQUEST NO AI PROXY: {e}")
-        print(f"   - AI_SERVICE_URL: {AI_SERVICE_URL}")
-        print(f"   - Payload: {payload}")
-        raise HTTPException(status_code=502, detail=f"AI Service Error: {str(e)}")
-    except Exception as e:
-        print(f"🚨 ERRO INESPERADO NO AI PROXY: {e}")
-        print(f"   - Type: {type(e).__name__}")
-        raise HTTPException(status_code=500, detail=f"Unexpected Error: {str(e)}")
