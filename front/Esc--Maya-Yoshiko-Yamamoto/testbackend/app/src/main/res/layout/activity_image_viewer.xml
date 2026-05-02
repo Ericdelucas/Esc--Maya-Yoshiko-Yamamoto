@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#000000">
+
+    <!-- Toolbar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="#2196F3"
+        android:padding="16dp">
+
+        <Button
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="← Voltar"
+            android:textColor="#FFFFFF"
+            android:background="?android:attr/selectableItemBackground"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:padding="8dp" />
+
+        <TextView
+            android:id="@+id/tvFileName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Nome do Arquivo"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+    </LinearLayout>
+
+    <!-- Progress Bar -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="32dp"
+        android:visibility="gone" />
+
+    <!-- Image View -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:background="#333333"
+            android:padding="1dp" />
+
+    </ScrollView>
+
+    <!-- Image Info -->
+    <TextView
+        android:id="@+id/tvImageInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:text="Carregando informações..."
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:background="#1E1E1E"
+        android:fontFamily="monospace" />
+
+    <!-- Action Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="#2196F3"
+        android:padding="16dp">
+
+        <Button
+            android:id="@+id/btnShare"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="📤 Compartilhar"
+            android:textColor="#FFFFFF"
+            android:background="#1976D2"
+            android:layout_marginEnd="8dp"
+            android:enabled="false" />
+
+        <Button
+            android:id="@+id/btnDownload"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="⬇️ Baixar"
+            android:textColor="#FFFFFF"
+            android:background="#1976D2"
+            android:layout_marginStart="8dp"
+            android:enabled="false" />
+
+    </LinearLayout>
+
+</LinearLayout>

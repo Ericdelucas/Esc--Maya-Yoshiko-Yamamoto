@@ -354,9 +354,19 @@ public class ReportDetailActivity extends AppCompatActivity {
     }
 
     private void openAttachment(ReportAttachment attachment) {
-        String downloadUrl = "https://esc-maya-yoshiko-yamamoto.onrender.com/reports/" + attachment.getReportId() + "/attachments/" + attachment.getId() + "/download";
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(downloadUrl));
-        startActivity(intent);
+        // Abrir visualizador dedicado para imagens
+        if ("image".equals(attachment.getAttachmentType())) {
+            Intent intent = new Intent(this, ImageViewerActivity.class);
+            intent.putExtra("report_id", attachment.getReportId());
+            intent.putExtra("attachment_id", attachment.getId());
+            intent.putExtra("file_name", attachment.getFileName());
+            startActivity(intent);
+        } else {
+            // Para outros tipos de arquivo, usar visualizador padrão
+            String downloadUrl = "https://esc-maya-yoshiko-yamamoto.onrender.com/reports/" + attachment.getReportId() + "/attachments/" + attachment.getId() + "/download";
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(downloadUrl));
+            startActivity(intent);
+        }
     }
 
     private void deleteAttachment(ReportAttachment attachment) {

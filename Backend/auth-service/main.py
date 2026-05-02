@@ -26,11 +26,6 @@ def create_app() -> FastAPI:
 
     register_error_handlers(app)
 
-    # Configurar arquivos estáticos para fotos de perfil
-    profile_photos_dir = "/tmp/profile_photos"
-    os.makedirs(profile_photos_dir, exist_ok=True)
-    app.mount("/media/profiles", StaticFiles(directory=profile_photos_dir), name="profile_photos")
-
     app.include_router(health_router)
     app.include_router(auth_router, tags=["auth"])
     app.include_router(me_router)
@@ -45,6 +40,18 @@ def create_app() -> FastAPI:
     app.include_router(health_tools_router, prefix="/health-tools", tags=["health-tools"])
     app.include_router(patient_health_router, tags=["patient-health"])
     app.include_router(patient_router, tags=["patient"])
+    
+    # Configurar arquivos estáticos para fotos de perfil (no final para não conflitar)
+    profile_photos_dir = "/app/storage/profile_photos"
+    os.makedirs(profile_photos_dir, exist_ok=True)
+    
+    print(f"🔍 DEBUG: Montando StaticFiles em /media/profiles -> {profile_photos_dir}")
+    print(f"🔍 DEBUG: Arquivos no diretório: {os.listdir(profile_photos_dir)}")
+    
+    app.mount("/media/profiles", StaticFiles(directory=profile_photos_dir), name="profile_photos")
+    
+    print(f"🔍 DEBUG: StaticFiles montado com sucesso")
+    
     return app
 
 
