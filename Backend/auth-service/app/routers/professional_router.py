@@ -534,19 +534,11 @@ def get_patient_exercises(
     exercise_service = ExerciseService()
     exercises = exercise_service.get_exercises_by_patient(patient_id, db)
     
-    # Mapeamento de IDs para nomes mais amigáveis
-    patient_names = {
-        1: "Edgar Ferreira",
-        2: "Vinícius Santos", 
-        3: "Ana Carolina",
-        4: "Carlos Alberto",
-        5: "Juliana Mendes",
-        6: "Roberto Silva"
-    }
-    
+    # Usar nome do banco automaticamente, com fallback para email se full_name for NULL
     display_name = patient.full_name
     if not display_name or display_name.strip() == "":
-        display_name = patient_names.get(patient_id, f"Paciente {patient_id}")
+        # Se full_name for NULL, usar o email como nome de exibição
+        display_name = patient.email.split('@')[0] if patient.email and '@' in patient.email else f"Paciente {patient_id}"
 
     return {
         "success": True,
