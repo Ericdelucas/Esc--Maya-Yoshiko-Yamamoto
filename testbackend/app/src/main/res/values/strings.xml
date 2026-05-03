@@ -55,12 +55,6 @@
     <!-- Exercise -->
     <string name="my_exercises">Meus Exercícios</string>
     <string name="knee_strengthening">Fortalecimento de Joelho</string>
-    <string name="select_patient">Selecionar Paciente</string>
-    <string name="patient_selected">Paciente selecionado: %1$s</string>
-    <string name="exercises_format">Exercícios: %1$s</string>
-    <string name="delete_exercise_confirm">Deseja excluir o exercício %1$s?</string>
-    <string name="task_completed_points">Tarefa concluída! Você ganhou %1$d pontos.</string>
-    <string name="user_points_format">%1$s: %2$d pontos (Nível %3$s)</string>
     
     <!-- Progress -->
     <string name="see_detailed_progress">Ver progresso detalhado</string>

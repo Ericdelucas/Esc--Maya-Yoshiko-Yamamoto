@@ -79,7 +79,7 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="imagePath" value="$PROJECT_DIR$/src/main/res/drawable/Logo2.png" />
+                                                <entry key="imagePath" value="$PROJECT_DIR$/src/main/res/drawable/logo.png" />
                                                 <entry key="scalingPercent" value="63" />
                                               </map>
                                             </option>
@@ -108,6 +108,12 @@
                                           </PersistentState>
                                         </value>
                                       </entry>
+                                    </map>
+                                  </option>
+                                  <option name="values">
+                                    <map>
+                                      <entry key="backgroundAssetType" value="COLOR" />
+                                      <entry key="backgroundColor" value="ffffff" />
                                     </map>
                                   </option>
                                 </PersistentState>
