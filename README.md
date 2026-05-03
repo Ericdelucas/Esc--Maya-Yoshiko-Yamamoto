@@ -51,10 +51,56 @@ Como diferencial, o sistema utiliza inteligência artificial para analisar os mo
 
 <h3>Entregas</h3>
 <pre>
-
+├── 📁 documentos
+│   ├── 📄 Banner_FECAP_CCOMP3_ESC.pdf
+│   ├── 📊 Banner_FECAP_CCOMP3_ESC.pptx
+│   ├── 📝 Documento - Projeto de Extensão - COM Empresa.docx
+│   ├── 📝 Documento - Projeto de Extensão - SEM EMPRESA.docx
+│   ├── 🚀 Entrega 1
+│   │   ├── 📈 Analise Descritiva
+│   │   ├── 📱 Aplicativo Móvel
+│   │   ├── 🗂️ Estrutura de Dados
+│   │   ├── 💻 Programação para Dispositivos
+│   │   └── 📄 Venha para a FECAP!.txt
+│   ├── 🚀 Entrega 2
+│   │   ├── 📈 Analise Descritiva
+│   │   ├── 📱 Aplicativo Móvel
+│   │   ├── 🗂️ Estrutura de Dados
+│   │   ├── 💻 Programação para Dispositivos
+│   │   └── 📄 Venha para a FECAP!.txt
+│   └── 📄 Venha para a FECAP!.txt
+├── 📁 imagens
+│   ├── 🖼️ Imagem colada (10).png
+│   ├── 🖼️ Imagem colada (11).png
+│   ├── 🖼️ Imagem colada (12).png
+│   ├── 🖼️ Imagem colada (13).png
+│   ├── 🖼️ Imagem colada (2).png
+│   ├── 🖼️ Imagem colada (3).png
+│   ├── 🖼️ Imagem colada (4).png
+│   ├── 🖼️ Imagem colada (5).png
+│   ├── 🖼️ Imagem colada (6).png
+│   ├── 🖼️ Imagem colada (7).png
+│   ├── 🖼️ Imagem colada (8).png
+│   ├── 🖼️ Imagem colada (9).png
+│   └── 🖼️ Imagem colada.png
+├── 📖 README.md
+└── 📁 src
+    ├── 🚀 Entrega 1
+    │   ├── ⚙️ Backend
+    │   ├── 🖥️ Frontend
+    │   └── 📄 Venha para a FECAP!.txt
+    └── 🚀 Entrega 2
+        ├── ⚙️ Backend
+        ├── 🖥️ Frontend
+        └── 📄 Venha para a FECAP!.txt
 </pre>
 
+
+
+
 <h3>Frontend</h3>
+<details>
+<summary><strong>clique aqui para ver o Tree</strong></summary>
 <pre>
 Esc--Maya-Yoshiko-Yamamoto/
 │   └── front/Esc--Maya-Yoshiko-Yamamoto/testbackend/
@@ -71,8 +117,14 @@ Esc--Maya-Yoshiko-Yamamoto/
 │       ├── 📦 gradle/                       # Configuração Gradle
 │       └── 📦 build/                        # Build artifacts
 </pre>
+</details>
+
+
 
 <h3>Backend</h3>
+
+<details>
+<summary><strong>clique aqui para ver o Tree</strong></summary>
 <pre>
 Backend/
 ├── auth-service/          # 🏛️ Serviço Central de Autenticação
@@ -85,6 +137,7 @@ Backend/
 ├── analytics-service/   # 📊 Serviço de Análises
 └── shared/             # 🔧 Componentes Compartilhados
 </pre>
+</details>
 
 ## 🛠Instalação
 

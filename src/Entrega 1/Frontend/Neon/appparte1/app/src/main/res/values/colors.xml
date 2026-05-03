@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="primary_teal">#64B5C1</color>
+    <color name="primary_dark">#2F5D62</color>
+    <color name="logo_bg_custom">#1192A8</color>
+    <color name="header_light_teal">#A8DADC</color>
+    <color name="bg_light">#F5F7F8</color>
+    <color name="card_bg">#FFFFFF</color>
+    <color name="text_main">#2F5D62</color>
+    <color name="text_secondary">#7A9E9F</color>
+    <color name="accent_red">#E57373</color>
+    <color name="progress_blue">#00BCD4</color>
+</resources>

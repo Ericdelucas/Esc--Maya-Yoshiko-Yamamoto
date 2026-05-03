@@ -1,0 +1,29 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme -->
+    <style name="Theme.SmartSaude" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Paleta de Cores Médica -->
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryVariant">@color/primary_variant</item>
+        <item name="colorSecondary">@color/secondary_light</item>
+        
+        <!-- Backgrounds e Superfícies -->
+        <item name="android:windowBackground">@color/app_background</item>
+        <item name="android:colorBackground">@color/app_background</item>
+        <item name="colorSurface">@color/card_background</item>
+        
+        <!-- Textos -->
+        <item name="android:textColor">@color/text_main</item>
+        <item name="android:textColorPrimary">@color/text_main</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+        
+        <!-- Status Bar -->
+        <item name="android:statusBarColor">@color/app_background</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+    </style>
+
+    <style name="Theme.Testbackend" parent="Theme.SmartSaude" />
+
+    <!-- Overlays para Toolbar e AppBar -->
+    <style name="Theme.Testbackend.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="Theme.Testbackend.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+</resources>

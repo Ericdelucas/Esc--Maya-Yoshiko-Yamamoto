@@ -1,0 +1,47 @@
+[
+  {
+    "service": "auth-service",
+    "status": "\u2705 PASS",
+    "url": "http://localhost:8080/health",
+    "response": {
+      "status": "ok"
+    },
+    "error": null
+  },
+  {
+    "service": "exercise-service",
+    "status": "\u2705 PASS",
+    "url": "http://localhost:8081/health",
+    "response": {
+      "status": "ok"
+    },
+    "error": null
+  },
+  {
+    "service": "training-service",
+    "status": "\u2705 PASS",
+    "url": "http://localhost:8030/health",
+    "response": {
+      "status": "ok"
+    },
+    "error": null
+  },
+  {
+    "service": "ehr-service",
+    "status": "\u2705 PASS",
+    "url": "http://localhost:8060/health",
+    "response": {
+      "status": "ok"
+    },
+    "error": null
+  },
+  {
+    "service": "ai-service",
+    "status": "\u2705 PASS",
+    "url": "http://localhost:8090/health",
+    "response": {
+      "status": "ok"
+    },
+    "error": null
+  }
+]

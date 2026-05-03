@@ -1,0 +1,114 @@
+package com.example.testbackend.adapters;
+
+import android.content.Context;
+import android.content.Intent;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.TextView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+import com.example.testbackend.PatientHealthDetailsActivity;
+import com.example.testbackend.R;
+import com.example.testbackend.models.Patient;
+import java.util.List;
+
+public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.PatientViewHolder> {
+
+    private final List<Patient> patients;
+    private final OnPatientClickListener listener;
+    private final Context context;
+
+    public interface OnPatientClickListener {
+        void onPatientClick(Patient patient);
+        void onPatientLongClick(Patient patient);
+    }
+
+    public PatientsAdapter(Context context, List<Patient> patients, OnPatientClickListener listener) {
+        this.context = context;
+        this.patients = patients;
+        this.listener = listener;
+    }
+
+    @NonNull
+    @Override
+    public PatientViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.item_patient, parent, false);
+        return new PatientViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull PatientViewHolder holder, int position) {
+        Patient patient = patients.get(position);
+        
+        String name = patient.getDisplayName();
+        holder.tvName.setText(name);
+        holder.tvEmail.setText(patient.getEmail());
+        
+        if (name != null && !name.isEmpty()) {
+            holder.tvInitial.setText(name.substring(0, 1).toUpperCase());
+        }
+
+        // 🔥 CLIQUE SIMPLES E SEGURO
+        holder.itemView.setOnClickListener(v -> {
+            try {
+                Intent intent = new Intent(context, PatientHealthDetailsActivity.class);
+                intent.putExtra("patient_id", patient.getId()); 
+                intent.putExtra("patient_name", patient.getDisplayName());
+                intent.putExtra("patient_email", patient.getEmail());
+                
+                context.startActivity(intent);
+            } catch (Exception e) {
+                android.util.Log.e("PATIENT_ADAPTER", "Erro ao abrir detalhes: " + e.getMessage());
+                // Mostrar Toast de erro
+                android.widget.Toast.makeText(context, "Erro ao abrir detalhes do paciente", android.widget.Toast.LENGTH_SHORT).show();
+            }
+            
+            if (listener != null) {
+                listener.onPatientClick(patient);
+            }
+        });
+
+        // 🔥 LONG CLICK PARA DELETAR PACIENTE
+        holder.itemView.setOnLongClickListener(v -> {
+            if (listener != null) {
+                listener.onPatientLongClick(patient);
+            }
+            return true;
+        });
+
+        // O botão de ícone faz a mesma coisa
+        holder.btnReports.setOnClickListener(v -> {
+            try {
+                Intent intent = new Intent(context, PatientHealthDetailsActivity.class);
+                intent.putExtra("patient_id", patient.getId()); 
+                intent.putExtra("patient_name", patient.getDisplayName());
+                intent.putExtra("patient_email", patient.getEmail());
+                
+                context.startActivity(intent);
+            } catch (Exception e) {
+                android.util.Log.e("PATIENT_ADAPTER", "Erro ao abrir detalhes (botão): " + e.getMessage());
+                android.widget.Toast.makeText(context, "Erro ao abrir detalhes", android.widget.Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    public int getItemCount() {
+        return patients == null ? 0 : patients.size();
+    }
+
+    static class PatientViewHolder extends RecyclerView.ViewHolder {
+        TextView tvName, tvEmail, tvInitial;
+        ImageButton btnReports;
+
+        public PatientViewHolder(@NonNull View itemView) {
+            super(itemView);
+            tvName = itemView.findViewById(R.id.tvPatientName);
+            tvEmail = itemView.findViewById(R.id.tvPatientEmail);
+            tvInitial = itemView.findViewById(R.id.tvPatientInitial);
+            btnReports = itemView.findViewById(R.id.btnReports);
+        }
+    }
+}

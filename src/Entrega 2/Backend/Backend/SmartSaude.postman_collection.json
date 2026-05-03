@@ -1,0 +1,430 @@
+{
+	"info": {
+		"_postman_id": "smartsaude-collection",
+		"name": "SmartSaúde AI - Backend API",
+		"description": "Coleção completa de testes para o backend SmartSaúde AI",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Health",
+			"item": [
+				{
+					"name": "Auth Service Health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{auth_base_url}}/health",
+							"host": ["{{auth_base_url}}"],
+							"path": ["health"]
+						}
+					}
+				},
+				{
+					"name": "Exercise Service Health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{exercise_base_url}}/health",
+							"host": ["{{exercise_base_url}}"],
+							"path": ["health"]
+						}
+					}
+				},
+				{
+					"name": "Training Service Health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{training_base_url}}/health",
+							"host": ["{{training_base_url}}"],
+							"path": ["health"]
+						}
+					}
+				},
+				{
+					"name": "EHR Service Health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ehr_base_url}}/health",
+							"host": ["{{ehr_base_url}}"],
+							"path": ["health"]
+						}
+					}
+				},
+				{
+					"name": "AI Service Health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ai_base_url}}/health",
+							"host": ["{{ai_base_url}}"],
+							"path": ["health"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"{{user_email}}\",\n  \"password\": \"{{user_password}}\",\n  \"role\": \"PATIENT\"\n}"
+						},
+						"url": {
+							"raw": "{{auth_base_url}}/auth/register",
+							"host": ["{{auth_base_url}}"],
+							"path": ["auth", "register"]
+						}
+					}
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"{{user_email}}\",\n  \"password\": \"{{user_password}}\"\n}"
+						},
+						"url": {
+							"raw": "{{auth_base_url}}/auth/login",
+							"host": ["{{auth_base_url}}"],
+							"path": ["auth", "login"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response.json();",
+									"",
+									"if (response.access_token) {",
+									"    pm.collectionVariables.set(\"jwt_token\", response.access_token);",
+									"}"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Me",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{auth_base_url}}/auth/me",
+							"host": ["{{auth_base_url}}"],
+							"path": ["auth", "me"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Exercises",
+			"item": [
+				{
+					"name": "List Exercises",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{exercise_base_url}}/exercises",
+							"host": ["{{exercise_base_url}}"],
+							"path": ["exercises"]
+						}
+					}
+				},
+				{
+					"name": "Get Exercise By Id",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{exercise_base_url}}/exercises/{{exercise_id}}",
+							"host": ["{{exercise_base_url}}"],
+							"path": ["exercises", "{{exercise_id}}"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Training",
+			"item": [
+				{
+					"name": "List Training Plans",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{training_base_url}}/training/me/plans",
+							"host": ["{{training_base_url}}"],
+							"path": ["training", "me", "plans"]
+						}
+					}
+				},
+				{
+					"name": "Create Training Log",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"training_plan_id\": {{training_plan_id}},\n  \"notes\": \"Session completed successfully\"\n}"
+						},
+						"url": {
+							"raw": "{{training_base_url}}/training/logs",
+							"host": ["{{training_base_url}}"],
+							"path": ["training", "logs"]
+						}
+					}
+				},
+				{
+					"name": "My Training Logs",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{training_base_url}}/training/me/logs",
+							"host": ["{{training_base_url}}"],
+							"path": ["training", "me", "logs"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "EHR",
+			"item": [
+				{
+					"name": "Create Medical Record",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"patient_id\": 1,\n  \"professional_id\": 1,\n  \"notes\": \"Paciente com boa evolução clínica.\"\n}"
+						},
+						"url": {
+							"raw": "{{ehr_base_url}}/ehr/records",
+							"host": ["{{ehr_base_url}}"],
+							"path": ["ehr", "records"]
+						}
+					}
+				},
+				{
+					"name": "Get Medical Record By Patient",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{ehr_base_url}}/ehr/records/patient/1",
+							"host": ["{{ehr_base_url}}"],
+							"path": ["ehr", "records", "patient", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "AI",
+			"item": [
+				{
+					"name": "Translate",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"text\": \"Hello, how are you?\",\n  \"source_lang\": \"en\",\n  \"target_lang\": \"pt\"\n}"
+						},
+						"url": {
+							"raw": "{{ai_base_url}}/ai/translate",
+							"host": ["{{ai_base_url}}"],
+							"path": ["ai", "translate"]
+						}
+					}
+				},
+				{
+					"name": "Analyze Pose",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"image_data\": \"base64_encoded_image_here\"\n}"
+						},
+						"url": {
+							"raw": "{{ai_base_url}}/ai/pose/analyze",
+							"host": ["{{ai_base_url}}"],
+							"path": ["ai", "pose", "analyze"]
+						}
+					}
+				},
+				{
+					"name": "Chat (Not Implemented)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"message\": \"Olá, preciso de ajuda com meu tratamento.\"\n}"
+						},
+						"url": {
+							"raw": "{{ai_base_url}}/ai/chat",
+							"host": ["{{ai_base_url}}"],
+							"path": ["ai", "chat"]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// This endpoint returns 404 - Not Implemented",
+									"pm.test(\"Chat endpoint not implemented\", function () {",
+									"    pm.expect(pm.response.code).to.eql(404);",
+									"});"
+								]
+							}
+						}
+					]
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "auth_base_url",
+			"value": "http://localhost:8080"
+		},
+		{
+			"key": "exercise_base_url",
+			"value": "http://localhost:8081"
+		},
+		{
+			"key": "training_base_url",
+			"value": "http://localhost:8030"
+		},
+		{
+			"key": "ehr_base_url",
+			"value": "http://localhost:8060"
+		},
+		{
+			"key": "ai_base_url",
+			"value": "http://localhost:8090"
+		},
+		{
+			"key": "jwt_token",
+			"value": ""
+		},
+		{
+			"key": "user_email",
+			"value": "patient@test.com"
+		},
+		{
+			"key": "user_password",
+			"value": "123456"
+		},
+		{
+			"key": "exercise_id",
+			"value": "1"
+		},
+		{
+			"key": "training_plan_id",
+			"value": "1"
+		},
+		{
+			"key": "session_id",
+			"value": ""
+		}
+	]
+}

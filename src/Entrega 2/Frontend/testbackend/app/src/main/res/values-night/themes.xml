@@ -1,0 +1,22 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Tema Noturno Profissional -->
+    <style name="Theme.SmartSaude" parent="Theme.Material3.Dark.NoActionBar">
+        <!-- Azul Turquesa em tom mais suave para o Dark Mode -->
+        <item name="colorPrimary">@color/primary_dark</item>
+        
+        <!-- Background e Superfície Dark -->
+        <item name="android:windowBackground">@color/app_background_dark</item>
+        <item name="colorSurface">@color/card_background_dark</item>
+        
+        <!-- Texto Claro -->
+        <item name="android:textColor">@color/text_main_dark</item>
+        <item name="android:textColorPrimary">@color/text_main_dark</item>
+        
+        <!-- Cards no Dark Mode -->
+        <item name="materialCardViewStyle">@style/Widget.Material3.CardView.Elevated</item>
+        
+        <!-- Status Bar Escura com ícones brancos -->
+        <item name="android:statusBarColor">@color/app_background_dark</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+</resources>
