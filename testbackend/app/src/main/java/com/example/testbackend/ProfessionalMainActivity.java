@@ -186,6 +186,12 @@ public class ProfessionalMainActivity extends AppCompatActivity {
     }
 
     private void updateUI(UserProfileResponse profile) {
+        Log.d(TAG, "🔍 DEBUG: updateUI chamado");
+        Log.d(TAG, "   - Profile ID: " + profile.getId());
+        Log.d(TAG, "   - Email: " + profile.getEmail());
+        Log.d(TAG, "   - Name: " + profile.getFullName());
+        Log.d(TAG, "   - Profile Photo URL: " + profile.getProfilePhotoUrl());
+        
         String name = profile.getFullName();
         if (name == null || name.isEmpty()) {
             name = profile.getEmail().split("@")[0];
@@ -199,18 +205,31 @@ public class ProfessionalMainActivity extends AppCompatActivity {
             String baseUrl = Constants.AUTH_BASE_URL;
             if (baseUrl.endsWith("/")) baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
             String fullImageUrl = baseUrl + profile.getProfilePhotoUrl();
+            Log.d(TAG, "🔍 DEBUG: Carregando imagem de perfil");
+            Log.d(TAG, "   - Base URL: " + baseUrl);
+            Log.d(TAG, "   - Profile Photo URL: " + profile.getProfilePhotoUrl());
+            Log.d(TAG, "   - Full Image URL: " + fullImageUrl);
+            
             Picasso.get().load(fullImageUrl).into(ivUserPhoto, new com.squareup.picasso.Callback() {
                 @Override
                 public void onSuccess() {
+                    Log.d(TAG, "✅ DEBUG: Imagem carregada com sucesso");
                     ivUserPhoto.setVisibility(View.VISIBLE);
                     if (tvUserInitial != null) tvUserInitial.setVisibility(View.GONE);
                 }
                 @Override
                 public void onError(Exception e) {
+                    Log.e(TAG, "❌ DEBUG: Erro ao carregar imagem: " + e.getMessage());
                     ivUserPhoto.setVisibility(View.GONE);
                     if (tvUserInitial != null) tvUserInitial.setVisibility(View.VISIBLE);
                 }
             });
+        } else {
+            Log.d(TAG, "🔍 DEBUG: Foto de perfil não encontrada ou ImageView nulo");
+            Log.d(TAG, "   - ProfilePhotoUrl: " + profile.getProfilePhotoUrl());
+            Log.d(TAG, "   - ImageView: " + (ivUserPhoto != null ? "not null" : "null"));
+            ivUserPhoto.setVisibility(View.GONE);
+            if (tvUserInitial != null) tvUserInitial.setVisibility(View.VISIBLE);
         }
     }
 
@@ -277,6 +296,7 @@ public class ProfessionalMainActivity extends AppCompatActivity {
         super.onResume();
         if (tokenManager.isLoggedIn()) {
             loadDashboardData();
+            loadUserProfile(); // Recarregar perfil para atualizar foto
         }
     }
 

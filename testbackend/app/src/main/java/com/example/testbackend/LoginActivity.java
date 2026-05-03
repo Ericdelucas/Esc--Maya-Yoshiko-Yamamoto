@@ -9,7 +9,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -43,12 +42,13 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         
         try {
-            setContentView(R.layout.activity_login_new);
+            setContentView(R.layout.activity_login);
             tokenManager = new TokenManager(this);
 
             etEmail = findViewById(R.id.etEmail);
             etPassword = findViewById(R.id.etPassword);
-            btnLogin = findViewById(R.id.loginButton);
+            btnLogin = findViewById(R.id.btnLogin);
+            btnGoToRegister = findViewById(R.id.btnGoToRegister);
             loadingIndicator = findViewById(R.id.loadingIndicator);
 
             if (btnLogin == null) {
@@ -62,7 +62,10 @@ public class LoginActivity extends AppCompatActivity {
                 }
             });
 
-                        
+            btnGoToRegister.setOnClickListener(v -> {
+                startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
+            });
+            
         } catch (Exception e) {
             Log.e(TAG, "Erro fatal no onCreate", e);
         }
@@ -112,11 +115,12 @@ public class LoginActivity extends AppCompatActivity {
                     String token = responseBody.getToken();
                     String role = responseBody.getUserRole();
                     String fullName = responseBody.getFullName();
+                    int userId = responseBody.getUserId();
                     
-                    Log.d(TAG, "✅ Sucesso! Token recebido, Role: '" + role + "', Nome: " + fullName);
+                    Log.d(TAG, "✅ Sucesso! Token recebido, Role: '" + role + "', Nome: " + fullName + ", ID: " + userId);
 
                     if (token != null && !token.isEmpty()) {
-                        tokenManager.saveSession(token, role, email, -1, fullName != null ? fullName : "");
+                        tokenManager.saveSession(token, role, email, userId, fullName != null ? fullName : "");
                         loginResponse = responseBody;
                         navigateToCorrectActivity();
                     } else {
@@ -156,8 +160,11 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<LoginResponse> call, Throwable t) {
                 setLoading(false);
+                String attemptedUrl = call.request().url().toString();
                 Log.e(TAG, "❌ FALHA DE REDE: " + t.getMessage());
-                Toast.makeText(LoginActivity.this, "Erro de conexão com o servidor", Toast.LENGTH_LONG).show();
+                Log.e(TAG, "🌐 URL TENTADA: " + attemptedUrl);
+                Log.e(TAG, "🌐 BASE URL: " + Constants.AUTH_BASE_URL);
+                Toast.makeText(LoginActivity.this, "Erro de conexão: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }

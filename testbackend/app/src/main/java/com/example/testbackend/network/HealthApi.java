@@ -31,4 +31,9 @@ public interface HealthApi {
     Call<Map<String, Object>> saveQuestionnaire(
         @Body Map<String, Object> questionnaireData
     );
+
+    @POST("health-tools/save-questionnaire-simple")
+    Call<Map<String, Object>> saveQuestionnaireSimple(
+        @Query("user_id") int userId
+    );
 }

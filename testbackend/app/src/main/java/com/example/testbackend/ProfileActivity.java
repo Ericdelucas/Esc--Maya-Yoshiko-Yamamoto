@@ -174,11 +174,18 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void uploadProfilePhoto(Uri uri) {
+        Log.d(TAG, "🔍 DEBUG: Iniciando upload de foto");
+        Log.d(TAG, "   - URI: " + uri.toString());
+        
         btnChangePhoto.setEnabled(false);
         btnChangePhoto.setText("Enviando...");
 
         byte[] imageBytes = ImageUtils.getImageBytes(this, uri);
+        Log.d(TAG, "🔍 DEBUG: Imagem processada");
+        Log.d(TAG, "   - Size: " + (imageBytes != null ? imageBytes.length + " bytes" : "null"));
+        
         if (imageBytes == null) {
+            Log.e(TAG, "❌ DEBUG: Erro ao processar imagem");
             Toast.makeText(this, "Erro ao processar imagem", Toast.LENGTH_SHORT).show();
             btnChangePhoto.setEnabled(true);
             btnChangePhoto.setText("Alterar foto de perfil");
@@ -188,28 +195,60 @@ public class ProfileActivity extends AppCompatActivity {
         RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"), imageBytes);
         MultipartBody.Part body = MultipartBody.Part.createFormData("file", "profile.jpg", requestFile);
 
+        String authToken = tokenManager.getAuthToken();
+        Log.d(TAG, "🔍 DEBUG: Preparando requisição");
+        Log.d(TAG, "   - Auth token: " + (authToken != null ? authToken.substring(0, 20) + "..." : "null"));
+        Log.d(TAG, "   - URL: " + Constants.AUTH_BASE_URL + "/auth/profile/photo");
+
         AuthApi authApi = ApiClient.getAuthClient().create(AuthApi.class);
-        authApi.uploadProfilePhoto(tokenManager.getAuthToken(), body).enqueue(new Callback<FileUploadResponse>() {
+        authApi.uploadProfilePhoto(authToken, body).enqueue(new Callback<FileUploadResponse>() {
             @Override
             public void onResponse(Call<FileUploadResponse> call, Response<FileUploadResponse> response) {
+                Log.d(TAG, "🔍 DEBUG: Resposta recebida");
+                Log.d(TAG, "   - Code: " + response.code());
+                Log.d(TAG, "   - Message: " + response.message());
+                Log.d(TAG, "   - Successful: " + response.isSuccessful());
+                
+                if (response.body() != null) {
+                    Log.d(TAG, "   - Response body: " + response.body().toString());
+                } else {
+                    Log.d(TAG, "   - Response body: null");
+                }
+                
                 btnChangePhoto.setEnabled(true);
                 btnChangePhoto.setText("Alterar foto de perfil");
                 
                 if (response.isSuccessful()) {
+                    Log.d(TAG, "✅ DEBUG: Upload bem-sucedido");
                     Toast.makeText(ProfileActivity.this, "Foto atualizada!", Toast.LENGTH_SHORT).show();
                     loadUserProfile();
                 } else {
-                    Log.e(TAG, "Erro upload code: " + response.code());
+                    Log.e(TAG, "❌ DEBUG: Erro no upload");
+                    try {
+                        if (response.errorBody() != null) {
+                            String errorBody = response.errorBody().string();
+                            Log.e(TAG, "   - Error body: " + errorBody);
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "   - Error reading error body: " + e.getMessage());
+                    }
                     Toast.makeText(ProfileActivity.this, "Erro no upload: " + response.code(), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<FileUploadResponse> call, Throwable t) {
+                Log.e(TAG, "❌ DEBUG: Falha na requisição");
+                Log.e(TAG, "   - Error: " + t.getMessage());
+                Log.e(TAG, "   - Type: " + t.getClass().getSimpleName());
+                if (t.getCause() != null) {
+                    Log.e(TAG, "   - Cause: " + t.getCause().getMessage());
+                }
+                
                 btnChangePhoto.setEnabled(true);
                 btnChangePhoto.setText("Alterar foto de perfil");
                 Log.e(TAG, "Falha upload", t);
-                Toast.makeText(ProfileActivity.this, "Falha na conexão", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ProfileActivity.this, "Falha na conexão: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }

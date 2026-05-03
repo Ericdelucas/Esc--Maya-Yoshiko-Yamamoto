@@ -26,6 +26,7 @@ import com.example.testbackend.models.PatientReport;
 import com.example.testbackend.models.ReportCreate;
 import com.example.testbackend.network.ApiClient;
 import com.example.testbackend.network.PatientReportApi;
+import com.example.testbackend.utils.TokenManager;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,6 +35,8 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import okhttp3.MultipartBody;
 
 public class CreateReportActivity extends AppCompatActivity {
     private static final String TAG = "CreateReportActivity";
@@ -54,7 +57,7 @@ public class CreateReportActivity extends AppCompatActivity {
     private TextView tvImageCount;
 
     private PatientReportApi api;
-    private int professionalId = 37; // Default
+    private TokenManager tokenManager;
     private int patientId = -1;
     
     private List<Uri> selectedImages = new ArrayList<>();
@@ -65,7 +68,9 @@ public class CreateReportActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_report);
 
         patientId = getIntent().getIntExtra("patient_id", -1);
+        
         api = ApiClient.getAuthClient().create(PatientReportApi.class);
+        tokenManager = new TokenManager(this);
 
         setupViews();
         setupSpinners();
@@ -140,6 +145,11 @@ public class CreateReportActivity extends AppCompatActivity {
 
         ReportCreate report = new ReportCreate();
         report.setPatientId(patientId);
+        
+        // 🔥 OBTER ID DO PROFISSIONAL LOGADO
+        int professionalId = tokenManager.getUserId();
+        Log.d(TAG, "👤 Criando relatório para profissional ID: " + professionalId);
+        
         report.setProfessionalId(professionalId);
         report.setReportDate(new Date());
         
@@ -158,8 +168,18 @@ public class CreateReportActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<PatientReport> call, Response<PatientReport> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(CreateReportActivity.this, "Relatório criado com sucesso", Toast.LENGTH_SHORT).show();
-                    finish();
+                    PatientReport createdReport = response.body();
+                    if (createdReport != null) {
+                        // 🔥 FAZER UPLOAD DAS IMAGENS SE HOUVER
+                        if (!selectedImages.isEmpty()) {
+                            uploadImagesForReport(createdReport.getId());
+                        } else {
+                            Toast.makeText(CreateReportActivity.this, "Relatório criado com sucesso", Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
+                    } else {
+                        Toast.makeText(CreateReportActivity.this, "Erro ao criar relatório", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
                     String errorMessage = "Erro ao criar relatório";
                     try {
@@ -315,5 +335,100 @@ public class CreateReportActivity extends AppCompatActivity {
         frameLayout.addView(btnRemove);
         
         return frameLayout;
+    }
+    
+    // 🔥 MÉTODO PARA FAZER UPLOAD DAS IMAGENS
+    private void uploadImagesForReport(int reportId) {
+        Log.d(TAG, "📤 Iniciando upload de " + selectedImages.size() + " imagens para o relatório ID: " + reportId);
+        
+        try {
+            // Criar lista de MultipartBody.Part para as imagens
+            List<MultipartBody.Part> imageParts = new ArrayList<>();
+            
+            for (Uri imageUri : selectedImages) {
+                try {
+                    // Obter InputStream da URI
+                    java.io.InputStream inputStream = getContentResolver().openInputStream(imageUri);
+                    if (inputStream != null) {
+                        // Ler bytes da imagem (compatível com versões antigas)
+                        java.io.ByteArrayOutputStream buffer = new java.io.ByteArrayOutputStream();
+                        int bytesRead;
+                        byte[] data = new byte[1024];
+                        while ((bytesRead = inputStream.read(data, 0, data.length)) != -1) {
+                            buffer.write(data, 0, bytesRead);
+                        }
+                        byte[] imageBytes = buffer.toByteArray();
+                        inputStream.close();
+                        buffer.close();
+                        
+                        // Criar RequestBody
+                        okhttp3.RequestBody requestFile = okhttp3.RequestBody.create(
+                            imageBytes, 
+                            okhttp3.MediaType.parse(getContentResolver().getType(imageUri))
+                        );
+                        
+                        // Criar MultipartBody.Part
+                        String fileName = "image_" + System.currentTimeMillis() + ".jpg";
+                        MultipartBody.Part part = MultipartBody.Part.createFormData("files", fileName, requestFile);
+                        imageParts.add(part);
+                        
+                        Log.d(TAG, "✅ Imagem preparada: " + fileName);
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "❌ Erro ao processar imagem: " + imageUri.toString(), e);
+                }
+            }
+            
+            if (imageParts.isEmpty()) {
+                Toast.makeText(this, "Nenhuma imagem válida para upload", Toast.LENGTH_SHORT).show();
+                finish();
+                return;
+            }
+            
+            // Criar RequestBody para descrição (opcional)
+            okhttp3.RequestBody description = okhttp3.RequestBody.create(
+                "", okhttp3.MediaType.parse("text/plain")
+            );
+            
+            // Fazer upload
+            api.uploadAttachments(reportId, imageParts, description).enqueue(new Callback<List<com.example.testbackend.models.ReportAttachment>>() {
+                @Override
+                public void onResponse(retrofit2.Call<List<com.example.testbackend.models.ReportAttachment>> call, retrofit2.Response<List<com.example.testbackend.models.ReportAttachment>> response) {
+                    if (response.isSuccessful()) {
+                        List<com.example.testbackend.models.ReportAttachment> attachments = response.body();
+                        if (attachments != null) {
+                            Log.d(TAG, "✅ Upload concluído! " + attachments.size() + " imagens enviadas");
+                            Toast.makeText(CreateReportActivity.this, 
+                                "Relatório criado com " + attachments.size() + " imagens", Toast.LENGTH_LONG).show();
+                        } else {
+                            Log.d(TAG, "✅ Upload concluído!");
+                            Toast.makeText(CreateReportActivity.this, "Relatório criado com sucesso", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Log.e(TAG, "❌ Erro no upload: " + response.code());
+                        String errorMessage = "Erro no upload de imagens";
+                        try {
+                            if (response.errorBody() != null) {
+                                errorMessage = response.errorBody().string();
+                            }
+                        } catch (Exception e) {}
+                        Toast.makeText(CreateReportActivity.this, errorMessage, Toast.LENGTH_LONG).show();
+                    }
+                    finish();
+                }
+                
+                @Override
+                public void onFailure(retrofit2.Call<List<com.example.testbackend.models.ReportAttachment>> call, Throwable t) {
+                    Log.e(TAG, "❌ Falha no upload: " + t.getMessage(), t);
+                    Toast.makeText(CreateReportActivity.this, "Falha no upload das imagens", Toast.LENGTH_LONG).show();
+                    finish();
+                }
+            });
+            
+        } catch (Exception e) {
+            Log.e(TAG, "❌ Erro ao preparar upload: " + e.getMessage(), e);
+            Toast.makeText(this, "Erro ao preparar upload das imagens", Toast.LENGTH_SHORT).show();
+            finish();
+        }
     }
 }

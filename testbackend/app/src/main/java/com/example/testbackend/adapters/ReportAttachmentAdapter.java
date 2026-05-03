@@ -62,7 +62,7 @@ public class ReportAttachmentAdapter extends RecyclerView.Adapter<ReportAttachme
         }
         
         if ("image".equals(attachment.getAttachmentType())) {
-            String imageUrl = "http://localhost:8080/reports/" + attachment.getReportId() + 
+            String imageUrl = "https://esc-maya-yoshiko-yamamoto.onrender.com/reports/" + attachment.getReportId() + 
                              "/attachments/" + attachment.getId() + "/download";
             Picasso.get()
                 .load(imageUrl)

@@ -9,6 +9,8 @@ public class TaskCreateRequest {
     private Integer frequency_per_week; // OPCIONAL (default=1)
     private String start_date;       // OBRIGATÓRIO - formato "YYYY-MM-DD"
     private String end_date;        // OPCIONAL (pode ser null)
+    private String exercise_image_url;  // OPCIONAL - URL da imagem
+    private String exercise_video_url;  // OPCIONAL - URL do vídeo
     
     // Getters e Setters
     public Integer getPatient_id() { return patient_id; }
@@ -34,6 +36,12 @@ public class TaskCreateRequest {
     
     public String getEnd_date() { return end_date; }
     public void setEnd_date(String end_date) { this.end_date = end_date; }
+    
+    public String getExercise_image_url() { return exercise_image_url; }
+    public void setExercise_image_url(String exercise_image_url) { this.exercise_image_url = exercise_image_url; }
+    
+    public String getExercise_video_url() { return exercise_video_url; }
+    public void setExercise_video_url(String exercise_video_url) { this.exercise_video_url = exercise_video_url; }
 
     // Compatibility methods for camelCase if needed
     public Integer getPatientId() { return patient_id; }
@@ -44,4 +52,10 @@ public class TaskCreateRequest {
     public void setFrequencyPerWeek(Integer val) { this.frequency_per_week = val; }
     public String getStartDate() { return start_date; }
     public void setStartDate(String date) { this.start_date = date; }
+    
+    public String getExerciseImageUrl() { return exercise_image_url; }
+    public void setExerciseImageUrl(String url) { this.exercise_image_url = url; }
+    
+    public String getExerciseVideoUrl() { return exercise_video_url; }
+    public void setExerciseVideoUrl(String url) { this.exercise_video_url = url; }
 }

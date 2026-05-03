@@ -21,6 +21,9 @@ public class LoginResponse {
     @SerializedName("email")
     private String email;
 
+    @SerializedName("user_id")
+    private int userId;
+
     // 🔥 NOVOS CAMPOS - Backend controla o direcionamento
     @SerializedName("target_activity")
     private String targetActivity;
@@ -45,6 +48,10 @@ public class LoginResponse {
 
     public String getEmail() {
         return email;
+    }
+
+    public int getUserId() {
+        return userId;
     }
 
     // 🔥 NOVOS GETTERS

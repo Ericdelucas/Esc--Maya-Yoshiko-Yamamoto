@@ -43,12 +43,9 @@ public class TestConnectionActivity extends AppCompatActivity {
             try {
                 Log.d(TAG, "🔍 Testando conexão...");
                 
-                // Testar diferentes URLs
+                // Testar URL do Render.com
                 String[] urls = {
-                    "http://10.1.9.88:8080/health",
-                    "http://localhost:8080/health",
-                    "http://127.0.0.1:8080/health",
-                    "http://10.0.2.2:8080/health"
+                    "https://esc-maya-yoshiko-yamamoto.onrender.com/health"
                 };
                 
                 final StringBuilder fullResults = new StringBuilder();

@@ -3,6 +3,7 @@ package com.example.testbackend.network;
 import com.example.testbackend.models.AppointmentCreateRequest;
 import com.example.testbackend.models.AppointmentListResponse;
 
+import java.util.List;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -22,6 +23,20 @@ public interface AppointmentApi {
     
     @GET("appointments/month/{year}/{month}")
     Call<AppointmentListResponse> getAppointmentsByMonth(
+        @Header("Authorization") String token,
+        @Path("year") int year,
+        @Path("month") int month
+    );
+    
+    // 🔥 SOLUÇÃO DEFINITIVA: Endpoint para pacientes
+    @GET("auth/patient-appointments")
+    Call<List<Map<String, Object>>> getMyAppointments(
+        @Header("Authorization") String token
+    );
+    
+    // 🔥 ENDPOINT CORRETO PARA PACIENTES
+    @GET("appointments/patient/month/{year}/{month}")
+    Call<AppointmentListResponse> getPatientAppointmentsByMonth(
         @Header("Authorization") String token,
         @Path("year") int year,
         @Path("month") int month

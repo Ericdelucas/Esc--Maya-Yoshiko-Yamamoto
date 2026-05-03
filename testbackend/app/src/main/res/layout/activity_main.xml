@@ -116,6 +116,18 @@
                         android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
                         android:textColor="?attr/colorPrimary" />
 
+                    <!-- 🔥 NOVO: Próxima Consulta -->
+                    <TextView
+                        android:id="@+id/tvNextAppointment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Próxima consulta: Carregando..."
+                        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                        android:textColor="?attr/colorPrimary"
+                        android:textStyle="bold"
+                        android:visibility="gone" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

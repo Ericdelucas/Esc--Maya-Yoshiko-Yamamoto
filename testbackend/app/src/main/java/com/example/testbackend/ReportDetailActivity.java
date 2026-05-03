@@ -265,25 +265,44 @@ public class ReportDetailActivity extends AppCompatActivity {
     }
 
     private void loadAttachments() {
+        Log.d(TAG, "🔍 Carregando anexos para relatório " + reportId);
         api.getReportAttachments(reportId).enqueue(new Callback<ReportAttachmentList>() {
             @Override
             public void onResponse(Call<ReportAttachmentList> call, Response<ReportAttachmentList> response) {
+                Log.d(TAG, "📊 Resposta anexos - Code: " + response.code() + ", Success: " + response.isSuccessful());
+                
                 if (response.isSuccessful() && response.body() != null) {
                     attachments.clear();
                     attachments.addAll(response.body().getAttachments());
                     attachmentAdapter.updateAttachments(attachments);
                     
+                    Log.d(TAG, "📎 Anexos carregados: " + attachments.size());
+                    
                     if (attachments.isEmpty()) {
+                        Log.d(TAG, "❌ Nenhum anexo encontrado");
                         tvNoAttachments.setVisibility(View.VISIBLE);
                         recyclerAttachments.setVisibility(View.GONE);
                     } else {
+                        Log.d(TAG, "✅ " + attachments.size() + " anexos encontrados");
                         tvNoAttachments.setVisibility(View.GONE);
                         recyclerAttachments.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    Log.e(TAG, "❌ Erro ao carregar anexos: " + response.code());
+                    if (response.errorBody() != null) {
+                        try {
+                            String errorBody = response.errorBody().string();
+                            Log.e(TAG, "❌ Error body: " + errorBody);
+                        } catch (Exception e) {
+                            Log.e(TAG, "❌ Erro ao ler error body", e);
+                        }
                     }
                 }
             }
             @Override
-            public void onFailure(Call<ReportAttachmentList> call, Throwable t) {}
+            public void onFailure(Call<ReportAttachmentList> call, Throwable t) {
+                Log.e(TAG, "❌ Falha ao carregar anexos", t);
+            }
         });
     }
 
@@ -335,9 +354,19 @@ public class ReportDetailActivity extends AppCompatActivity {
     }
 
     private void openAttachment(ReportAttachment attachment) {
-        String downloadUrl = "http://localhost:8080/reports/" + attachment.getReportId() + "/attachments/" + attachment.getId() + "/download";
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(downloadUrl));
-        startActivity(intent);
+        // Abrir visualizador dedicado para imagens
+        if ("image".equals(attachment.getAttachmentType())) {
+            Intent intent = new Intent(this, ImageViewerActivity.class);
+            intent.putExtra("report_id", attachment.getReportId());
+            intent.putExtra("attachment_id", attachment.getId());
+            intent.putExtra("file_name", attachment.getFileName());
+            startActivity(intent);
+        } else {
+            // Para outros tipos de arquivo, usar visualizador padrão
+            String downloadUrl = "https://esc-maya-yoshiko-yamamoto.onrender.com/reports/" + attachment.getReportId() + "/attachments/" + attachment.getId() + "/download";
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(downloadUrl));
+            startActivity(intent);
+        }
     }
 
     private void deleteAttachment(ReportAttachment attachment) {

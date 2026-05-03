@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
 
@@ -90,6 +91,23 @@
             android:name=".ReportDetailActivity"
             android:exported="false"
             android:label="Detalhes do Relatório" />
+
+        <activity
+            android:name=".ImageViewerActivity"
+            android:exported="false"
+            android:label="Visualizador de Imagem"
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
+
+        <!-- FileProvider para compartilhamento de arquivos -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
             
     </application>
 

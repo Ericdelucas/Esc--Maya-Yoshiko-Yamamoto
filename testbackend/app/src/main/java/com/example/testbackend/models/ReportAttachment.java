@@ -27,6 +27,9 @@ public class ReportAttachment {
     @SerializedName("uploaded_at")
     private String uploadedAt;
     
+    // Campo para armazenar bytes da imagem (não serializado)
+    private byte[] fileBytes;
+    
     // Getters and Setters
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
@@ -51,4 +54,7 @@ public class ReportAttachment {
     
     public String getUploadedAt() { return uploadedAt; }
     public void setUploadedAt(String uploadedAt) { this.uploadedAt = uploadedAt; }
+    
+    public byte[] getFileBytes() { return fileBytes; }
+    public void setFileBytes(byte[] fileBytes) { this.fileBytes = fileBytes; }
 }

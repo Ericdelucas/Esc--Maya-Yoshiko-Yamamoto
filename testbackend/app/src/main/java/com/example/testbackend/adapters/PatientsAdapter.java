@@ -70,6 +70,14 @@ public class PatientsAdapter extends RecyclerView.Adapter<PatientsAdapter.Patien
             }
         });
 
+        // 🔥 LONG CLICK PARA DELETAR PACIENTE
+        holder.itemView.setOnLongClickListener(v -> {
+            if (listener != null) {
+                listener.onPatientLongClick(patient);
+            }
+            return true;
+        });
+
         // O botão de ícone faz a mesma coisa
         holder.btnReports.setOnClickListener(v -> {
             try {

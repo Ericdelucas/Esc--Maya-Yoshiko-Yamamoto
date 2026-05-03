@@ -28,6 +28,12 @@ public class Task implements Serializable {
     
     @SerializedName("completed_today")
     private Boolean completedToday; // Auxiliar para UI
+    
+    @SerializedName("exercise_image_url")
+    private String exerciseImageUrl;
+    
+    @SerializedName("exercise_video_url")
+    private String exerciseVideoUrl;
 
     public Task() {}
 
@@ -69,4 +75,10 @@ public class Task implements Serializable {
 
     public Boolean getCompletedToday() { return completedToday != null && completedToday; }
     public void setCompletedToday(Boolean completedToday) { this.completedToday = completedToday; }
+
+    public String getExerciseImageUrl() { return exerciseImageUrl; }
+    public void setExerciseImageUrl(String exerciseImageUrl) { this.exerciseImageUrl = exerciseImageUrl; }
+
+    public String getExerciseVideoUrl() { return exerciseVideoUrl; }
+    public void setExerciseVideoUrl(String exerciseVideoUrl) { this.exerciseVideoUrl = exerciseVideoUrl; }
 }
