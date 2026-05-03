@@ -20,26 +20,31 @@ Vide tutoriais do PI.
 
 ## Descrição
 
-<table style="width: 100%; text-align: center;">
+<table align="center">
   <tr>
-    <td align="center" valign="top">
-      <a href="https://ibb.co/bgxV7RGn"><img src="https://i.ibb.co/KjYgmz8H/337-Sem-T-tulo-20260403154319.png" alt="Tela de login" border="none"></a>   
+    <td align="center">
+      <a href="https://ibb.co/ymNDWGwJ">
+        <img src="https://i.ibb.co/6cy2gV35/1000148180.png" width="200" height="400">
       </a>
-      <p><b>Tela de Login</b></p>
     </td>
-    <td align="center" valign="top">
-      <a href="https://ibb.co/1fmz96yv"><img src="https://i.ibb.co/nsLPDCdg/1000146910.png" alt="Tela de Home(paciente)" border="none"></a>
+    <td align="center">
+      <a href="https://ibb.co/LXPWz25D">
+        <img src="https://i.ibb.co/fzS5YPvV/1000148201.png" width="200" height="400">
       </a>
-      <p><b>Tela Principal (Paciente)</b></p>
-      </td>
-    <td align="center" valign="top">
-      <a href="https://ibb.co/B2vjs9M8"><img src="https://i.ibb.co/HTRxCskV/1000146911.png" alt="Tela de Home (profissional)" border="none"></a>
+    </td>
+    <td align="center">
+      <a href="https://ibb.co/Nn3NTdXb">
+        <img src="https://i.ibb.co/yBRk4cD7/1000148202.png" width="200" height="400">
       </a>
-      <p><b>Tela Principal (Profissional)</b></p>
     </td>
   </tr>
-</table>
 
+  <tr>
+    <td align="center"><b>Tela de Login</b></td>
+    <td align="center"><b>Tela Principal (Paciente)</b></td>
+    <td align="center"><b>Tela Principal (Profissional)</b></td>
+  </tr>
+</table>
 <br>
 
 <p> A SmartSaude é uma plataforma desenvolvida para auxiliar no acompanhamento de tratamentos fisioterapêuticos, unindo um aplicativo mobile a um sistema backend responsável por gerenciar dados, usuários e funcionalidades. A proposta do projeto é facilitar o acesso do paciente aos exercícios e permitir o registro contínuo do seu progresso, tornando o processo mais organizado e eficiente.
@@ -138,11 +143,13 @@ Backend/
 └── shared/             # 🔧 Componentes Compartilhados
 </pre>
 </details>
+<br>
 
 ## 🛠Instalação
 
-<h3><b>Android:</b></h3>
-<h3><p>https://drive.google.com/file/d/1bZhjURfa8ue7h2TGKx2VhKunDvap8EEC/view?usp=sharing<p></h3>
+<h3>Android:</h3>
+<p>https://drive.google.com/file/d/1bZhjURfa8ue7h2TGKx2VhKunDvap8EEC/view?usp=sharing</p>
+<br>
 
 ## 💻 Como rodar o projeto?
 
@@ -156,9 +163,45 @@ Backend/
 
 ## 💻 Configuração para Desenvolvimento
 
-Este guia explica como preparar e rodar o projeto SmartSaúde AI em ambiente local.
+<h3>1. Acesso ao repositório</h3>
 
----
+<li>Acesse o repositório no README do GitHub</li>
+<li>Navegue até a "🛠instalação" localize o link do arquivo .apk</li>
+
+
+<h3>2. Download do APK</h3>
+
+<li>Ao clicar no link, selecione “Download”</li>
+<li>Aguarde a conclusão do download na barra de notificações do celular</li>
+
+<h3>3. Permissão de instalação (Android)</h3>
+
+<li>Após o download, toque no arquivo .apk</li>
+<li>O sistema pode exibir um aviso de segurança Clique em “Configurações” ou “Permitir desta fonte”</li>
+<li>Ative a opção para permitir a instalação de apps de fontes desconhecidas
+Retorne e selecione “Instalar”</li>
+
+<h3>4. Verificação de segurança</h3>
+<li>O sistema Android pode realizar uma verificação automática (Play Protect)</li>
+<li>Caso apareça aviso: Selecione “Instalar mesmo assim” (caso confie na fonte)</li>
+<li>Aguarde a conclusão da instalação</li>
+
+<h3>5. Abertura do aplicativo</h3>
+
+<li>Após instalado, clique em “Abrir”</li>
+<li>Ou localize o app na tela inicial / menu de aplicativos</li>
+
+<h3>6. Criação de conta</h3>
+<li>Na tela inicial, selecione a opção “Cadastrar”</li>
+<li>Preencha os campos solicitados (ex: CPF, e-mail, senha)</li>
+<li>Confirme o cadastro</li>
+
+<h3>7. Login no sistema</h3>
+<li>Retorne à tela de login</li>
+<li>Insira e-mail e senha cadastrados</li>
+<li>Clique em “Entrar”</li>
+
+<br>
 
 ## 🗂️ Caminho do projeto
 
@@ -243,9 +286,9 @@ const val BASE_URL = "http://SEU_IP:8080/"
 - Clique no botão "Run" (▶️) no Android Studio
 - Selecione um emulador ou dispositivo físico
 
-
 ---
 <br>
+
 ## Rotas da API 🚀
 
 <h3>Arquitetura de Microserviços</h3>
@@ -269,7 +312,7 @@ const val BASE_URL = "http://SEU_IP:8080/"
 <br>
 
 ## 📋Licença/License
-<h3><p><a href="https://github.com/Ericdelucas/Esc--Maya-Yoshiko-Yamamoto.git">ESC</a> © 2026 by <a href="https://www.linkedin.com/in/eric-de-lucas-silva/">Eric de Lucas Silva, Stephanie Macedo da Silva e En Hsiang Chien</a> is licensed under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a><img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" alt="" style="max-width: 1em;max-height:1em;margin-left: .2em;"><img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" alt="" style="max-width: 1em;max-height:1em;margin-left: .2em;"><p></h3>
+<p> <a href="https://github.com/Ericdelucas/Esc--Maya-Yoshiko-Yamamoto.git">ESC</a> © 2026 by <a href="https://www.linkedin.com/in/eric-de-lucas-silva/">Eric de Lucas Silva, Stephanie Macedo da Silva e En Hsiang Chien</a> is licensed under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a><img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" alt="" style="max-width: 1em;max-height:1em;margin-left: .2em;"><img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" alt="" style="max-width: 1em;max-height:1em;margin-left: .2em;"> </p>
 
 ## 🎓Referências
 
