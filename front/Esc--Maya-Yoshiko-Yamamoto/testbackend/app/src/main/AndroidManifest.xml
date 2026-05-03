@@ -98,6 +98,11 @@
             android:label="Visualizador de Imagem"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
 
+        <activity
+            android:name=".StatisticsChartsActivity"
+            android:exported="false"
+            android:label="Gráficos Estatísticos" />
+
         <!-- FileProvider para compartilhamento de arquivos -->
         <provider
             android:name="androidx.core.content.FileProvider"

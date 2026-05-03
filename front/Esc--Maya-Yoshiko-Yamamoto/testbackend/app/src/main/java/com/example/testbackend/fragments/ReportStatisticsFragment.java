@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.content.Intent;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,6 +18,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.testbackend.R;
 import com.example.testbackend.adapters.ReportAdapter;
 import com.example.testbackend.models.PatientReport;
+import com.example.testbackend.StatisticsChartsActivity;
+import com.google.android.material.button.MaterialButton;
 import com.example.testbackend.models.ReportStatistics;
 import com.example.testbackend.network.ApiClient;
 import com.example.testbackend.network.PatientReportApi;
@@ -69,6 +72,12 @@ public class ReportStatisticsFragment extends Fragment {
         recentAdapter = new ReportAdapter(recentReports, report -> {}, report -> {});
         recyclerViewRecent.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerViewRecent.setAdapter(recentAdapter);
+
+        MaterialButton btnViewCharts = view.findViewById(R.id.btnViewCharts);
+        btnViewCharts.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), StatisticsChartsActivity.class);
+            startActivity(intent);
+        });
     }
 
     private void loadStatistics() {
