@@ -90,6 +90,50 @@ def create_app() -> FastAPI:
 
 app = create_app()
 
+# Endpoint temporário para debug de pacientes
+@app.get("/debug-patients")
+def debug_patients():
+    """Endpoint temporário para debug de pacientes sem autenticação"""
+    try:
+        from app.storage.database.base_repository import SessionLocal
+        from app.models.orm.user_orm import UserORM
+        
+        with SessionLocal() as db:
+            patients = db.query(UserORM).filter(UserORM.role == "patient").all()
+            
+            patient_list = []
+            for p in patients:
+                display_name = p.full_name if p.full_name else (p.email.split('@')[0] if p.email else f"Paciente {p.id}")
+                patient_list.append({
+                    "id": p.id,
+                    "email": p.email,
+                    "full_name": display_name,
+                    "role": p.role
+                })
+            
+            return {
+                "success": True,
+                "total_patients": len(patient_list),
+                "patients": patient_list
+            }
+    except Exception as e:
+        return {"error": str(e)}
+
+# Endpoint simples para teste
+@app.get("/test-patients")
+def test_patients():
+    """Endpoint simples para teste"""
+    return {
+        "success": True,
+        "total_patients": 4,
+        "patients": [
+            {"id": 3, "email": "cria@gmail.com", "full_name": "cria", "role": "patient"},
+            {"id": 5, "email": "testando@gmail.com", "full_name": "testando", "role": "patient"},
+            {"id": 6, "email": "aws@gmail.com", "full_name": "aws", "role": "patient"},
+            {"id": 13, "email": "novo.paciente@teste.com", "full_name": "novo.paciente", "role": "patient"}
+        ]
+    }
+
 if __name__ == "__main__":
     settings = get_settings()
     port = int(os.getenv("PORT", settings.auth_port))
