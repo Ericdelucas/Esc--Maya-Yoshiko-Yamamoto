@@ -8,6 +8,8 @@
     <string name="register">Register</string>
     <string name="logout">Sign out</string>
     <string name="welcome">Welcome</string>
+    <string name="cancel">Cancel</string>
+    <string name="excluir">Delete</string>
     
     <!-- Settings Screen -->
     <string name="appearance">Appearance</string>
@@ -57,4 +59,12 @@
     <string name="assistant_dialog_message">Do you want to open the recommended screen now?</string>
     <string name="assistant_dialog_positive">Open now</string>
     <string name="assistant_dialog_negative">Cancel</string>
+
+    <!-- Exercise -->
+    <string name="select_patient">Select Patient</string>
+    <string name="patient_selected">Patient selected: %1$s</string>
+    <string name="exercises_format">Exercises: %1$s</string>
+    <string name="delete_exercise_confirm">Do you want to delete the exercise %1$s?</string>
+    <string name="task_completed_points">Task completed! You earned %1$d points.</string>
+    <string name="user_points_format">%1$s: %2$d points (Level %3$d)</string>
 </resources>
