@@ -66,13 +66,28 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
 
             setupToolbar();
             initViews();
-            loadPatients();
+            
+            // 🔥 LÓGICA DE CARREGAMENTO DIFERENCIADA
+            if (isProfessional()) {
+                Log.d(TAG, "Usuário é profissional, carregando lista de pacientes");
+                loadPatients();
+            } else {
+                Log.d(TAG, "Usuário é paciente, carregando exercícios diretamente");
+                if (btnSelectPatient != null) btnSelectPatient.setVisibility(View.GONE);
+                loadPatientTasks();
+            }
+            
             updateUserPoints(); 
         } catch (Exception e) {
             Log.e(TAG, "Erro fatal no onCreate: " + e.getMessage(), e);
             Toast.makeText(this, "Erro ao abrir tela", Toast.LENGTH_SHORT).show();
             finish();
         }
+    }
+
+    private boolean isProfessional() {
+        String role = tokenManager.getUserRole();
+        return role != null && (role.equalsIgnoreCase("professional") || role.equalsIgnoreCase("doctor") || role.equalsIgnoreCase("admin"));
     }
 
     private void setupToolbar() {
@@ -109,11 +124,18 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
     }
 
     private void refreshData() {
-        loadPatientTasks();
+        if (isProfessional()) {
+            if (selectedPatient != null) {
+                loadPatientExercises(selectedPatient.getId());
+            } else {
+                loadPatients();
+            }
+        } else {
+            loadPatientTasks();
+        }
         updateUserPoints();
     }
 
-    
     private void loadPatientTasks() {
         String token = tokenManager.getAuthToken();
         if (token == null || taskApi == null) {
@@ -121,6 +143,8 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
             if (token == null) handleAuthError();
             return;
         }
+        
+        if (swipeRefresh != null) swipeRefresh.setRefreshing(true);
         
         taskApi.getTestTasks(token).enqueue(new Callback<TestTasksResponse>() {
             @Override
@@ -150,6 +174,7 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
             public void onFailure(Call<TestTasksResponse> call, Throwable t) {
                 if (swipeRefresh != null) swipeRefresh.setRefreshing(false);
                 Log.e(TAG, "Falha de conexão: " + t.getMessage());
+                Toast.makeText(ExerciseListActivity.this, "Erro de conexão ao carregar exercícios", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -167,7 +192,6 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
             return;
         }
         
-        // 🔥 Cria request com ID REAL da tarefa para controle individual
         TaskCompletionRequest request = new TaskCompletionRequest(task.getId());
         
         taskApi.completeTask(token, request).enqueue(new Callback<TaskCompletionResponse>() {
@@ -183,13 +207,11 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
                         updateTaskAsCompleted(task);
                         updateUserPoints();
                         
-                        // Mostra progressão diária
                         if (result.getTasksCompletedToday() != null) {
                             String progressMsg = "Progresso: " + result.getTasksCompletedToday() + "/5 tarefas hoje";
                             Toast.makeText(ExerciseListActivity.this, progressMsg, Toast.LENGTH_LONG).show();
                         }
                     } else {
-                        // Trata bloqueio de repetição
                         String message = result.getMessage();
                         if (result.getCanRepeatTomorrow() != null && result.getCanRepeatTomorrow()) {
                             message += "\n\n📅 Você poderá repetir este exercício amanhã!";
@@ -233,6 +255,9 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
                     currentUserPoints = response.body();
                     updatePointsUI();
                 } else if (response.code() == 401 || response.code() == 403) {
+                    // Se for erro 403 mas o usuário for paciente, pode ser apenas que o endpoint de pontos falhou
+                    // mas não queremos deslogar ele se a lista de exercícios funcionou.
+                    // No entanto, getUserPoints costuma ser liberado para todos.
                     handleAuthError();
                 }
             }
@@ -260,6 +285,7 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
     }
 
     private void handleAuthError() {
+        Log.e(TAG, "Erro de autenticação ou permissão (401/403). Redirecionando para login.");
         if (tokenManager != null) {
             tokenManager.clearToken();
         }
@@ -271,6 +297,8 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
 
     @Override
     public void onTaskLongClick(Task task) {
+        if (!isProfessional()) return; // Pacientes não podem excluir
+        
         new AlertDialog.Builder(this)
             .setTitle("Excluir Exercício")
             .setMessage("Tem certeza que deseja excluir o exercício \"" + task.getTitle() + "\"?")
@@ -288,7 +316,6 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
         
         Log.d(TAG, "Excluindo exercício ID: " + task.getId());
         
-        // Usar endpoint de exclusão profissional
         taskApi.deleteExerciseProfessional(token, task.getId()).enqueue(new Callback<DeleteExerciseResponse>() {
             @Override
             public void onResponse(Call<DeleteExerciseResponse> call, Response<DeleteExerciseResponse> response) {
@@ -296,7 +323,6 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
                     DeleteExerciseResponse result = response.body();
                     
                     if (result.isSuccess()) {
-                        // Remover da lista local
                         int position = taskList.indexOf(task);
                         if (position != -1) {
                             taskList.remove(position);
@@ -309,31 +335,10 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
                         Toast.makeText(ExerciseListActivity.this, result.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    // Tratar diferentes tipos de erro
-                    if (response.code() == 401) {
-                        Toast.makeText(ExerciseListActivity.this, "Sessão expirada. Faça login novamente.", Toast.LENGTH_LONG).show();
-                        Log.e(TAG, "Erro 401 - Sessão expirada");
-                        // Opcional: redirecionar para tela de login
-                        tokenManager.clearToken();
-                        // Intent loginIntent = new Intent(this, LoginActivity.class);
-                        // startActivity(loginIntent);
-                        // finish();
-                    } else if (response.code() == 403) {
-                        Toast.makeText(ExerciseListActivity.this, "Você não tem permissão para excluir exercícios.", Toast.LENGTH_LONG).show();
-                        Log.e(TAG, "Erro 403 - Sem permissão");
-                    } else if (response.code() == 404) {
-                        Toast.makeText(ExerciseListActivity.this, "Exercício não encontrado ou já excluído.", Toast.LENGTH_SHORT).show();
-                        Log.e(TAG, "Erro 404 - Exercício não encontrado");
-                        // Remover da lista local mesmo assim
-                        int position = taskList.indexOf(task);
-                        if (position != -1) {
-                            taskList.remove(position);
-                            adapter.notifyItemRemoved(position);
-                            adapter.notifyItemRangeChanged(position, taskList.size());
-                        }
+                    if (response.code() == 401 || response.code() == 403) {
+                        handleAuthError();
                     } else {
                         Toast.makeText(ExerciseListActivity.this, "Erro ao excluir exercício (" + response.code() + ")", Toast.LENGTH_SHORT).show();
-                        Log.e(TAG, "Erro na resposta: " + response.code());
                     }
                 }
             }
@@ -368,7 +373,6 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
                         patientList.addAll(data.getPatients());
                     }
                     
-                    // Se houver pacientes, seleciona o primeiro automaticamente
                     if (!patientList.isEmpty()) {
                         selectedPatient = patientList.get(0);
                         loadPatientExercises(selectedPatient.getId());
@@ -438,7 +442,6 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
                         rvExercises.setAdapter(adapter);
                     }
                     
-                    // Atualizar título com nome do paciente
                     if (getSupportActionBar() != null && selectedPatient != null) {
                         getSupportActionBar().setTitle("Exercícios: " + selectedPatient.getDisplayName());
                     }
