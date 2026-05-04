@@ -135,7 +135,7 @@ Backend/
 ## 🛠Instalação
 
 <h3>Android:</h3>
-<p>https://drive.google.com/file/d/1bZhjURfa8ue7h2TGKx2VhKunDvap8EEC/view?usp=sharing</p>
+<p><a href= "https://drive.google.com/file/d/1bZhjURfa8ue7h2TGKx2VhKunDvap8EEC/view?usp=sharing">Click aqui para baixar</a></p>
 <br>
 
 ## 💻 Como rodar o projeto?
@@ -238,11 +238,11 @@ docker-compose down
 <p>Assista ao vídeo abaixo para uma demonstração completa das funcionalidades do sistema, incluindo a criação de participantes, equipes e atividades.</p>
 
 <h3>conta do paciente</h3>
-https://drive.google.com/file/d/1MjeqjMs6TLmSSI7D7qzJa9heRKmzGFyZ/view?usp=sharing
+<a href="https://drive.google.com/file/d/1MjeqjMs6TLmSSI7D7qzJa9heRKmzGFyZ/view?usp=sharing">Clica o link do vídeo aqui</a>
 
 <h3>conta do profissional</h3>
-https://drive.google.com/file/d/1cFt2RKfjQtuLXf7qkEg2YvvB7zD0ppAB/view?usp=sharing
-<br>
+<a href= "https://drive.google.com/file/d/1cFt2RKfjQtuLXf7qkEg2YvvB7zD0ppAB/view?usp=sharing">Clica o link do vídeo aqui </a> 
+
 
 ## 📱Configuração do Frontend (Android)
 
