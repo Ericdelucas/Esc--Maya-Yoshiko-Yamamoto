@@ -131,24 +131,14 @@ Backend/
 </pre>
 </details>
 <br>
+<br>
 
 ## 🛠Instalação
 
 <h3>Android:</h3>
-<p><a href= "https://drive.google.com/file/d/1bZhjURfa8ue7h2TGKx2VhKunDvap8EEC/view?usp=sharing">Click aqui para baixar</a></p>
-<br>
+<p><a href= "https://drive.google.com/file/d/1bZhjURfa8ue7h2TGKx2VhKunDvap8EEC/view?usp=sharing">Click aqui para baixar o arquivo apk</a></p>
 
-## 💻 Como rodar o projeto?
-
-<h3><p>✅ Ferramentas necessárias<p></h3>
-<li>Android Studio</li>
-<li>Visual Studio Code</li>
-<li>Java 11+</li>
-<li>python 3(backend)</li>
-<li>MySQL</li>
-<br>
-
-## 💻 Configuração para Desenvolvimento
+<h2>Tutorial de como baixar o aplicativo</h2>
 
 <h3>1. Acesso ao repositório</h3>
 
@@ -187,10 +177,32 @@ Retorne e selecione “Instalar”</li>
 <li>Retorne à tela de login</li>
 <li>Insira e-mail e senha cadastrados</li>
 <li>Clique em “Entrar”</li>
-
+<br>
 <br>
 
-## 🗂️ Caminho do projeto
+## 🎥Demonstração do Projeto
+<p>Assista ao vídeo abaixo para uma demonstração completa das funcionalidades do sistema, incluindo a criação de participantes, equipes e atividades.</p>
+
+<h3>conta do paciente</h3>
+<a href="https://drive.google.com/file/d/1MjeqjMs6TLmSSI7D7qzJa9heRKmzGFyZ/view?usp=sharing">Clica o link do vídeo aqui</a>
+
+<h3>conta do profissional</h3>
+<a href= "https://drive.google.com/file/d/1cFt2RKfjQtuLXf7qkEg2YvvB7zD0ppAB/view?usp=sharing">Clica o link do vídeo aqui </a> 
+<br>
+<br>
+
+## 💻 Como rodar o projeto?
+
+<h3><p>✅ Ferramentas necessárias<p></h3>
+<li>Android Studio</li>
+<li>Visual Studio Code</li>
+<li>Java 11+</li>
+<li>python 3(backend)</li>
+<li>MySQL</li>
+<br>
+<br>
+
+## 💻 Configuração para Desenvolvimento
 
 ```
 git clone https://github.com/Ericdelucas/Esc--Maya-Yoshiko-Yamamoto.git
@@ -233,15 +245,6 @@ docker-compose down
 
 ---
 <br>
-
-## 🎥Demonstração do Projeto
-<p>Assista ao vídeo abaixo para uma demonstração completa das funcionalidades do sistema, incluindo a criação de participantes, equipes e atividades.</p>
-
-<h3>conta do paciente</h3>
-<a href="https://drive.google.com/file/d/1MjeqjMs6TLmSSI7D7qzJa9heRKmzGFyZ/view?usp=sharing">Clica o link do vídeo aqui</a>
-
-<h3>conta do profissional</h3>
-<a href= "https://drive.google.com/file/d/1cFt2RKfjQtuLXf7qkEg2YvvB7zD0ppAB/view?usp=sharing">Clica o link do vídeo aqui </a> 
 
 
 ## 📱Configuração do Frontend (Android)
@@ -299,7 +302,11 @@ const val BASE_URL = "http://SEU_IP:8080/"
 <br>
 
 ## 📋Licença/License
-<p> <a href="https://github.com/Ericdelucas/Esc--Maya-Yoshiko-Yamamoto.git">ESC</a> © 2026 by <a href="https://www.linkedin.com/in/eric-de-lucas-silva/">Eric de Lucas Silva, Stephanie Macedo da Silva e En Hsiang Chien</a> is licensed under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a><img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" alt="" style="max-width: 1em;max-height:1em;margin-left: .2em;"><img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" alt="" style="max-width: 1em;max-height:1em;margin-left: .2em;"> </p>
+<p> <a href="https://github.com/Ericdelucas/Esc--Maya-Yoshiko-Yamamoto.git">ESC</a> © 2026 by <a href="https://www.linkedin.com/in/eric-de-lucas-silva/">Eric de Lucas Silva</a>,
+<a href ="https://www.linkedin.com/in/stephanie-silva-1b6100340/">Stephanie Macedo da Silva</a>, 
+<a href="https://www.linkedin.com/in/en-hsiang-chien-53b550381/">En Hsiang Chien</a> e
+<a href= "https://www.linkedin.com/school/fecap/posts/?feedView=all"> FECAP </a>
+is licensed under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a><img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" alt="" style="max-width: 1em;max-height:1em;margin-left: .2em;"><img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" alt="" style="max-width: 1em;max-height:1em;margin-left: .2em;"> </p>
 
 ## 🎓Referências
 
