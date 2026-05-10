@@ -1,47 +1,37 @@
 [
   {
     "service": "auth-service",
-    "status": "\u2705 PASS",
+    "status": "\u274c FAIL",
     "url": "http://localhost:8080/health",
-    "response": {
-      "status": "ok"
-    },
-    "error": null
+    "response": null,
+    "error": "Conex\u00e3o recusada"
   },
   {
     "service": "exercise-service",
-    "status": "\u2705 PASS",
+    "status": "\u274c FAIL",
     "url": "http://localhost:8081/health",
-    "response": {
-      "status": "ok"
-    },
-    "error": null
+    "response": null,
+    "error": "Conex\u00e3o recusada"
   },
   {
     "service": "training-service",
-    "status": "\u2705 PASS",
+    "status": "\u274c FAIL",
     "url": "http://localhost:8030/health",
-    "response": {
-      "status": "ok"
-    },
-    "error": null
+    "response": null,
+    "error": "Conex\u00e3o recusada"
   },
   {
     "service": "ehr-service",
-    "status": "\u2705 PASS",
+    "status": "\u274c FAIL",
     "url": "http://localhost:8060/health",
-    "response": {
-      "status": "ok"
-    },
-    "error": null
+    "response": null,
+    "error": "Conex\u00e3o recusada"
   },
   {
     "service": "ai-service",
-    "status": "\u2705 PASS",
+    "status": "\u274c FAIL",
     "url": "http://localhost:8090/health",
-    "response": {
-      "status": "ok"
-    },
-    "error": null
+    "response": null,
+    "error": "Conex\u00e3o recusada"
   }
 ]

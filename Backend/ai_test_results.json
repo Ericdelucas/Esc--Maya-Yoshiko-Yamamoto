@@ -1,0 +1,8 @@
+[
+  {
+    "test": "Teste Básico - Saudação",
+    "success": false,
+    "error": "Connection refused",
+    "response_preview": ""
+  }
+]

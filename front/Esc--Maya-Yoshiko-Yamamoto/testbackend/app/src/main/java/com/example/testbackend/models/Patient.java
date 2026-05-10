@@ -39,6 +39,10 @@ public class Patient implements Serializable {
     public String getFull_name() { return full_name; }
     public void setFull_name(String full_name) { this.full_name = full_name; }
     
+    // Método de compatibilidade para manter código existente funcionando
+    public String getFullName() { return full_name; }
+    public void setFullName(String full_name) { this.full_name = full_name; }
+    
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
     
