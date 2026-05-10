@@ -10,6 +10,29 @@
     <string name="logout">Sair</string>
     <string name="settings">Configurações</string>
     <string name="welcome">Bem-vindo</string>
+    <string name="greeting_patient">Olá, %1$s!</string>
+    <string name="greeting_professional">Olá, Prof. %1$s</string>
+    
+    <!-- Professional Dashboard -->
+    <string name="welcome_doctor">Bem-vindo, Dr(a)</string>
+    <string name="control_panel">Painel de Controle</string>
+    <string name="overview">Visão Geral</string>
+    <string name="patients">Pacientes</string>
+    <string name="appointments">Consultas</string>
+    <string name="patient_management">Gestão de Pacientes</string>
+    <string name="my_patients">Meus Pacientes</string>
+    <string name="new_patient">Novo Paciente</string>
+    <string name="professional_tools">Ferramentas Profissionais</string>
+    <string name="exercises">Exercícios</string>
+    <string name="reports">Relatórios</string>
+    <string name="quick_actions">Ações Rápidas</string>
+    <string name="my_profile">Meu Perfil</string>
+    <string name="schedule">Agenda</string>
+    <string name="settings_description">Configurações</string>
+    <string name="profile_photo_description">Foto de perfil</string>
+    <string name="logout_description">Sair</string>
+    <string name="add_task_description">Adicionar Tarefa</string>
+    <string name="default_user_points">🏆 %1$s | Pontos: %2$d | Nível: %3$s</string>
     <string name="open">Abrir</string>
     <string name="yes">Sim</string>
     <string name="no">Não</string>
@@ -60,7 +83,7 @@
     <string name="exercises_format">Exercícios: %1$s</string>
     <string name="delete_exercise_confirm">Deseja excluir o exercício %1$s?</string>
     <string name="task_completed_points">Tarefa concluída! Você ganhou %1$d pontos.</string>
-    <string name="user_points_format">%1$s: %2$d pontos (Nível %3$d)</string>
+    <string name="user_points_format">%1$s: %2$d pontos (Nível %3$s)</string>
     
     <!-- Progress -->
     <string name="see_detailed_progress">Ver progresso detalhado</string>
@@ -86,10 +109,27 @@
 
     <!-- Health Questionnaire -->
     <string name="questionnaire_title">Questionário de Saúde</string>
+    <string name="questionnaire_subtitle">Triagem e Histórico de Saúde</string>
     <string name="q1_text">Você pratica atividades físicas regularmente?</string>
     <string name="q2_text">Você possui alguma doença crônica diagnosticada?</string>
     <string name="q3_text">Você sente dores nas articulações durante o exercício?</string>
-
+    
+    <!-- Questionário específico -->
+    <string name="health_screening_title">Triagem e Histórico de Saúde</string>
+    <string name="symptoms_question">Apresentou febre, tosse ou falta de ar nas últimas 24 horas?</string>
+    <string name="allergies_question">Possui algum tipo de alergia a medicamentos ou alimentos?</string>
+    <string name="allergies_details_hint">Se sim, quais?</string>
+    <string name="medications_question">Faz uso de algum medicamento de uso contínuo?</string>
+    <string name="chronic_diseases_question">Possui histórico de hipertensão, diabetes ou doenças cardíacas?</string>
+    <string name="surgery_question">Realizou algum procedimento cirúrgico nos últimos 12 meses?</string>
+    <string name="sleep_nutrition_question">Como avalia a qualidade do seu sono e alimentação atual?</string>
+    
+    <!-- Opções de resposta -->
+    <string name="excellent_healthy">Excelente / Saudável</string>
+    <string name="needs_improvement">Precisa de Melhorias</string>
+    <string name="save_answers">Salvar Respostas</string>
+    
+    
     <!-- Assistant -->
     <string name="assistant_title">Assistente Virtual</string>
     <string name="assistant_welcome_message">Olá! Sou seu assistente virtual de saúde. Como posso ajudar hoje?</string>

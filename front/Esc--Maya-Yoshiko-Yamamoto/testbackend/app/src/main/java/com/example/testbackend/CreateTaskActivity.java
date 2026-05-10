@@ -3,6 +3,7 @@ package com.example.testbackend;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.content.Context;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import com.example.testbackend.utils.LocaleHelper;
 
 import com.example.testbackend.models.Patient;
 import com.example.testbackend.models.Task;
@@ -121,11 +123,22 @@ public class CreateTaskActivity extends AppCompatActivity {
                         Log.d("PATIENT", "ID: " + p.getId() + ", Nome: " + p.getDisplayName());
                     }
                     
-                    // Configurar spinner diretamente com lista de pacientes (usa o toString() do model)
+                    // Criar lista com opção inicial + pacientes
+                    List<Patient> spinnerList = new ArrayList<>();
+                    // Adicionar paciente placeholder para forçar seleção
+                    Patient placeholderPatient = new Patient();
+                    placeholderPatient.setId(-1); // ID inválido para validação
+                    placeholderPatient.setFull_name("Selecione um paciente");
+                    spinnerList.add(placeholderPatient);
+                    spinnerList.addAll(patientsList);
+                    
                     ArrayAdapter<Patient> adapter = new ArrayAdapter<>(CreateTaskActivity.this,
-                            android.R.layout.simple_spinner_item, patientsList);
+                            android.R.layout.simple_spinner_item, spinnerList);
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spPatient.setAdapter(adapter);
+                    
+                    // Definir seleção inicial para o placeholder
+                    spPatient.setSelection(0);
                 } else {
                     Log.e("PATIENTS_ERROR", "Erro ao carregar pacientes: " + response.code());
                     Toast.makeText(CreateTaskActivity.this, "Erro ao carregar pacientes", Toast.LENGTH_SHORT).show();
@@ -178,6 +191,12 @@ public class CreateTaskActivity extends AppCompatActivity {
         }
 
         Patient selectedPatient = (Patient) spPatient.getSelectedItem();
+        
+        // VALIDAÇÃO: Verificar se selecionou um paciente válido (não o placeholder)
+        if (selectedPatient == null || selectedPatient.getId() == -1) {
+            Toast.makeText(this, "Por favor, selecione um paciente válido", Toast.LENGTH_SHORT).show();
+            return;
+        }
         int frequency = spFrequency.getSelectedItemPosition() + 1;
         String startDateStr = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 

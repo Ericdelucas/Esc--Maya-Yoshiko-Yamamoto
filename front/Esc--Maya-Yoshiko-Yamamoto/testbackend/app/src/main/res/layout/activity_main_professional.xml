@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="48dp"
-        android:text="Bem-vindo, Dr(a)"
+        android:text="@string/welcome_doctor"
         android:textAppearance="@style/TextAppearance.Material3.HeadlineMedium"
         android:textColor="@color/white"
         android:textStyle="bold"
@@ -36,7 +36,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:layout_marginTop="4dp"
-        android:text="Painel de Controle"
+        android:text="@string/control_panel"
         android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
         android:textColor="@color/white"
         android:alpha="0.9"
@@ -56,7 +56,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/tvGreeting"
         app:layout_constraintEnd_toStartOf="@+id/cardAccountAvatar"
         app:layout_constraintTop_toTopOf="@+id/tvGreeting"
-        android:contentDescription="Configurações" />
+        android:contentDescription="@string/settings_description" />
 
     <!-- Avatar Profissional -->
     <com.google.android.material.card.MaterialCardView
@@ -82,7 +82,7 @@
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
                 android:visibility="gone"
-                android:contentDescription="Foto de perfil" />
+                android:contentDescription="@string/profile_photo_description" />
 
             <TextView
                 android:id="@+id/tvUserInitial"
@@ -132,7 +132,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Visão Geral"
+                        android:text="@string/overview"
                         android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
                         android:textColor="?attr/colorPrimary"
                         android:textStyle="bold" />
@@ -164,7 +164,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Pacientes"
+                                android:text="@string/patients"
                                 android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                                 android:textColor="?android:attr/textColorSecondary" />
                         </LinearLayout>
@@ -189,7 +189,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Consultas"
+                                android:text="@string/appointments"
                                 android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                                 android:textColor="?android:attr/textColorSecondary" />
                         </LinearLayout>
@@ -203,7 +203,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="24dp"
                 android:layout_marginTop="32dp"
-                android:text="Gestão de Pacientes"
+                android:text="@string/patient_management"
                 android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
                 android:textColor="?attr/colorOnSurface"
                 android:textStyle="bold" />
@@ -238,7 +238,7 @@
                         android:drawableTop="@android:drawable/ic_menu_myplaces"
                         android:drawableTint="?attr/colorPrimary"
                         android:padding="16dp"
-                        android:text="Meus Pacientes"
+                        android:text="@string/my_patients"
                         android:textAlignment="center"
                         android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                         android:textColor="?attr/colorOnSurface" />
@@ -266,7 +266,7 @@
                         android:drawableTop="@android:drawable/ic_menu_add"
                         android:drawableTint="?attr/colorSecondary"
                         android:padding="16dp"
-                        android:text="Novo Paciente"
+                        android:text="@string/new_patient"
                         android:textAlignment="center"
                         android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                         android:textColor="?attr/colorOnSurface" />
@@ -279,7 +279,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="24dp"
                 android:layout_marginTop="32dp"
-                android:text="Ferramentas Profissionais"
+                android:text="@string/professional_tools"
                 android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
                 android:textColor="?attr/colorOnSurface"
                 android:textStyle="bold" />
@@ -314,12 +314,13 @@
                         android:drawableTop="@android:drawable/ic_menu_recent_history"
                         android:drawableTint="?attr/colorTertiary"
                         android:padding="16dp"
-                        android:text="Exercícios"
+                        android:text="@string/exercises"
                         android:textAlignment="center"
                         android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                         android:textColor="?attr/colorOnSurface" />
                 </com.google.android.material.card.MaterialCardView>
 
+                
                 <!-- Card Relatórios -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cardReports"
@@ -342,7 +343,7 @@
                         android:drawableTop="@android:drawable/ic_menu_sort_by_size"
                         android:drawableTint="?attr/colorPrimary"
                         android:padding="16dp"
-                        android:text="Relatórios"
+                        android:text="@string/reports"
                         android:textAlignment="center"
                         android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                         android:textColor="?attr/colorOnSurface" />
@@ -371,7 +372,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Ações Rápidas"
+                        android:text="@string/quick_actions"
                         android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
                         android:textColor="?attr/colorOnSurface"
                         android:textStyle="bold" />
@@ -390,7 +391,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_marginEnd="8dp"
-                            android:text="Meu Perfil"
+                            android:text="@string/my_profile"
                             android:textSize="12sp" />
 
                         <Button
@@ -400,7 +401,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_marginStart="8dp"
-                            android:text="Agenda"
+                            android:text="@string/schedule"
                             android:textSize="12sp" />
                     </LinearLayout>
                 </LinearLayout>
@@ -426,7 +427,7 @@
         app:backgroundTint="#D32F2F"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:contentDescription="Sair" />
+        android:contentDescription="@string/logout_description" />
 
     <!-- NOVO: FAB Adicionar Tarefa -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -440,6 +441,6 @@
         app:backgroundTint="?attr/colorPrimary"
         app:layout_constraintBottom_toTopOf="@+id/fabLogout"
         app:layout_constraintEnd_toEndOf="parent"
-        android:contentDescription="Adicionar Tarefa" />
+        android:contentDescription="@string/add_task_description" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

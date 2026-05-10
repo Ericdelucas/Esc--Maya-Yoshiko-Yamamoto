@@ -1,5 +1,6 @@
 package com.example.testbackend;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -13,6 +14,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.testbackend.utils.LocaleHelper;
 
 import com.example.testbackend.models.LoginRequest;
 import com.example.testbackend.models.LoginResponse;
@@ -39,6 +42,11 @@ public class LoginActivity extends AppCompatActivity {
     private ProgressBar loadingIndicator;
     private TokenManager tokenManager;
     private LoginResponse loginResponse;
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(LocaleHelper.onAttach(newBase));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

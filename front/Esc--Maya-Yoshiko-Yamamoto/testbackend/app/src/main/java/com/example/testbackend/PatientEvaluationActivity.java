@@ -1,8 +1,10 @@
 package com.example.testbackend;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import com.example.testbackend.utils.LocaleHelper;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager2.widget.ViewPager2;
 import com.example.testbackend.adapters.EvaluationPagerAdapter;

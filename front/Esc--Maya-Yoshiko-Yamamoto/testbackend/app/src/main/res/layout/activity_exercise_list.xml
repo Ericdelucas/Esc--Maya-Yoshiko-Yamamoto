@@ -45,7 +45,7 @@
                     android:layout_weight="1"
                     android:gravity="center_vertical"
                     android:padding="8dp"
-                    android:text="🏆 ericdelucass | Pontos: 0 | Nível: Nível 1"
+                    android:text="@string/default_user_points"
                     android:textColor="@color/white"
                     android:textSize="14sp"
                     android:textStyle="bold" />
@@ -55,7 +55,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:backgroundTint="@color/white"
-                    android:text="Selecionar Paciente"
+                    android:text="@string/select_patient"
                     android:textColor="?attr/colorPrimary"
                     android:textSize="12sp"
                     android:textStyle="bold" />

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.RadioGroup;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -68,11 +69,44 @@ public class SettingsActivity extends AppCompatActivity {
         MaterialButton btnPT = findViewById(R.id.btnPortuguese);
         MaterialButton btnEN = findViewById(R.id.btnEnglish);
 
-        btnPT.setOnClickListener(v -> restartAppWithLocale("pt"));
-        btnEN.setOnClickListener(v -> restartAppWithLocale("en"));
+        // Obter idioma atual salvo
+        String currentLang = LocaleHelper.getCurrentLanguage(this);
+        
+        // Atualizar visualização dos botões
+        updateLanguageButtons(btnPT, btnEN, currentLang);
+
+        btnPT.setOnClickListener(v -> {
+            if (!"pt".equals(currentLang)) {
+                restartAppWithLocale("pt");
+            }
+        });
+        
+        btnEN.setOnClickListener(v -> {
+            if (!"en".equals(currentLang)) {
+                restartAppWithLocale("en");
+            }
+        });
+    }
+    
+    private void updateLanguageButtons(MaterialButton btnPT, MaterialButton btnEN, String currentLang) {
+        // Resetar estilos
+        btnPT.setBackgroundColor(getResources().getColor(android.R.color.transparent));
+        btnEN.setBackgroundColor(getResources().getColor(android.R.color.transparent));
+        
+        // Destacar idioma atual
+        if ("pt".equals(currentLang)) {
+            btnPT.setBackgroundColor(getResources().getColor(com.google.android.material.R.color.design_default_color_primary));
+            btnPT.setTextColor(getResources().getColor(android.R.color.white));
+        } else if ("en".equals(currentLang)) {
+            btnEN.setBackgroundColor(getResources().getColor(com.google.android.material.R.color.design_default_color_primary));
+            btnEN.setTextColor(getResources().getColor(android.R.color.white));
+        }
     }
 
     private void restartAppWithLocale(String lang) {
+        Log.d("SettingsActivity", "Restarting app with locale: " + lang);
+        
+        // Primeiro aplica o locale
         LocaleHelper.setLocale(this, lang);
         
         // Reinicia a stack do app para garantir que strings.xml seja recarregado globalmente

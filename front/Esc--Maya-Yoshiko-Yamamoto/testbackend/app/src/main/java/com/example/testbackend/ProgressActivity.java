@@ -1,7 +1,9 @@
 package com.example.testbackend;
 
+import android.content.Context;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
+import com.example.testbackend.utils.LocaleHelper;
 
 /**
  * Esta tela foi desativada pois o layout activity_progress.xml foi removido.

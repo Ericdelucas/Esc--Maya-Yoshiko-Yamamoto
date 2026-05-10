@@ -179,8 +179,9 @@ public class ProfessionalMainActivity extends AppCompatActivity {
             if (tvUserInitial != null) tvUserInitial.setText(initial);
             
             String name = email.split("@")[0];
+            name = name.substring(0, 1).toUpperCase() + name.substring(1);
             if (tvGreeting != null) {
-                tvGreeting.setText("Olá, Prof. " + name.substring(0, 1).toUpperCase() + name.substring(1));
+                tvGreeting.setText(getString(R.string.greeting_professional, name));
             }
         }
     }
@@ -196,7 +197,7 @@ public class ProfessionalMainActivity extends AppCompatActivity {
         if (name == null || name.isEmpty()) {
             name = profile.getEmail().split("@")[0];
         }
-        if (tvGreeting != null) tvGreeting.setText("Olá, Prof. " + name);
+        if (tvGreeting != null) tvGreeting.setText(getString(R.string.greeting_professional, name));
 
         String initial = profile.getEmail().substring(0, 1).toUpperCase();
         if (tvUserInitial != null) tvUserInitial.setText(initial);
@@ -256,6 +257,7 @@ public class ProfessionalMainActivity extends AppCompatActivity {
             cardExercises.setOnClickListener(v -> startActivity(new Intent(this, ExerciseListActivity.class)));
         }
 
+        
         // Botões de Ações Rápidas (IDs corretos do XML)
         View btnProfile = findViewById(R.id.btnProfile);
         if (btnProfile != null) {

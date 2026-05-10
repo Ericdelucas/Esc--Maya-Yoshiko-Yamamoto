@@ -405,6 +405,27 @@ def get_patient_tasks(current_user: UserOut = Depends(get_current_user)):
     # 🔥 **OBTER EXERCÍCIOS ESPECÍFICOS DO PACIENTE**
     if patient_id in patient_exercises_db:
         exercises = patient_exercises_db[patient_id]
+        
+        # 🔥 **GARANTIR VÍDEOS ALEATÓRIOS PARA EXERCÍCIOS EXISTENTES**
+        import random
+        
+        # Lista de vídeos de exemplo para evitar erros
+        sample_videos = [
+            "https://www.w3schools.com/html/movie.mp4",
+            "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4",
+            "https://www.learningcontainer.com/mp4/sample/mp4-480p-5mb.mp4",
+            "https://file-examples.com/storage/fe86ead47066ed2b463e4c5c/2017/10/file_example_MP4_480_1_5MG.mp4"
+        ]
+        
+        # Corrigir exercícios que não têm vídeo
+        for exercise in exercises:
+            if "exercise_video_url" not in exercise or not exercise["exercise_video_url"]:
+                exercise["exercise_video_url"] = random.choice(sample_videos)
+                print(f"   - Adicionando vídeo aleatório para exercício {exercise.get('id', 'unknown')}: {exercise['exercise_video_url']}")
+            
+            if "exercise_image_url" not in exercise or not exercise["exercise_image_url"]:
+                exercise["exercise_image_url"] = f"https://picsum.photos/400/300?random={random.randint(1, 1000)}"
+        
         print(f"   - Encontrados {len(exercises)} exercícios para paciente {patient_id}")
     else:
         # 🔥 **SE NÃO TIVER, RETORNA LISTA VAZIA**
@@ -439,7 +460,9 @@ def assign_exercise_to_patient(
         "is_active": True,
         "created_at": date.today().isoformat() + "T00:00:00",
         "assigned_by": current_user.id,
-        "assigned_at": date.today().isoformat()
+        "assigned_at": date.today().isoformat(),
+        "exercise_image_url": exercise_data.get("exercise_image_url"),
+        "exercise_video_url": exercise_data.get("exercise_video_url")
     }
     
     # 🔥 **ADICIONAR EXERCÍCIO ESPECÍFICO AO PACIENTE**
@@ -453,6 +476,7 @@ def assign_exercise_to_patient(
     print(f"   - Paciente: {patient_id}")
     print(f"   - Exercício: {exercise['title']}")
     print(f"   - ID: {exercise['id']}")
+    print(f"   - Vídeo URL: {exercise.get('exercise_video_url')}")
     
     return {
         "success": True,
@@ -461,6 +485,7 @@ def assign_exercise_to_patient(
         "patient_id": patient_id,
         "assigned_by": current_user.id
     }
+
 
 @router.get("/exercises/patient/{patient_id}")
 def get_patient_exercises_for_professional(
@@ -562,7 +587,24 @@ def get_exercises_for_management(
     
     # 🔥 **ADICIONAR INFORMAÇÕES DE GERENCIAMENTO**
     managed_exercises = []
+    import random
+    
+    # Lista de vídeos de exemplo para evitar erros
+    sample_videos = [
+        "https://www.w3schools.com/html/movie.mp4",
+        "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4",
+        "https://www.learningcontainer.com/mp4/sample/mp4-480p-5mb.mp4",
+        "https://file-examples.com/storage/fe86ead47066ed2b463e4c5c/2017/10/file_example_MP4_480_1_5MG.mp4"
+    ]
+    
     for exercise in exercises:
+        # Garantir que o exercício tenha vídeo para não dar erro
+        if "exercise_video_url" not in exercise or not exercise["exercise_video_url"]:
+            exercise["exercise_video_url"] = random.choice(sample_videos)
+        
+        if "exercise_image_url" not in exercise or not exercise["exercise_image_url"]:
+            exercise["exercise_image_url"] = f"https://picsum.photos/400/300?random={random.randint(1, 1000)}"
+        
         managed_exercise = {
             "id": exercise["id"],
             "title": exercise["title"],
@@ -573,7 +615,9 @@ def get_exercises_for_management(
             "created_at": exercise["created_at"],
             "can_delete": True,  # Profissional pode deletar
             "assigned_by": exercise.get("assigned_by", "Sistema"),
-            "assigned_at": exercise.get("assigned_at", "Desconhecido")
+            "assigned_at": exercise.get("assigned_at", "Desconhecido"),
+            "exercise_image_url": exercise.get("exercise_image_url"),
+            "exercise_video_url": exercise.get("exercise_video_url")
         }
         managed_exercises.append(managed_exercise)
     
@@ -604,7 +648,21 @@ def test_endpoint(current_user: UserOut = Depends(get_current_user), db: Session
     
     # 🔥 **CONVERTER PARA FORMATO ESPERADO PELO FRONTEND**
     exercises = []
+    import random
+    
+    # Lista de vídeos de exemplo para evitar erros
+    sample_videos = [
+        "https://www.w3schools.com/html/movie.mp4",
+        "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4",
+        "https://www.learningcontainer.com/mp4/sample/mp4-480p-5mb.mp4",
+        "https://file-examples.com/storage/fe86ead47066ed2b463e4c5c/2017/10/file_example_MP4_480_1_5MG.mp4"
+    ]
+    
     for task in tasks_from_db:
+        # Garantir vídeo aleatório se não tiver
+        video_url = task.exercise_video_url or random.choice(sample_videos)
+        image_url = task.exercise_image_url or f"https://picsum.photos/400/300?random={random.randint(1, 1000)}"
+        
         exercise = {
             "id": task.id,
             "title": task.title,
@@ -613,11 +671,11 @@ def test_endpoint(current_user: UserOut = Depends(get_current_user), db: Session
             "frequency_per_week": task.frequency_per_week,
             "is_active": task.is_active,
             "created_at": task.created_at.isoformat() if task.created_at else "2026-04-24T00:00:00",
-            "exercise_image_url": task.exercise_image_url or "https://picsum.photos/400/300?random=1",
-            "exercise_video_url": task.exercise_video_url or "https://www.w3schools.com/html/movie.mp4"
+            "exercise_image_url": image_url,
+            "exercise_video_url": video_url
         }
         exercises.append(exercise)
-        print(f"   - Exercício {task.id}: {task.title} (Vídeo: {task.exercise_video_url})")
+        print(f"   - Exercício {task.id}: {task.title} (Vídeo: {video_url})")
     
     # 🔥 **SE NÃO TIVER NO BANCO, RETORNA LISTA VAZIA**
     if not exercises:

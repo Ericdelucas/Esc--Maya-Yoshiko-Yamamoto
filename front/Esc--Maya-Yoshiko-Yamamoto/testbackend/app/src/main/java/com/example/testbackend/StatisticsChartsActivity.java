@@ -1,5 +1,6 @@
 package com.example.testbackend;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import com.example.testbackend.utils.LocaleHelper;
 import androidx.appcompat.widget.Toolbar;
 
 import com.github.mikephil.charting.charts.BarChart;

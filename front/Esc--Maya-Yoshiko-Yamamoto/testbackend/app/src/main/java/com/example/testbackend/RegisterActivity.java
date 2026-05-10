@@ -1,5 +1,6 @@
 package com.example.testbackend;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Patterns;
@@ -11,6 +12,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import com.example.testbackend.utils.LocaleHelper;
 
 import com.example.testbackend.models.RegisterRequest;
 import com.example.testbackend.network.ApiClient;
@@ -29,6 +31,11 @@ public class RegisterActivity extends AppCompatActivity {
     private CheckBox cbLgpd;
     private Button btnRegister, btnBack;
     private boolean isProcessing = false; // ✅ Trava de estado para evitar loop
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(LocaleHelper.onAttach(newBase));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

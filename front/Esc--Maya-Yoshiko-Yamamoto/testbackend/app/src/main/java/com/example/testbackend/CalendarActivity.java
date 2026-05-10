@@ -1,6 +1,7 @@
 package com.example.testbackend;
 
 import android.content.Intent;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageButton;
@@ -8,6 +9,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import com.example.testbackend.utils.LocaleHelper;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 

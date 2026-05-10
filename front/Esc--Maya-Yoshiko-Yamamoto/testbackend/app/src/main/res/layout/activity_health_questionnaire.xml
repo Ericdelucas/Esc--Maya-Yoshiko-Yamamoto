@@ -29,7 +29,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Triagem e Histórico de Saúde"
+                android:text="@string/health_screening_title"
                 android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
                 android:layout_marginBottom="16dp"
                 android:textStyle="bold"
@@ -50,7 +50,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Apresentou febre, tosse ou falta de ar nas últimas 24 horas?"
+                        android:text="@string/symptoms_question"
                         android:textStyle="bold"
                         android:textAppearance="@style/TextAppearance.Material3.BodyLarge"/>
                     <RadioGroup
@@ -59,8 +59,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:orientation="horizontal">
-                        <RadioButton android:id="@+id/rbSymptomsYes" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Sim"/>
-                        <RadioButton android:id="@+id/rbSymptomsNo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="24dp" android:text="Não" android:checked="true"/>
+                        <RadioButton android:id="@+id/rbSymptomsYes" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/yes"/>
+                        <RadioButton android:id="@+id/rbSymptomsNo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="24dp" android:text="@string/no" android:checked="true"/>
                     </RadioGroup>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -80,7 +80,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Possui algum tipo de alergia a medicamentos ou alimentos?"
+                        android:text="@string/allergies_question"
                         android:textStyle="bold"
                         android:textAppearance="@style/TextAppearance.Material3.BodyLarge"/>
                     <RadioGroup
@@ -89,14 +89,14 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:orientation="horizontal">
-                        <RadioButton android:id="@+id/rbAllergiesYes" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Sim"/>
-                        <RadioButton android:id="@+id/rbAllergiesNo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="24dp" android:text="Não" android:checked="true"/>
+                        <RadioButton android:id="@+id/rbAllergiesYes" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/yes"/>
+                        <RadioButton android:id="@+id/rbAllergiesNo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="24dp" android:text="@string/no" android:checked="true"/>
                     </RadioGroup>
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:hint="Se sim, quais?">
+                        android:hint="@string/allergies_details_hint">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etAllergyDetails"
                             android:layout_width="match_parent"
@@ -120,7 +120,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Faz uso de algum medicamento de uso contínuo?"
+                        android:text="@string/medications_question"
                         android:textStyle="bold"
                         android:textAppearance="@style/TextAppearance.Material3.BodyLarge"/>
                     <RadioGroup
@@ -129,8 +129,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:orientation="horizontal">
-                        <RadioButton android:id="@+id/rbMedsYes" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Sim"/>
-                        <RadioButton android:id="@+id/rbMedsNo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="24dp" android:text="Não" android:checked="true"/>
+                        <RadioButton android:id="@+id/rbMedsYes" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/yes"/>
+                        <RadioButton android:id="@+id/rbMedsNo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="24dp" android:text="@string/no" android:checked="true"/>
                     </RadioGroup>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -150,7 +150,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Possui histórico de hipertensão, diabetes ou doenças cardíacas?"
+                        android:text="@string/chronic_diseases_question"
                         android:textStyle="bold"
                         android:textAppearance="@style/TextAppearance.Material3.BodyLarge"/>
                     <RadioGroup
@@ -159,8 +159,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:orientation="horizontal">
-                        <RadioButton android:id="@+id/rbChronicYes" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Sim"/>
-                        <RadioButton android:id="@+id/rbChronicNo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="24dp" android:text="Não" android:checked="true"/>
+                        <RadioButton android:id="@+id/rbChronicYes" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/yes"/>
+                        <RadioButton android:id="@+id/rbChronicNo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="24dp" android:text="@string/no" android:checked="true"/>
                     </RadioGroup>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -180,7 +180,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Realizou algum procedimento cirúrgico nos últimos 12 meses?"
+                        android:text="@string/surgery_question"
                         android:textStyle="bold"
                         android:textAppearance="@style/TextAppearance.Material3.BodyLarge"/>
                     <RadioGroup
@@ -189,8 +189,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:orientation="horizontal">
-                        <RadioButton android:id="@+id/rbSurgeryYes" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Sim"/>
-                        <RadioButton android:id="@+id/rbSurgeryNo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="24dp" android:text="Não" android:checked="true"/>
+                        <RadioButton android:id="@+id/rbSurgeryYes" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/yes"/>
+                        <RadioButton android:id="@+id/rbSurgeryNo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="24dp" android:text="@string/no" android:checked="true"/>
                     </RadioGroup>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -210,7 +210,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Como avalia a qualidade do seu sono e alimentação atual?"
+                        android:text="@string/sleep_nutrition_question"
                         android:textStyle="bold"
                         android:textAppearance="@style/TextAppearance.Material3.BodyLarge"/>
                     <RadioGroup
@@ -218,9 +218,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp">
-                        <RadioButton android:id="@+id/rbHabitsExcellent" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Excelente / Saudável" android:checked="true"/>
-                        <RadioButton android:id="@+id/rbHabitsRegular" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Regular"/>
-                        <RadioButton android:id="@+id/rbHabitsPoor" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Precisa de Melhorias"/>
+                        <RadioButton android:id="@+id/rbHabitsExcellent" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/excellent_healthy" android:checked="true"/>
+                        <RadioButton android:id="@+id/rbHabitsRegular" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/regular"/>
+                        <RadioButton android:id="@+id/rbHabitsPoor" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/needs_improvement"/>
                     </RadioGroup>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -229,7 +229,7 @@
                 android:id="@+id/btnSaveQuestionnaire"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:text="Salvar Respostas"
+                android:text="@string/save_answers"
                 app:cornerRadius="12dp"
                 android:layout_marginBottom="32dp"/>
 

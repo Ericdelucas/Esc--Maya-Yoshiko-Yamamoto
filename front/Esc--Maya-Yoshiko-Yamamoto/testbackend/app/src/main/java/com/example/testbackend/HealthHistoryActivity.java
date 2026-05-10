@@ -42,6 +42,7 @@ public class HealthHistoryActivity extends AppCompatActivity {
         initViews();
         setupAPI();
         loadUserProfile(); // Carrega o ID real do usuário logado
+        loadSavedHealthData(); // Carrega dados salvos localmente
         setupListeners();
     }
 
@@ -102,6 +103,31 @@ public class HealthHistoryActivity extends AppCompatActivity {
             saveHealthData();
         });
     }
+    
+    private void loadSavedHealthData() {
+        // Carregar dados salvos localmente
+        var prefs = getSharedPreferences("health_data", MODE_PRIVATE);
+        
+        String age = prefs.getString("age", "");
+        String weight = prefs.getString("weight", "");
+        String height = prefs.getString("height", "");
+        String medications = prefs.getString("medications", "");
+        String allergies = prefs.getString("allergies", "");
+        String observations = prefs.getString("observations", "");
+        
+        // Preencher os campos com os dados salvos
+        if (!age.isEmpty()) etAge.setText(age);
+        if (!weight.isEmpty()) etWeight.setText(weight);
+        if (!height.isEmpty()) etHeight.setText(height);
+        if (!medications.isEmpty()) etMedications.setText(medications);
+        if (!allergies.isEmpty()) etAllergies.setText(allergies);
+        if (!observations.isEmpty()) etObservations.setText(observations);
+        
+        long lastUpdated = prefs.getLong("last_updated", 0);
+        if (lastUpdated > 0) {
+            Log.d(TAG, "Dados carregados - última atualização: " + new java.util.Date(lastUpdated));
+        }
+    }
 
     private void saveHealthData() {
         String weightStr = etWeight.getText().toString().trim();
@@ -154,6 +180,8 @@ public class HealthHistoryActivity extends AppCompatActivity {
         
         // Salvar dados básicos localmente (já que o backend de questionário não funciona em produção)
         String age = etAge.getText().toString().trim();
+        String weight = etWeight.getText().toString().trim();
+        String height = etHeight.getText().toString().trim();
         String medications = etMedications.getText().toString().trim();
         String allergies = etAllergies.getText().toString().trim();
         String observations = etObservations.getText().toString().trim();
@@ -162,6 +190,8 @@ public class HealthHistoryActivity extends AppCompatActivity {
         getSharedPreferences("health_data", MODE_PRIVATE)
             .edit()
             .putString("age", age)
+            .putString("weight", weight)
+            .putString("height", height)
             .putString("medications", medications)
             .putString("allergies", allergies)
             .putString("observations", observations)

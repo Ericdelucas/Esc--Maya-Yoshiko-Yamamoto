@@ -215,7 +215,7 @@ public class MainActivity extends AppCompatActivity {
             
             String name = email.split("@")[0];
             name = name.substring(0, 1).toUpperCase() + name.substring(1);
-            tvGreeting.setText("Olá, " + name + "!");
+            tvGreeting.setText(getString(R.string.greeting_patient, name));
         }
     }
 
@@ -225,7 +225,7 @@ public class MainActivity extends AppCompatActivity {
             name = profile.getEmail().split("@")[0];
             name = name.substring(0, 1).toUpperCase() + name.substring(1);
         }
-        tvGreeting.setText("Olá, " + name + "!");
+        tvGreeting.setText(getString(R.string.greeting_patient, name));
 
         String initial = profile.getEmail().substring(0, 1).toUpperCase();
         tvUserInitial.setText(initial);

@@ -77,16 +77,63 @@
                 android:lineSpacingExtra="4dp"
                 android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
 
-            <!-- Botão de Vídeo -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnWatchVideo"
-                style="@style/Widget.Material3.Button.TonalButton"
+            <!-- Video Player Integrado -->
+            <LinearLayout
+                android:id="@+id/videoContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="VER VÍDEO EXPLICATIVO"
-                android:visibility="gone"
-                app:icon="@android:drawable/presence_video_online" />
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Vídeo Explicativo"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:layout_marginBottom="8dp" />
+
+                <VideoView
+                    android:id="@+id/videoView"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:background="@android:color/black"
+                    android:layout_gravity="center" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="8dp">
+
+                    <Button
+                        android:id="@+id/btnPlayVideo"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="▶️ Play"
+                        android:layout_marginEnd="4dp" />
+
+                    <Button
+                        android:id="@+id/btnPauseVideo"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="⏸️ Pause"
+                        android:layout_marginStart="4dp" />
+                </LinearLayout>
+
+                <!-- Botão para abrir em player externo (backup) -->
+                <Button
+                    android:id="@+id/btnOpenExternal"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Abrir em Player Externo"
+                    app:icon="@android:drawable/presence_video_online" />
+            </LinearLayout>
 
             <Space android:layout_width="match_parent" android:layout_height="120dp" />
 
