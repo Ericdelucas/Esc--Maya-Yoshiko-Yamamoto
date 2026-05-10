@@ -547,6 +547,51 @@ def assign_exercise_to_patient(
         "assigned_by": current_user.id
     }
 
+@router.get("/debug/exercises")
+def debug_exercises(current_user: UserOut = Depends(get_current_user)):
+    """Endpoint de debug para verificar onde os exercícios estão salvos"""
+    
+    print(f"🔍 DEBUG - VERIFICANDO EXERCÍCIOS SALVOS")
+    print(f"   - Usuário: {current_user.id} (role: {current_user.role})")
+    print(f"   - patient_exercises_db keys: {list(patient_exercises_db.keys())}")
+    print(f"   - Total pacientes com exercícios: {len(patient_exercises_db)}")
+    
+    debug_info = {
+        "user_id": current_user.id,
+        "user_role": current_user.role,
+        "patient_exercises_db_keys": list(patient_exercises_db.keys()),
+        "total_patients_with_exercises": len(patient_exercises_db),
+        "exercises_by_patient": {}
+    }
+    
+    # Mostrar exercícios de cada paciente
+    for patient_id, exercises in patient_exercises_db.items():
+        debug_info["exercises_by_patient"][str(patient_id)] = {
+            "total_exercises": len(exercises),
+            "exercises": []
+        }
+        
+        for exercise in exercises:
+            exercise_info = {
+                "id": exercise.get("id"),
+                "title": exercise.get("title"),
+                "has_video": exercise.get("exercise_video_url") is not None,
+                "video_url": exercise.get("exercise_video_url"),
+                "has_image": exercise.get("exercise_image_url") is not None,
+                "image_url": exercise.get("exercise_image_url")
+            }
+            debug_info["exercises_by_patient"][str(patient_id)]["exercises"].append(exercise_info)
+            
+            print(f"   - Paciente {patient_id}: Exercício {exercise.get('id')} - {exercise.get('title')}")
+            print(f"     Vídeo: {exercise.get('exercise_video_url')}")
+            print(f"     Imagem: {exercise.get('exercise_image_url')}")
+    
+    return {
+        "success": True,
+        "debug_info": debug_info,
+        "message": f"Debug completo - {len(patient_exercises_db)} pacientes com exercícios"
+    }
+
 
 @router.get("/exercises/patient/{patient_id}")
 def get_patient_exercises_for_professional(
@@ -562,7 +607,7 @@ def get_patient_exercises_for_professional(
             "success": True,
             "patient_id": patient_id,
             "total_exercises": 0,
-            "tasks": [],
+            "exercises": [],
             "message": "Paciente não possui exercícios atribuídos"
         }
     
