@@ -122,6 +122,15 @@ async def get_report_statistics(
         recent_reports=[PatientReportResponse.model_validate(r) for r in recent_reports]
     )
 
+@router.get("/chart-data")
+async def get_chart_data(
+    professional_id: int = Query(...),
+    repo: PatientReportRepository = Depends(get_repository)
+):
+    """Dados detalhados para gráficos estatísticos"""
+    chart_data = repo.getChartData(professional_id)
+    return chart_data
+
 @router.get("/{report_id}", response_model=PatientReportResponse)
 async def get_report(
     report_id: int,

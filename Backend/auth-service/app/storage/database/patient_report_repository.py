@@ -145,3 +145,61 @@ class PatientReportRepository:
             self.db.delete(attachment)
         self.db.commit()
         return True
+    
+    def getChartData(self, professional_id: int) -> dict:
+        """Obter dados detalhados para gráficos estatísticos"""
+        
+        # 1. Dados para Box Plot - Distribuição de escala de dor por tipo de relatório
+        pain_distribution = self.db.query(
+            PatientReportORM.report_type,
+            PatientReportORM.pain_scale
+        ).filter(
+            and_(
+                PatientReportORM.professional_id == professional_id,
+                PatientReportORM.pain_scale.isnot(None)
+            )
+        ).all()
+        
+        # 2. Dados para Gráfico de Linhas - Relatórios por mês (usando strftime para SQLite)
+        monthly_reports_query = self.db.query(
+            func.strftime('%Y-%m', PatientReportORM.report_date).label('month'),
+            PatientReportORM.report_type,
+            func.count(PatientReportORM.id).label('count')
+        ).filter(
+            PatientReportORM.professional_id == professional_id
+        ).group_by(
+            func.strftime('%Y-%m', PatientReportORM.report_date),
+            PatientReportORM.report_type
+        ).order_by('month')
+        
+        try:
+            monthly_reports = monthly_reports_query.all()
+        except Exception:
+            # Fallback se strftime não funcionar
+            monthly_reports = []
+        
+        # 3. Dados para Gráfico de Pizza - Status funcionais
+        functional_status = self.db.query(
+            PatientReportORM.functional_status,
+            func.count(PatientReportORM.id).label('count')
+        ).filter(
+            and_(
+                PatientReportORM.professional_id == professional_id,
+                PatientReportORM.functional_status.isnot(None)
+            )
+        ).group_by(PatientReportORM.functional_status).all()
+        
+        return {
+            'pain_distribution': [
+                {'report_type': r.report_type, 'pain_scale': r.pain_scale}
+                for r in pain_distribution
+            ],
+            'monthly_reports': [
+                {'month': r.month, 'report_type': r.report_type, 'count': r.count}
+                for r in monthly_reports
+            ],
+            'functional_status': [
+                {'status': r.functional_status, 'count': r.count}
+                for r in functional_status
+            ]
+        }

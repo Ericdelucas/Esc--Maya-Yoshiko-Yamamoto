@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, File, Header, UploadFile, HTTPException, status
+from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 from app.storage.database.db import get_db
 from app.models.schemas.exercise_schema import ExerciseCreate, ExerciseOut, FileUploadResponse
@@ -88,6 +89,34 @@ def create_exercise(
     """Cria exercício com mídia (paths de upload prévios)"""
     user_id = current_user.get("sub")  # JWT usa 'sub' para user_id
     return _service.create(payload, user_id, db)
+
+
+@router.get("/media/images/{filename}")
+async def get_image(filename: str):
+    """Serve imagens de exercícios"""
+    try:
+        import os
+        image_path = os.path.join("storage/images", filename)
+        if os.path.exists(image_path):
+            return FileResponse(image_path, media_type="image/jpeg")
+        else:
+            raise HTTPException(status_code=404, detail="Image not found")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error serving image: {str(e)}")
+
+
+@router.get("/media/videos/{filename}")
+async def get_video(filename: str):
+    """Serve vídeos de exercícios"""
+    try:
+        import os
+        video_path = os.path.join("storage/videos", filename)
+        if os.path.exists(video_path):
+            return FileResponse(video_path, media_type="video/mp4")
+        else:
+            raise HTTPException(status_code=404, detail="Video not found")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error serving video: {str(e)}")
 
 
 @router.get("/admin/stats")

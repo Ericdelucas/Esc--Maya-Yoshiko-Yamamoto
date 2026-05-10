@@ -141,6 +141,16 @@
 
         </GridLayout>
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnViewCharts"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ver Gráficos Estatísticos"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            app:icon="@android:drawable/ic_menu_gallery"
+            app:iconGravity="textStart"/>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
