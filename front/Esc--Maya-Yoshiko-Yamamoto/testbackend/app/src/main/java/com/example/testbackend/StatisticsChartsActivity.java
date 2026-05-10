@@ -6,15 +6,16 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import com.github.mikephil.charting.charts.BoxChart;
+import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.data.BoxData;
-import com.github.mikephil.charting.data.BoxDataSet;
-import com.github.mikephil.charting.data.BoxEntry;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -22,7 +23,6 @@ import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.ValueFormatter;
-import com.github.mikephil.charting.interfaces.datasets.IBoxDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.example.testbackend.models.ChartDataResponse;
 import com.example.testbackend.network.ApiClient;
@@ -31,7 +31,7 @@ import com.example.testbackend.utils.TokenManager;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -43,7 +43,7 @@ import retrofit2.Response;
 
 public class StatisticsChartsActivity extends AppCompatActivity {
 
-    private BoxChart boxChart;
+    private BarChart barChart;
     private LineChart lineChart;
     private PieChart pieChart;
     private ProgressBar progressBar;
@@ -70,28 +70,30 @@ public class StatisticsChartsActivity extends AppCompatActivity {
     }
 
     private void setupViews() {
-        boxChart = findViewById(R.id.boxChart);
+        barChart = findViewById(R.id.barChart);
         lineChart = findViewById(R.id.lineChart);
         pieChart = findViewById(R.id.pieChart);
         progressBar = findViewById(R.id.progressBar);
         tokenManager = new TokenManager(this);
 
-        setupBoxChart();
+        setupBarChart();
         setupLineChart();
         setupPieChart();
     }
 
-    private void setupBoxChart() {
-        boxChart.getDescription().setEnabled(false);
-        boxChart.setDrawGridBackground(false);
-        boxChart.getAxisLeft().setAxisMinimum(0f);
-        boxChart.getAxisLeft().setAxisMaximum(10f);
-        boxChart.getAxisRight().setEnabled(false);
-        boxChart.getXAxis().setGranularity(1f);
-        boxChart.animateY(1000);
+    private void setupBarChart() {
+        if (barChart == null) return;
+        barChart.getDescription().setEnabled(false);
+        barChart.setDrawGridBackground(false);
+        barChart.getAxisLeft().setAxisMinimum(0f);
+        barChart.getAxisLeft().setAxisMaximum(10f);
+        barChart.getAxisRight().setEnabled(false);
+        barChart.getXAxis().setGranularity(1f);
+        barChart.animateY(1000);
     }
 
     private void setupLineChart() {
+        if (lineChart == null) return;
         lineChart.getDescription().setEnabled(false);
         lineChart.setDrawGridBackground(false);
         lineChart.getXAxis().setGranularity(1f);
@@ -105,8 +107,8 @@ public class StatisticsChartsActivity extends AppCompatActivity {
     }
 
     private void setupPieChart() {
+        if (pieChart == null) return;
         pieChart.getDescription().setEnabled(false);
-        pieChart.setDrawHoleEnabled(true);
         pieChart.setHoleRadius(40f);
         pieChart.setTransparentCircleRadius(45f);
         pieChart.setUsePercentValues(true);
@@ -114,19 +116,20 @@ public class StatisticsChartsActivity extends AppCompatActivity {
     }
 
     private void loadChartData() {
-        progressBar.setVisibility(View.VISIBLE);
+        if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
         
-        int professionalId = tokenManager.getUserId();
+        int userId = tokenManager.getUserId();
+        String token = tokenManager.getAuthToken();
         ChartDataApi api = ApiClient.getAuthClient().create(ChartDataApi.class);
         
-        api.getChartData(professionalId).enqueue(new Callback<ChartDataResponse>() {
+        api.getChartData(token, userId).enqueue(new Callback<>() {
             @Override
-            public void onResponse(Call<ChartDataResponse> call, Response<ChartDataResponse> response) {
-                progressBar.setVisibility(View.GONE);
+            public void onResponse(@NonNull Call<ChartDataResponse> call, @NonNull Response<ChartDataResponse> response) {
+                if (progressBar != null) progressBar.setVisibility(View.GONE);
                 
                 if (response.isSuccessful() && response.body() != null) {
                     ChartDataResponse chartData = response.body();
-                    setupBoxChartData(chartData.getPainDistribution());
+                    setupBarChartData(chartData.getPainDistribution());
                     setupLineChartData(chartData.getMonthlyReports());
                     setupPieChartData(chartData.getFunctionalStatus());
                 } else {
@@ -136,77 +139,74 @@ public class StatisticsChartsActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<ChartDataResponse> call, Throwable t) {
-                progressBar.setVisibility(View.GONE);
+            public void onFailure(@NonNull Call<ChartDataResponse> call, @NonNull Throwable t) {
+                if (progressBar != null) progressBar.setVisibility(View.GONE);
                 Toast.makeText(StatisticsChartsActivity.this, "Falha na conexão", Toast.LENGTH_SHORT).show();
                 Log.e("ChartsActivity", "Network error", t);
             }
         });
     }
 
-    private void setupBoxChartData(List<ChartDataResponse.PainDistributionData> painData) {
-        if (painData == null || painData.isEmpty()) return;
+    private void setupBarChartData(List<ChartDataResponse.PainDistributionData> painData) {
+        if (barChart == null || painData == null || painData.isEmpty()) return;
 
-        Map<String, List<Float>> groupedData = new HashMap<>();
+        Map<String, List<Integer>> groupedData = new HashMap<>();
         for (ChartDataResponse.PainDistributionData data : painData) {
             String type = data.getReportType();
-            if (!groupedData.containsKey(type)) {
-                groupedData.put(type, new ArrayList<>());
+            List<Integer> list = groupedData.get(type);
+            if (list == null) {
+                list = new ArrayList<>();
+                groupedData.put(type, list);
             }
-            groupedData.get(type).add((float) data.getPainScale());
+            list.add(data.getPainScale());
         }
 
-        ArrayList<IBoxDataSet> dataSets = new ArrayList<>();
-        int[] colors = {0xFF4CAF50, 0xFFFF9800, 0xFF2196F3, 0xFFF44336};
-        int colorIndex = 0;
+        ArrayList<BarEntry> entries = new ArrayList<>();
+        ArrayList<String> labels = new ArrayList<>();
+        int index = 0;
 
-        for (Map.Entry<String, List<Float>> entry : groupedData.entrySet()) {
-            List<Float> values = entry.getValue();
-            if (values.size() < 2) continue;
-
-            float min = Float.MAX_VALUE;
-            float max = Float.MIN_VALUE;
+        for (Map.Entry<String, List<Integer>> entry : groupedData.entrySet()) {
             float sum = 0;
-            for (float val : values) {
-                min = Math.min(min, val);
-                max = Math.max(max, val);
+            for (int val : entry.getValue()) {
                 sum += val;
             }
-            float mean = sum / values.size();
-
-            // Calculate quartiles
-            values.sort(Float::compare);
-            float q1 = values.get(values.size() / 4);
-            float q3 = values.get(3 * values.size() / 4);
-
-            ArrayList<BoxEntry> boxEntries = new ArrayList<>();
-            boxEntries.add(new BoxEntry(colorIndex, min, q1, mean, q3, max));
-
-            BoxDataSet boxDataSet = new BoxDataSet(boxEntries, entry.getKey());
-            boxDataSet.setColor(colors[colorIndex % colors.length]);
-            boxDataSet.setFillColor(colors[colorIndex % colors.length]);
-            boxDataSet.setValueTextSize(10f);
-            dataSets.add(boxDataSet);
-            colorIndex++;
+            float avg = sum / entry.getValue().size();
+            entries.add(new BarEntry(index, avg));
+            labels.add(entry.getKey());
+            index++;
         }
 
-        BoxData boxData = new BoxData(dataSets);
-        boxChart.setData(boxData);
-        boxChart.invalidate();
+        BarDataSet dataSet = new BarDataSet(entries, "Média de Dor por Tipo");
+        dataSet.setColors(0xFF4CAF50, 0xFFFF9800, 0xFF2196F3, 0xFFF44336);
+        dataSet.setValueTextSize(10f);
+
+        barChart.getXAxis().setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value) {
+                int idx = (int) value;
+                return (idx >= 0 && idx < labels.size()) ? labels.get(idx) : "";
+            }
+        });
+
+        BarData barData = new BarData(dataSet);
+        barChart.setData(barData);
+        barChart.invalidate();
     }
 
     private void setupLineChartData(List<ChartDataResponse.MonthlyReportData> monthlyData) {
-        if (monthlyData == null || monthlyData.isEmpty()) return;
+        if (lineChart == null || monthlyData == null || monthlyData.isEmpty()) return;
 
         Map<String, Map<String, Integer>> groupedData = new HashMap<>();
         for (ChartDataResponse.MonthlyReportData data : monthlyData) {
             String month = data.getMonth();
             String type = data.getReportType();
             
-            if (!groupedData.containsKey(type)) {
-                groupedData.put(type, new HashMap<>());
+            Map<String, Integer> monthMap = groupedData.get(type);
+            if (monthMap == null) {
+                monthMap = new HashMap<>();
+                groupedData.put(type, monthMap);
             }
-            groupedData.get(type).put(month, data.getCount());
+            monthMap.put(month, data.getCount());
         }
 
         ArrayList<ILineDataSet> dataSets = new ArrayList<>();
@@ -237,7 +237,7 @@ public class StatisticsChartsActivity extends AppCompatActivity {
     }
 
     private void setupPieChartData(List<ChartDataResponse.FunctionalStatusData> statusData) {
-        if (statusData == null || statusData.isEmpty()) return;
+        if (pieChart == null || statusData == null || statusData.isEmpty()) return;
 
         ArrayList<PieEntry> entries = new ArrayList<>();
         for (ChartDataResponse.FunctionalStatusData data : statusData) {
@@ -245,7 +245,7 @@ public class StatisticsChartsActivity extends AppCompatActivity {
         }
 
         PieDataSet pieDataSet = new PieDataSet(entries, "Status Funcional");
-        pieDataSet.setColors(new int[] {0xFF4CAF50, 0xFFFF9800, 0xFF2196F3, 0xFFF44336, 0xFF9C27B0});
+        pieDataSet.setColors(0xFF4CAF50, 0xFFFF9800, 0xFF2196F3, 0xFFF44336, 0xFF9C27B0);
         pieDataSet.setValueTextSize(12f);
         pieDataSet.setValueTextColor(0xFFFFFFFF);
 
@@ -256,8 +256,8 @@ public class StatisticsChartsActivity extends AppCompatActivity {
 
     private String formatMonthLabel(int index) {
         SimpleDateFormat sdf = new SimpleDateFormat("MMM yyyy", Locale.getDefault());
-        Date date = new Date();
-        date.setMonth(date.getMonth() - (12 - index));
-        return sdf.format(date);
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MONTH, -(12 - index));
+        return sdf.format(cal.getTime());
     }
 }

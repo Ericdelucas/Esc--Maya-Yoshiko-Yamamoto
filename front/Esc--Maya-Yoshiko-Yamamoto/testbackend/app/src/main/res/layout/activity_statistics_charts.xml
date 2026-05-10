@@ -30,7 +30,7 @@
             android:padding="16dp">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Gráficos Estatísticos"
                 android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
@@ -38,7 +38,6 @@
                 android:layout_marginBottom="24dp"
                 android:gravity="center"/>
 
-            <!-- Progress Bar -->
             <ProgressBar
                 android:id="@+id/progressBar"
                 android:layout_width="wrap_content"
@@ -46,7 +45,7 @@
                 android:layout_gravity="center"
                 android:visibility="gone"/>
 
-            <!-- Box Plot - Distribuição de Dor -->
+            <!-- Bar Chart - Média de Dor por Tipo -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -63,13 +62,13 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Distribuição de Escala de Dor"
+                        android:text="Média da Escala de Dor"
                         android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
                         android:textStyle="bold"
                         android:layout_marginBottom="8dp"/>
 
-                    <com.github.mikephil.charting.charts.BoxChart
-                        android:id="@+id/boxChart"
+                    <com.github.mikephil.charting.charts.BarChart
+                        android:id="@+id/barChart"
                         android:layout_width="match_parent"
                         android:layout_height="200dp"/>
 

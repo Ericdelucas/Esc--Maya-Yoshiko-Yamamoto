@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.testbackend.models.LoginRequest;
@@ -22,8 +23,10 @@ import com.example.testbackend.utils.TokenManager;
 
 import org.json.JSONObject;
 
+import java.util.Locale;
 import java.util.Objects;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -32,7 +35,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "LOGIN_DEBUG";
     private EditText etEmail, etPassword;
-    private Button btnLogin, btnGoToRegister;
+    private Button btnLogin;
     private ProgressBar loadingIndicator;
     private TokenManager tokenManager;
     private LoginResponse loginResponse;
@@ -48,7 +51,6 @@ public class LoginActivity extends AppCompatActivity {
             etEmail = findViewById(R.id.etEmail);
             etPassword = findViewById(R.id.etPassword);
             btnLogin = findViewById(R.id.btnLogin);
-            btnGoToRegister = findViewById(R.id.btnGoToRegister);
             loadingIndicator = findViewById(R.id.loadingIndicator);
 
             if (btnLogin == null) {
@@ -60,10 +62,6 @@ public class LoginActivity extends AppCompatActivity {
                 if (validateLoginForm()) {
                     performLogin();
                 }
-            });
-
-            btnGoToRegister.setOnClickListener(v -> {
-                startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
             });
             
         } catch (Exception e) {
@@ -104,9 +102,9 @@ public class LoginActivity extends AppCompatActivity {
         AuthApi authApi = ApiClient.getAuthClient().create(AuthApi.class);
         LoginRequest loginRequest = new LoginRequest(email, password);
 
-        authApi.login(loginRequest).enqueue(new Callback<LoginResponse>() {
+        authApi.login(loginRequest).enqueue(new Callback<>() {
             @Override
-            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+            public void onResponse(@NonNull Call<LoginResponse> call, @NonNull Response<LoginResponse> response) {
                 setLoading(false);
                 Log.d(TAG, "📡 Resposta Recebida - Code: " + response.code());
                 
@@ -128,12 +126,12 @@ public class LoginActivity extends AppCompatActivity {
                         Toast.makeText(LoginActivity.this, "Erro: Token vazio", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    try {
-                        if (response.errorBody() != null) {
-                            String errorBody = response.errorBody().string();
-                            Log.e(TAG, "❌ Erro Body: " + errorBody);
+                    try (ResponseBody errorBody = response.errorBody()) {
+                        if (errorBody != null) {
+                            String errorString = errorBody.string();
+                            Log.e(TAG, "❌ Erro Body: " + errorString);
                             
-                            JSONObject errorJson = new JSONObject(errorBody);
+                            JSONObject errorJson = new JSONObject(errorString);
                             
                             if (response.code() == 429) {
                                 JSONObject detailJson = errorJson.optJSONObject("detail");
@@ -158,7 +156,7 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<LoginResponse> call, Throwable t) {
+            public void onFailure(@NonNull Call<LoginResponse> call, @NonNull Throwable t) {
                 setLoading(false);
                 String attemptedUrl = call.request().url().toString();
                 Log.e(TAG, "❌ FALHA DE REDE: " + t.getMessage());
@@ -171,19 +169,19 @@ public class LoginActivity extends AppCompatActivity {
 
     private void startCountdownTimer(int seconds) {
         if (btnLogin != null) btnLogin.setEnabled(false);
-        new CountDownTimer(seconds * 1000, 1000) {
+        new CountDownTimer((long) seconds * 1000, 1000) {
             public void onTick(long millisUntilFinished) {
                 int minutes = (int) (millisUntilFinished / 60000);
                 int secs = (int) (millisUntilFinished % 60000) / 1000;
                 if (btnLogin != null) {
-                    btnLogin.setText(String.format("Bloqueado (%d:%02d)", minutes, secs));
+                    btnLogin.setText(String.format(Locale.getDefault(), "Bloqueado (%d:%02d)", minutes, secs));
                 }
             }
             
             public void onFinish() {
                 if (btnLogin != null) {
                     btnLogin.setEnabled(true);
-                    btnLogin.setText("Entrar");
+                    btnLogin.setText(R.string.login);
                 }
             }
         }.start();

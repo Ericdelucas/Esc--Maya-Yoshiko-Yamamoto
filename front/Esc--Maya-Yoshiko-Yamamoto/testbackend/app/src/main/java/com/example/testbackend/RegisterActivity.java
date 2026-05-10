@@ -52,10 +52,15 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void setupRoleSpinner() {
-        String[] roles = {"patient", "professional", "admin"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, roles);
+        String[] roleDisplay = {"Paciente", "Profissional"};
+        String[] roleValues = {"patient", "professional"};
+        
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, roleDisplay);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerRole.setAdapter(adapter);
+        
+        // Guarda os valores correspondentes para usar no registro
+        spinnerRole.setTag(roleValues);
     }
 
     private void setupListeners() {
@@ -111,7 +116,8 @@ public class RegisterActivity extends AppCompatActivity {
         String name = etName.getText().toString().trim();
         String email = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
-        String role = spinnerRole.getSelectedItem().toString();
+        String[] roleValues = (String[]) spinnerRole.getTag();
+        String role = roleValues[spinnerRole.getSelectedItemPosition()];
 
         btnRegister.setEnabled(false);
         btnRegister.setText("Cadastrando...");

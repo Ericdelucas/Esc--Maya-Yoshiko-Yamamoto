@@ -1,6 +1,7 @@
 package com.example.testbackend;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -33,7 +34,6 @@ import com.example.testbackend.utils.TokenManager;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -50,6 +50,8 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
     private TaskApi taskApi;
     private UserPointsResponse currentUserPoints;
     private Patient selectedPatient;
+    private Button btnSelectPatient;
+    private TextView tvUserPoints;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,13 +66,27 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
             
             setupToolbar();
             initViews();
+
+            if (isProfessional()) {
+                loadPatients();
+            } else {
+                loadPatientTasks();
+            }
+            updateUserPoints();
+        } catch (Exception e) {
+            Log.e(TAG, "Erro fatal no onCreate", e);
+            Toast.makeText(this, "Erro ao carregar tela", Toast.LENGTH_SHORT).show();
             finish();
         }
     }
 
     private boolean isProfessional() {
-        String role = tokenManager != null ? tokenManager.getUserRole() : null;
+        String role = getUserRole();
         return role != null && (role.equalsIgnoreCase("professional") || role.equalsIgnoreCase("doctor") || role.equalsIgnoreCase("admin"));
+    }
+
+    private String getUserRole() {
+        return tokenManager != null ? tokenManager.getUserRole() : "patient";
     }
 
     private void setupToolbar() {
@@ -81,6 +97,7 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                 getSupportActionBar().setTitle(R.string.my_exercises);
             }
+            toolbar.setNavigationOnClickListener(v -> onBackPressed());
         }
     }
     
@@ -102,40 +119,33 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
         
         if (btnSelectPatient != null) {
             btnSelectPatient.setOnClickListener(v -> showPatientSelectionDialog());
-            // Mostrar botão apenas para profissionais
             btnSelectPatient.setVisibility(isProfessional() ? View.VISIBLE : View.GONE);
         }
     }
-        updateUserPoints();
-    }
-    
-    private void setupProfessionalUI() {
-        if (btnSelectPatient != null) {
-            btnSelectPatient.setVisibility(View.VISIBLE);
-            btnSelectPatient.setText(R.string.select_patient);
-        }
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(R.string.my_exercises);
-        }
-        loadPatients();
-    }
     
     private void refreshData() {
-        String userRole = getUserRole();
-        if ("patient".equals(userRole)) {
-            loadPatientTasks();
-        } else if (selectedPatient != null) {
-            loadPatientExercises(selectedPatient.getId());
+        if (isProfessional()) {
+            if (selectedPatient != null) {
+                loadPatientExercises(selectedPatient.getId());
+            } else {
+                loadPatients();
+            }
         } else {
-            loadPatients();
+            loadPatientTasks();
         }
         updateUserPoints();
     }
 
+    private void loadPatientTasks() {
+        String token = tokenManager.getAuthToken();
+        if (token == null || taskApi == null) {
+            if (swipeRefresh != null) swipeRefresh.setRefreshing(false);
             return;
         }
         
-        taskApi.getTestTasks(token).enqueue(new Callback<>() {
+        if (swipeRefresh != null) swipeRefresh.setRefreshing(true);
+        
+        taskApi.getTestTasks(token).enqueue(new Callback<TestTasksResponse>() {
             @Override
             public void onResponse(@NonNull Call<TestTasksResponse> call, @NonNull Response<TestTasksResponse> response) {
                 if (swipeRefresh != null) swipeRefresh.setRefreshing(false);
@@ -148,31 +158,82 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
                         taskList.addAll(tasks);
                     }
                     if (adapter != null) adapter.notifyDataSetChanged();
+                    updateToolbarTitle();
                 } else if (response.code() == 401 || response.code() == 403) {
                     handleAuthError();
                 }
             }
 
             @Override
+            public void onFailure(@NonNull Call<TestTasksResponse> call, @NonNull Throwable t) {
                 if (swipeRefresh != null) swipeRefresh.setRefreshing(false);
+                Log.e(TAG, "Erro ao carregar tarefas: " + t.getMessage());
                 Toast.makeText(ExerciseListActivity.this, "Erro ao carregar exercícios", Toast.LENGTH_SHORT).show();
             }
         });
     }
-    
-    private void addHardcodedPatients() {
-        patientList.clear();
-        patientList.add(new Patient(3, "cria", "cria@gmail.com", "patient"));
-        patientList.add(new Patient(5, "testando", "testando@gmail.com", "patient"));
-        patientList.add(new Patient(6, "aws", "aws@gmail.com", "patient"));
-        patientList.add(new Patient(13, "novo.paciente", "novo.paciente@teste.com", "patient"));
-        
-        if (!patientList.isEmpty() && selectedPatient == null) {
-            selectedPatient = patientList.get(0);
-            updatePatientButtonText();
-            loadPatientExercises(selectedPatient.getId());
-            updateToolbarTitle();
+
+    private void loadPatients() {
+        String token = tokenManager.getAuthToken();
+        if (token == null || taskApi == null) return;
+
+        taskApi.getPatients(token).enqueue(new Callback<PatientsResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<PatientsResponse> call, @NonNull Response<PatientsResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    patientList.clear();
+                    List<Patient> patients = response.body().getPatients();
+                    if (patients != null) {
+                        patientList.addAll(patients);
+                    }
+                    if (!patientList.isEmpty() && selectedPatient == null) {
+                        selectedPatient = patientList.get(0);
+                        updatePatientButtonText();
+                        loadPatientExercises(selectedPatient.getId());
+                        updateToolbarTitle();
+                    }
+                } else if (response.code() == 401 || response.code() == 403) {
+                    handleAuthError();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<PatientsResponse> call, @NonNull Throwable t) {
+                Log.e(TAG, "Erro ao carregar pacientes: " + t.getMessage());
+            }
+        });
+    }
+
+    private void loadPatientExercises(int patientId) {
+        String token = tokenManager.getAuthToken();
+        if (token == null || taskApi == null) {
+            if (swipeRefresh != null) swipeRefresh.setRefreshing(false);
+            return;
         }
+
+        if (swipeRefresh != null) swipeRefresh.setRefreshing(true);
+
+        taskApi.getPatientExercises(token, patientId).enqueue(new Callback<PatientExercisesResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<PatientExercisesResponse> call, @NonNull Response<PatientExercisesResponse> response) {
+                if (swipeRefresh != null) swipeRefresh.setRefreshing(false);
+                if (response.isSuccessful() && response.body() != null) {
+                    taskList.clear();
+                    List<Task> exercises = response.body().getExercises();
+                    if (exercises != null) {
+                        taskList.addAll(exercises);
+                    }
+                    if (adapter != null) adapter.notifyDataSetChanged();
+                    updateToolbarTitle();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<PatientExercisesResponse> call, @NonNull Throwable t) {
+                if (swipeRefresh != null) swipeRefresh.setRefreshing(false);
+                Log.e(TAG, "Erro ao carregar exercícios do paciente: " + t.getMessage());
+            }
+        });
     }
     
     private void showPatientSelectionDialog() {
@@ -194,7 +255,6 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
                 updatePatientButtonText();
                 updateToolbarTitle();
                 updateUserPoints();
-                Toast.makeText(this, getString(R.string.patient_selected, selectedPatient.getDisplayName()), Toast.LENGTH_SHORT).show();
             })
             .show();
     }
@@ -211,7 +271,7 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
             String name = "patient".equals(role) ? tokenManager.getUserName() : 
                          (selectedPatient != null ? selectedPatient.getDisplayName() : null);
             
-            if (name != null) {
+            if (name != null && !name.isEmpty()) {
                 getSupportActionBar().setTitle(getString(R.string.exercises_format, name));
             } else {
                 getSupportActionBar().setTitle(R.string.my_exercises);
@@ -221,7 +281,11 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
     
     private void handleAuthError() {
         Log.e(TAG, "🔥 ERRO DE AUTENTICAÇÃO detectado!");
-        Toast.makeText(this, "Sessão expirada", Toast.LENGTH_LONG).show();
+        if (tokenManager != null) tokenManager.clearToken();
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 
     @Override
@@ -233,6 +297,7 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
 
     @Override
     public void onTaskLongClick(Task task) {
+        if (!isProfessional()) return;
         new AlertDialog.Builder(this)
             .setTitle(R.string.excluir)
             .setMessage(getString(R.string.delete_exercise_confirm, task.getTitle()))
@@ -245,7 +310,7 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
         String token = tokenManager.getAuthToken();
         if (token == null || taskApi == null) return;
         
-        taskApi.deleteExerciseProfessional(token, task.getId()).enqueue(new Callback<>() {
+        taskApi.deleteExerciseProfessional(token, task.getId()).enqueue(new Callback<DeleteExerciseResponse>() {
             @Override
             public void onResponse(@NonNull Call<DeleteExerciseResponse> call, @NonNull Response<DeleteExerciseResponse> response) {
                 if (response.isSuccessful()) {
@@ -263,6 +328,12 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
 
     private void completeTaskOnBackend(Task task) {
         String token = tokenManager.getAuthToken();
+        if (token == null || taskApi == null) return;
+
+        TaskCompletionRequest request = new TaskCompletionRequest(task.getId());
+        taskApi.completeTask(token, request).enqueue(new Callback<TaskCompletionResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<TaskCompletionResponse> call, @NonNull Response<TaskCompletionResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     TaskCompletionResponse result = response.body();
                     if (result.isSuccess()) {
@@ -298,10 +369,12 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
 
     private void updateUserPoints() {
         String token = tokenManager.getAuthToken();
+        if (token == null || taskApi == null) return;
         
-        taskApi.getUserPoints(token).enqueue(new Callback<>() {
+        taskApi.getUserPoints(token).enqueue(new Callback<UserPointsResponse>() {
             @Override
             public void onResponse(@NonNull Call<UserPointsResponse> call, @NonNull Response<UserPointsResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
                     currentUserPoints = response.body();
                     updatePointsUI();
                 }
@@ -309,14 +382,21 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
             
             @Override
             public void onFailure(@NonNull Call<UserPointsResponse> call, @NonNull Throwable t) {
+                Log.e(TAG, "Erro ao carregar pontos: " + t.getMessage());
             }
         });
     }
 
     private void updatePointsUI() {
         if (tvUserPoints != null && currentUserPoints != null) {
+            String name = currentUserPoints.getUsername();
+            if (name == null || name.isEmpty()) {
+                name = tokenManager.getUserName();
+            }
+            if (name == null || name.isEmpty()) name = "Usuário";
+
             tvUserPoints.setText(getString(R.string.user_points_format, 
-                userName, currentUserPoints.getTotalPoints(), currentUserPoints.getLevel()));
+                name, currentUserPoints.getTotalPoints(), currentUserPoints.getLevel()));
             tvUserPoints.setVisibility(View.VISIBLE);
         }
     }
