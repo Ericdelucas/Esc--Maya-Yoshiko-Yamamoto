@@ -391,6 +391,8 @@ def create_task(
     print(f"=== DEBUG TASK CREATE ===")
     print(f"Task data: {task_data}")
     print(f"Task data dict: {task_data.model_dump()}")
+    print(f"🎥 Vídeo URL recebido: {task_data.exercise_video_url}")
+    print(f"📷 Imagem URL recebida: {task_data.exercise_image_url}")
     print(f"========================")
     
     # 🔥 **SALVAR NO BANCO DE DADOS REAL**
@@ -439,7 +441,10 @@ def create_task(
     print(f"   - ID: {new_task.id}")
     print(f"   - Paciente: {patient_id}")
     print(f"   - Exercício: {task_data.title}")
+    print(f"   - Vídeo URL: {task_data.exercise_video_url}")
+    print(f"   - Imagem URL: {task_data.exercise_image_url}")
     print(f"   - Total de exercícios do paciente: {len(patient_exercises_db[patient_id])}")
+    print(f"   - Vídeo salvo no patient_exercises_db: {new_exercise['exercise_video_url']}")
     
     return {
         "success": True,
