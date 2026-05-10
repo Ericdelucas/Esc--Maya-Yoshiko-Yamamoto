@@ -145,9 +145,9 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
         
         if (swipeRefresh != null) swipeRefresh.setRefreshing(true);
         
-        taskApi.getTestTasks(token).enqueue(new Callback<TestTasksResponse>() {
+        taskApi.getPatientTasks(token).enqueue(new Callback<PatientTasksResponse>() {
             @Override
-            public void onResponse(@NonNull Call<TestTasksResponse> call, @NonNull Response<TestTasksResponse> response) {
+            public void onResponse(@NonNull Call<PatientTasksResponse> call, @NonNull Response<PatientTasksResponse> response) {
                 if (swipeRefresh != null) swipeRefresh.setRefreshing(false);
                 if (isFinishing()) return;
                 
@@ -156,16 +156,23 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
                     List<Task> tasks = response.body().getTasks();
                     if (tasks != null) {
                         taskList.addAll(tasks);
+                        Log.d(TAG, "Carregados " + tasks.size() + " exercícios para o paciente");
+                        for (Task task : tasks) {
+                            Log.d(TAG, "Exercício: " + task.getTitle() + " | Vídeo: " + task.getExerciseVideoUrl());
+                        }
                     }
                     if (adapter != null) adapter.notifyDataSetChanged();
                     updateToolbarTitle();
                 } else if (response.code() == 401 || response.code() == 403) {
                     handleAuthError();
+                } else {
+                    Log.e(TAG, "Erro na resposta: " + response.code() + " - " + response.message());
+                    Toast.makeText(ExerciseListActivity.this, "Falha ao carregar os exercícios", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<TestTasksResponse> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<PatientTasksResponse> call, @NonNull Throwable t) {
                 if (swipeRefresh != null) swipeRefresh.setRefreshing(false);
                 Log.e(TAG, "Erro ao carregar tarefas: " + t.getMessage());
                 Toast.makeText(ExerciseListActivity.this, "Erro ao carregar exercícios", Toast.LENGTH_SHORT).show();

@@ -21,6 +21,60 @@ daily_completed_tasks = {}  # {user_id: {date: [task_ids]}}
 patient_exercises_db = {}  # {patient_id: [exercises]}
 
 # 🔥 **EXERCÍCIOS INICIAIS POR PACIENTE** (MOVIDOS PARA BANCO DE DADOS)
+
+# 🔥 **ADICIONAR EXERCÍCIOS DE TESTE COM VÍDEOS**
+import random
+
+sample_videos = [
+    "https://www.w3schools.com/html/movie.mp4",
+    "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4",
+    "https://www.learningcontainer.com/mp4/sample/mp4-480p-5mb.mp4",
+    "https://file-examples.com/storage/fe86ead47066ed2b463e4c5c/2017/10/file_example_MP4_480_1_5MG.mp4"
+]
+
+# Exercícios de teste para pacientes comuns
+test_exercises = [
+    {
+        "id": 1001,
+        "title": "Rotação de ombro",
+        "description": "Movimentos circulares suaves para fortalecer ombro",
+        "points_value": 15,
+        "frequency_per_week": 3,
+        "is_active": True,
+        "created_at": "2026-04-24T00:00:00",
+        "exercise_image_url": "https://picsum.photos/400/300?random=1001",
+        "exercise_video_url": sample_videos[0]
+    },
+    {
+        "id": 1002,
+        "title": "Elevação lateral",
+        "description": "Levantar braços lateralmente até altura dos ombros",
+        "points_value": 20,
+        "frequency_per_week": 2,
+        "is_active": True,
+        "created_at": "2026-04-24T00:00:00",
+        "exercise_image_url": "https://picsum.photos/400/300?random=1002",
+        "exercise_video_url": sample_videos[1]
+    },
+    {
+        "id": 1003,
+        "title": "Agachamento parcial",
+        "description": "Agachar até 45 graus para fortalecer quadríceps",
+        "points_value": 25,
+        "frequency_per_week": 3,
+        "is_active": True,
+        "created_at": "2026-04-24T00:00:00",
+        "exercise_image_url": "https://picsum.photos/400/300?random=1003",
+        "exercise_video_url": sample_videos[2]
+    }
+]
+
+# Inicializar alguns pacientes com exercícios de teste
+patient_exercises_db[1] = test_exercises  # Paciente ID 1
+patient_exercises_db[2] = test_exercises  # Paciente ID 2
+patient_exercises_db[3] = test_exercises  # Paciente ID 3
+
+print(f"🏋️ EXERCÍCIOS DE TESTE INICIALIZADOS PARA {len(patient_exercises_db)} PACIENTES")
 # patient_exercises_db = {
 #     1: [  # Paciente Edgar - Problema de ombro
 #         {
@@ -401,6 +455,8 @@ def get_patient_tasks(current_user: UserOut = Depends(get_current_user)):
     patient_id = current_user.id
     
     print(f"🔍 BUSCANDO EXERCÍCIOS PARA PACIENTE {patient_id}")
+    print(f"   - User role: {current_user.role}")
+    print(f"   - patient_exercises_db keys: {list(patient_exercises_db.keys())}")
     
     # 🔥 **OBTER EXERCÍCIOS ESPECÍFICOS DO PACIENTE**
     if patient_id in patient_exercises_db:
