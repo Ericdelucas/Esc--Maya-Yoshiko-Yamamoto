@@ -172,6 +172,19 @@ public class AssistantActivity extends AppCompatActivity {
         if (text == null) return null;
         String lower = text.toLowerCase();
 
+        // 🔥 RECONHECIMENTO DE RANKING/LEADERBOARD
+        if (lower.contains("rank") || lower.contains("ranking") || lower.contains("leaderboard") || 
+            lower.contains("colocação") || lower.contains("posição") || lower.contains("pontos")) {
+            return new AssistantAction("open_screen", "leaderboard", getString(R.string.assistant_dialog_positive));
+        }
+
+        // 🔥 RECONHECIMENTO DE MEUS EXERCÍCIOS
+        if (lower.contains("meus exerc") || lower.contains("exercícios") || lower.contains("exercicios") ||
+            lower.contains("treino") || lower.contains("lista de exerc") || lower.contains("ver exerc")) {
+            return new AssistantAction("open_screen", "exercise_list", getString(R.string.assistant_dialog_positive));
+        }
+
+        // 🔥 RECONHECIMENTO DE SAÚDE/FERRAMENTAS
         if (lower.contains("imc") || lower.contains("indice de massa corporal")) {
             return new AssistantAction("open_screen", "imc_calculator", getString(R.string.assistant_dialog_positive));
         }
@@ -184,15 +197,25 @@ public class AssistantActivity extends AppCompatActivity {
         if (lower.contains("questionário") || lower.contains("questionario")) {
             return new AssistantAction("open_screen", "health_questionnaire", getString(R.string.assistant_dialog_positive));
         }
-        if (lower.contains("progresso") || lower.contains("evolução") || lower.contains("evolucao")) {
+
+        // 🔥 RECONHECIMENTO DE PROGRESSO
+        if (lower.contains("progresso") || lower.contains("evolução") || lower.contains("evolucao") ||
+            lower.contains("estatística") || lower.contains("estatistica") || lower.contains("desempenho")) {
             return new AssistantAction("open_screen", "progress_dashboard", getString(R.string.assistant_dialog_positive));
         }
-        if (lower.contains("exerc") || lower.contains("treino") || lower.contains("lista")) {
-            return new AssistantAction("open_screen", "exercise_list", getString(R.string.assistant_dialog_positive));
-        }
-        if (lower.contains("config") || lower.contains("ajuste")) {
+
+        // 🔥 RECONHECIMENTO DE CONFIGURAÇÕES
+        if (lower.contains("config") || lower.contains("ajuste") || lower.contains("configuração") ||
+            lower.contains("configuracao") || lower.contains("perfil")) {
             return new AssistantAction("open_screen", "settings", getString(R.string.assistant_dialog_positive));
         }
+
+        // 🔥 RECONHECIMENTO DE SAÚDE GERAL
+        if (lower.contains("saúde") || lower.contains("saude") || lower.contains("ferramentas de saúde") ||
+            lower.contains("dados de saúde") || lower.contains("medidas")) {
+            return new AssistantAction("open_screen", "health_tools", getString(R.string.assistant_dialog_positive));
+        }
+
         return null;
     }
 
@@ -208,6 +231,18 @@ public class AssistantActivity extends AppCompatActivity {
     private void openTargetScreen(String target) {
         Intent intent = null;
         switch (target) {
+            case "leaderboard":
+                intent = new Intent(this, LeaderboardActivity.class);
+                break;
+            case "exercise_list":
+                intent = new Intent(this, ExerciseListActivity.class);
+                break;
+            case "progress_dashboard":
+                intent = new Intent(this, ProgressDashboardActivity.class);
+                break;
+            case "health_tools":
+                intent = new Intent(this, HealthHistoryActivity.class); // Temporariamente redireciona para HealthHistory
+                break;
             case "body_fat_calculator":
                 intent = new Intent(this, BodyFatCalculatorActivity.class);
                 break;
@@ -219,12 +254,6 @@ public class AssistantActivity extends AppCompatActivity {
                 break;
             case "health_questionnaire":
                 intent = new Intent(this, HealthQuestionnaireActivity.class);
-                break;
-            case "exercise_list":
-                intent = new Intent(this, ExerciseListActivity.class);
-                break;
-            case "progress_dashboard":
-                intent = new Intent(this, ProgressDashboardActivity.class);
                 break;
             case "settings":
                 intent = new Intent(this, SettingsActivity.class);

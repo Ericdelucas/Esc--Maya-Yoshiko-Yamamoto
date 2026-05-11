@@ -1,0 +1,242 @@
+{
+  "total_testes": 44,
+  "testes_passaram": 43,
+  "taxa_sucesso": 97.72727272727273,
+  "resultados": {
+    "🏆 RANKING/LEADERBOARD": [
+      {
+        "frase": "onde fica meu ranking",
+        "status": "PASS",
+        "acao": "LeaderboardActivity"
+      },
+      {
+        "frase": "e meus rank",
+        "status": "PASS",
+        "acao": "LeaderboardActivity"
+      },
+      {
+        "frase": "quero ver minha colocação",
+        "status": "PASS",
+        "acao": "LeaderboardActivity"
+      },
+      {
+        "frase": "quantos pontos tenho",
+        "status": "PASS",
+        "acao": "LeaderboardActivity"
+      },
+      {
+        "frase": "ranking",
+        "status": "PASS",
+        "acao": "LeaderboardActivity"
+      },
+      {
+        "frase": "leaderboard",
+        "status": "PASS",
+        "acao": "LeaderboardActivity"
+      },
+      {
+        "frase": "minha posição",
+        "status": "PASS",
+        "acao": "LeaderboardActivity"
+      }
+    ],
+    "💪 MEUS EXERCÍCIOS": [
+      {
+        "frase": "vc sabe onde fica meus exercícios",
+        "status": "PASS",
+        "acao": "ExerciseListActivity"
+      },
+      {
+        "frase": "meus exercícios",
+        "status": "PASS",
+        "acao": "ExerciseListActivity"
+      },
+      {
+        "frase": "onde fica meus treinos",
+        "status": "PASS",
+        "acao": "ExerciseListActivity"
+      },
+      {
+        "frase": "lista de exercícios",
+        "status": "PASS",
+        "acao": "ExerciseListActivity"
+      },
+      {
+        "frase": "ver meus exercícios",
+        "status": "PASS",
+        "acao": "ExerciseListActivity"
+      },
+      {
+        "frase": "quero fazer exercícios",
+        "status": "PASS",
+        "acao": "ExerciseListActivity"
+      },
+      {
+        "frase": "exercícios de hoje",
+        "status": "PASS",
+        "acao": "ExerciseListActivity"
+      }
+    ],
+    "❤️ SAÚDE/FERRAMENTAS": [
+      {
+        "frase": "onde fica saúde",
+        "status": "PASS",
+        "acao": "HealthToolsActivity"
+      },
+      {
+        "frase": "ferramentas de saúde",
+        "status": "PASS",
+        "acao": "HealthToolsActivity"
+      },
+      {
+        "frase": "quero ver minhas medidas",
+        "status": "PASS",
+        "acao": "HealthToolsActivity"
+      },
+      {
+        "frase": "dados de saúde",
+        "status": "PASS",
+        "acao": "HealthToolsActivity"
+      },
+      {
+        "frase": "saúde",
+        "status": "PASS",
+        "acao": "HealthToolsActivity"
+      },
+      {
+        "frase": "medidas corporais",
+        "status": "PASS",
+        "acao": "HealthToolsActivity"
+      }
+    ],
+    "📊 PROGRESSO/ESTATÍSTICAS": [
+      {
+        "frase": "quero ver meu progresso",
+        "status": "PASS",
+        "acao": "ProgressDashboardActivity"
+      },
+      {
+        "frase": "minhas estatísticas",
+        "status": "PASS",
+        "acao": "ProgressDashboardActivity"
+      },
+      {
+        "frase": "como está meu desempenho",
+        "status": "PASS",
+        "acao": "ProgressDashboardActivity"
+      },
+      {
+        "frase": "evolução",
+        "status": "PASS",
+        "acao": "ProgressDashboardActivity"
+      },
+      {
+        "frase": "progresso semanal",
+        "status": "PASS",
+        "acao": "ProgressDashboardActivity"
+      },
+      {
+        "frase": "estatísticas detalhadas",
+        "status": "PASS",
+        "acao": "ProgressDashboardActivity"
+      }
+    ],
+    "⚙️ CONFIGURAÇÕES/PERFIL": [
+      {
+        "frase": "config",
+        "status": "PASS",
+        "acao": "SettingsActivity"
+      },
+      {
+        "frase": "meu perfil",
+        "status": "PASS",
+        "acao": "SettingsActivity"
+      },
+      {
+        "frase": "configurações",
+        "status": "PASS",
+        "acao": "SettingsActivity"
+      },
+      {
+        "frase": "ajustes",
+        "status": "PASS",
+        "acao": "SettingsActivity"
+      },
+      {
+        "frase": "quero configurar",
+        "status": "PASS",
+        "acao": "SettingsActivity"
+      },
+      {
+        "frase": "perfil do usuário",
+        "status": "PASS",
+        "acao": "SettingsActivity"
+      }
+    ],
+    "🧮 CALCULADORAS": [
+      {
+        "frase": "calcular meu IMC",
+        "status": "PASS",
+        "acao": "ImcCalculatorActivity"
+      },
+      {
+        "frase": "índice de massa corporal",
+        "status": "PASS",
+        "acao": "ImcCalculatorActivity"
+      },
+      {
+        "frase": "calcular gordura corporal",
+        "status": "PASS",
+        "acao": "BodyFatCalculatorActivity"
+      },
+      {
+        "frase": "medir gordura",
+        "status": "PASS",
+        "acao": "BodyFatCalculatorActivity"
+      },
+      {
+        "frase": "IMC",
+        "status": "PASS",
+        "acao": "ImcCalculatorActivity"
+      },
+      {
+        "frase": "calculadora de gordura",
+        "status": "PASS",
+        "acao": "BodyFatCalculatorActivity"
+      }
+    ],
+    "📋 HISTÓRICO/DADOS": [
+      {
+        "frase": "meu histórico",
+        "status": "PASS",
+        "acao": "HealthHistoryActivity"
+      },
+      {
+        "frase": "histórico de saúde",
+        "status": "PASS",
+        "acao": "HealthToolsActivity"
+      },
+      {
+        "frase": "questionário de saúde",
+        "status": "PASS",
+        "acao": "HealthToolsActivity"
+      },
+      {
+        "frase": "dados anteriores",
+        "status": "FAIL",
+        "acao": null
+      },
+      {
+        "frase": "ver histórico completo",
+        "status": "PASS",
+        "acao": "HealthHistoryActivity"
+      },
+      {
+        "frase": "questionário",
+        "status": "PASS",
+        "acao": "HealthQuestionnaireActivity"
+      }
+    ]
+  },
+  "areas_criticas_ok": true
+}

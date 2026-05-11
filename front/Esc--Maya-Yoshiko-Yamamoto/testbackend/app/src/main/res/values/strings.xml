@@ -77,6 +77,7 @@
 
     <!-- Exercise -->
     <string name="my_exercises">Meus Exercícios</string>
+    <string name="recommended_exercises">Exercícios recomendados</string>
     <string name="knee_strengthening">Fortalecimento de Joelho</string>
     <string name="select_patient">Selecionar Paciente</string>
     <string name="patient_selected">Paciente selecionado: %1$s</string>
@@ -167,7 +168,7 @@
     <string name="dados_subjetivos">Dados Subjetivos</string>
     <string name="plano_tratamento">Plano de Tratamento</string>
     <string name="recomendacoes">Recomendações</string>
-    <string name="proximos_passos">Próximos Passos</string>
+    <string name="proximos_passos">Proximos Passos</string>
     <string name="escala_dor">Escala de Dor</string>
     <string name="status_funcional">Status Funcional</string>
     <string name="evolucao">Evolução</string>

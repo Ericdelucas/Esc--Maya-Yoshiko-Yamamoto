@@ -68,11 +68,15 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
             initViews();
 
             if (isProfessional()) {
+                Log.d(TAG, "Usuário é profissional, carregando lista de pacientes");
                 loadPatients();
             } else {
+                Log.d(TAG, "Usuário é paciente, carregando exercícios diretamente");
+                if (btnSelectPatient != null) btnSelectPatient.setVisibility(View.GONE);
                 loadPatientTasks();
             }
-            updateUserPoints();
+            
+            updateUserPoints(); 
         } catch (Exception e) {
             Log.e(TAG, "Erro fatal no onCreate", e);
             Toast.makeText(this, "Erro ao carregar tela", Toast.LENGTH_SHORT).show();
@@ -97,7 +101,7 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                 getSupportActionBar().setTitle(R.string.my_exercises);
             }
-            toolbar.setNavigationOnClickListener(v -> onBackPressed());
+            toolbar.setNavigationOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
         }
     }
     
@@ -145,9 +149,9 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
         
         if (swipeRefresh != null) swipeRefresh.setRefreshing(true);
         
-        taskApi.getPatientTasks(token).enqueue(new Callback<PatientTasksResponse>() {
+        taskApi.getTestTasks(token).enqueue(new Callback<>() {
             @Override
-            public void onResponse(@NonNull Call<PatientTasksResponse> call, @NonNull Response<PatientTasksResponse> response) {
+            public void onResponse(@NonNull Call<TestTasksResponse> call, @NonNull Response<TestTasksResponse> response) {
                 if (swipeRefresh != null) swipeRefresh.setRefreshing(false);
                 if (isFinishing()) return;
                 
@@ -156,23 +160,16 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
                     List<Task> tasks = response.body().getTasks();
                     if (tasks != null) {
                         taskList.addAll(tasks);
-                        Log.d(TAG, "Carregados " + tasks.size() + " exercícios para o paciente");
-                        for (Task task : tasks) {
-                            Log.d(TAG, "Exercício: " + task.getTitle() + " | Vídeo: " + task.getExerciseVideoUrl());
-                        }
                     }
                     if (adapter != null) adapter.notifyDataSetChanged();
                     updateToolbarTitle();
                 } else if (response.code() == 401 || response.code() == 403) {
                     handleAuthError();
-                } else {
-                    Log.e(TAG, "Erro na resposta: " + response.code() + " - " + response.message());
-                    Toast.makeText(ExerciseListActivity.this, "Falha ao carregar os exercícios", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<PatientTasksResponse> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<TestTasksResponse> call, @NonNull Throwable t) {
                 if (swipeRefresh != null) swipeRefresh.setRefreshing(false);
                 Log.e(TAG, "Erro ao carregar tarefas: " + t.getMessage());
                 Toast.makeText(ExerciseListActivity.this, "Erro ao carregar exercícios", Toast.LENGTH_SHORT).show();
@@ -184,7 +181,7 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
         String token = tokenManager.getAuthToken();
         if (token == null || taskApi == null) return;
 
-        taskApi.getPatients(token).enqueue(new Callback<PatientsResponse>() {
+        taskApi.getPatients(token).enqueue(new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<PatientsResponse> call, @NonNull Response<PatientsResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -207,6 +204,7 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
             @Override
             public void onFailure(@NonNull Call<PatientsResponse> call, @NonNull Throwable t) {
                 Log.e(TAG, "Erro ao carregar pacientes: " + t.getMessage());
+                Toast.makeText(ExerciseListActivity.this, "Erro ao carregar pacientes", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -220,7 +218,7 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
 
         if (swipeRefresh != null) swipeRefresh.setRefreshing(true);
 
-        taskApi.getPatientExercises(token, patientId).enqueue(new Callback<PatientExercisesResponse>() {
+        taskApi.getPatientExercises(token, patientId).enqueue(new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<PatientExercisesResponse> call, @NonNull Response<PatientExercisesResponse> response) {
                 if (swipeRefresh != null) swipeRefresh.setRefreshing(false);
@@ -317,12 +315,14 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
         String token = tokenManager.getAuthToken();
         if (token == null || taskApi == null) return;
         
-        taskApi.deleteExerciseProfessional(token, task.getId()).enqueue(new Callback<DeleteExerciseResponse>() {
+        taskApi.deleteExerciseProfessional(token, task.getId()).enqueue(new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<DeleteExerciseResponse> call, @NonNull Response<DeleteExerciseResponse> response) {
                 if (response.isSuccessful()) {
                     Toast.makeText(ExerciseListActivity.this, "Exercício excluído", Toast.LENGTH_SHORT).show();
                     refreshData();
+                } else if (response.code() == 401 || response.code() == 403) {
+                    handleAuthError();
                 }
             }
 
@@ -335,10 +335,13 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
 
     private void completeTaskOnBackend(Task task) {
         String token = tokenManager.getAuthToken();
-        if (token == null || taskApi == null) return;
-
+        if (token == null || taskApi == null) {
+            handleAuthError();
+            return;
+        }
+        
         TaskCompletionRequest request = new TaskCompletionRequest(task.getId());
-        taskApi.completeTask(token, request).enqueue(new Callback<TaskCompletionResponse>() {
+        taskApi.completeTask(token, request).enqueue(new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<TaskCompletionResponse> call, @NonNull Response<TaskCompletionResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -347,10 +350,20 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
                         Toast.makeText(ExerciseListActivity.this, 
                             getString(R.string.task_completed_points, result.getPointsAwarded()), 
                             Toast.LENGTH_SHORT).show();
+                        
+                        if (result.getTasksCompletedToday() != null) {
+                            String progressMsg = "Progresso: " + result.getTasksCompletedToday() + "/5 tarefas hoje";
+                            Toast.makeText(ExerciseListActivity.this, progressMsg, Toast.LENGTH_LONG).show();
+                        }
+                        
                         updateTaskAsCompleted(task);
                         updateUserPoints();
                     } else {
-                        Toast.makeText(ExerciseListActivity.this, result.getMessage(), Toast.LENGTH_LONG).show();
+                        String message = result.getMessage();
+                        if (result.getCanRepeatTomorrow() != null && result.getCanRepeatTomorrow()) {
+                            message += "\n\n📅 Você poderá repetir este exercício amanhã!";
+                        }
+                        Toast.makeText(ExerciseListActivity.this, message, Toast.LENGTH_LONG).show();
                     }
                 } else if (response.code() == 401 || response.code() == 403) {
                     handleAuthError();
@@ -378,12 +391,14 @@ public class ExerciseListActivity extends AppCompatActivity implements TaskWithR
         String token = tokenManager.getAuthToken();
         if (token == null || taskApi == null) return;
         
-        taskApi.getUserPoints(token).enqueue(new Callback<UserPointsResponse>() {
+        taskApi.getUserPoints(token).enqueue(new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<UserPointsResponse> call, @NonNull Response<UserPointsResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     currentUserPoints = response.body();
                     updatePointsUI();
+                } else if (response.code() == 401 || response.code() == 403) {
+                    handleAuthError();
                 }
             }
             

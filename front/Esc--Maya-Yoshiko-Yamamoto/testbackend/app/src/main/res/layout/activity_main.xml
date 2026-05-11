@@ -132,7 +132,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="@string/knee_strengthening"
+                        android:text="@string/recommended_exercises"
                         android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textStyle="bold" />
