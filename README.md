@@ -306,7 +306,7 @@ const val BASE_URL = "http://SEU_IP:8080/"
 
 Acesse o README da parte de Programação Orientada a Objetos:
 
-[👉 Clique aqui para acessar](./POO/README.md)
+[👉 Clique aqui para acessar](./documentos/Entrega%202/POO/entrega2%20%20drawio.pdf)
 
 
 ## 📋Licença/License
