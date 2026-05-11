@@ -302,6 +302,13 @@ const val BASE_URL = "http://SEU_IP:8080/"
 </table>
 <br>
 
+## 📚 Módulo POO
+
+Acesse o README da parte de Programação Orientada a Objetos:
+
+[👉 Clique aqui para acessar](./POO/README.md)
+
+
 ## 📋Licença/License
 <p> <a href="https://github.com/Ericdelucas/Esc--Maya-Yoshiko-Yamamoto.git">ESC</a> © 2026 by <a href="https://www.linkedin.com/in/eric-de-lucas-silva/">Eric de Lucas Silva</a>,
 <a href ="https://www.linkedin.com/in/stephanie-silva-1b6100340/">Stephanie Macedo da Silva</a>, 
