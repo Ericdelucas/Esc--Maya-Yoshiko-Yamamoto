@@ -56,25 +56,28 @@ Como diferencial, o sistema utiliza inteligência artificial para analisar os mo
 
 <h3>Entregas</h3>
 <pre>
+.
 ├── documentos
 │   ├── Banner_FECAP_CCOMP3_ESC.pdf
 │   ├── Banner_FECAP_CCOMP3_ESC.pptx
-│   ├── Documento - Projeto de Extensão - COM Empresa.docx
-│   ├── Documento - Projeto de Extensão - SEM EMPRESA.docx
+│   ├── Documento - Projeto de Extensão - COM Empresa - 2026_1.docx
+│   ├── Documento - Projeto de Extensão - COM Empresa - 2026_1.pdf
 │   ├── Entrega 1
-│   │   ├── Analise Descritiva
-│   │   ├── Aplicativo Móvel
-│   │   ├── Estrutura de Dados
+│   │   ├── Análise Descritiva de Dados
+│   │   ├── Programação Orientada a Objetivos e Estrutura de Dados
 │   │   ├── Programação para Dispositivos
+│   │   ├── Projeto Interdisciplinar Aplicativo Móvel
 │   │   └── Venha para a FECAP!.txt
 │   ├── Entrega 2
-│   │   ├── Analise Descritiva
-│   │   ├── Aplicativo Móvel
-│   │   ├── Estrutura de Dados
+│   │   ├── Análise Descritiva de Dados
+│   │   ├── Programação Orientada a Objetivos e Estrutura de Dados
 │   │   ├── Programação para Dispositivos
+│   │   ├── Projeto Interdisciplinar Aplicativo Móvel
 │   │   └── Venha para a FECAP!.txt
 │   └── Venha para a FECAP!.txt
-├── imagens   
+├── imagens
+│   ├── Tela Paciente
+│   └── Tela Profissional
 ├── README.md
 └── src
     ├── Entrega 1
