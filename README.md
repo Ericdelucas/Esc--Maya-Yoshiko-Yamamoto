@@ -306,7 +306,7 @@ const val BASE_URL = "http://SEU_IP:8080/"
 
 Acesse o README da parte de Programação Orientada a Objetos:
 
-[👉 Clique aqui para acessar](./documentos/Entrega%202/POO/entrega2%20%20drawio.pdf)
+[👉 Clique aqui para acessar](./documentos/Entrega%202/Programação%20Orientada%20a%20Objetivos%20e%20Estrutura%20de%20Dados/POO/README.md)
 
 
 ## 📋Licença/License
@@ -323,3 +323,5 @@ Aqui estão as referências usadas no projeto.
 1. <https://mayayamamoto.com.br/>
 2. <https://www.linkedin.com/in/maya-yoshiko-yamamoto-bb18a736/.org/>
 3. <https://www.instagram.com/rpg.maya/>
+4. SILVA, Luiz Fernando Tavares; SILVA, Hugo Henrique. Desenvolvimento de aplicação web: prontuário digital para a área de fisioterapia. Belo Horizonte: PUC Minas, 2025.
+5. FREIRE, Tiago Magalhães. Aplicativo para avaliação e orientação do tratamento. Fortaleza: Centro Universitário Christus, 2023.

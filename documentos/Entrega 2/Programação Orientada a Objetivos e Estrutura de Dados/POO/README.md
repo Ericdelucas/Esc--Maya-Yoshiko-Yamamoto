@@ -1,0 +1,1 @@
+<a href= "https://ibb.co/2YkV2rc4"><img src="https://i.ibb.co/93rKX0y5/Captura-de-tela-2026-05-11-204356.png" alt= "Diagrama" border="0"></a>
